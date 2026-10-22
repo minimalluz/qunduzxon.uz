@@ -1,11 +1,9 @@
-'use client';
-
 import Link from 'next/link';
 import { FiInstagram, FiYoutube, FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
 import { FaTelegram } from 'react-icons/fa';
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  const currentYear = 2024;
 
   return (
     <footer className="bg-gray-900 text-white">
