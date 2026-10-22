@@ -139,13 +139,11 @@ export default function Hero() {
           >
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-pink-400 to-rose-500 rounded-3xl transform rotate-6 scale-105 opacity-20" />
-              <div className="relative w-72 h-[400px] sm:w-80 sm:h-[450px] md:w-96 md:h-[520px] rounded-3xl overflow-hidden shadow-2xl">
-                <Image
+              <div style={{ position: 'relative', width: '100%', maxWidth: '384px', height: '520px', borderRadius: '1.5rem', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+                <img
                   src="/images/hero.jpg"
                   alt="Қундузхон Абдуллаева"
-                  fill
-                  className="object-cover object-[center_20%]"
-                  priority
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }}
                 />
               </div>
               {/* Floating Stats */}

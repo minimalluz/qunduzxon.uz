@@ -1,7 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { uz } from 'date-fns/locale';
@@ -17,17 +15,20 @@ interface BlogCardProps {
 
 export default function BlogCard({ slug, title, excerpt, coverImage, createdAt, tags }: BlogCardProps) {
   return (
-    <motion.article
-      whileHover={{ y: -5 }}
-      className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
-    >
+    <article className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
       <Link href={`/blog/${slug}`}>
-        <div className="relative h-56 overflow-hidden">
-          <Image
+        <div style={{ position: 'relative', height: '224px', overflow: 'hidden' }}>
+          <img
             src={coverImage}
             alt={title}
-            fill
-            className="object-cover object-[center_25%] group-hover:scale-105 transition-transform duration-500"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center 25%',
+              transition: 'transform 0.5s'
+            }}
+            className="group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           <div className="absolute bottom-4 left-4 flex gap-2">
@@ -57,6 +58,6 @@ export default function BlogCard({ slug, title, excerpt, coverImage, createdAt, 
           </span>
         </div>
       </Link>
-    </motion.article>
+    </article>
   );
 }

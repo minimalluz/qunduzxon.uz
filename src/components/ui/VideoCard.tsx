@@ -1,7 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 import { FiPlay, FiClock, FiEye } from 'react-icons/fi';
 
@@ -29,25 +27,25 @@ export default function VideoCard({ id, title, thumbnail, duration, views, categ
   };
 
   return (
-    <motion.div
-      whileHover={{ y: -5 }}
-      className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
-    >
+    <div className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
       <Link href={`/videos/${id}`}>
-        <div className="relative aspect-video overflow-hidden">
-          <Image
+        <div style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden' }}>
+          <img
             src={thumbnail}
             alt={title}
-            fill
-            className="object-cover object-[center_30%] group-hover:scale-105 transition-transform duration-500"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center 30%',
+              transition: 'transform 0.5s'
+            }}
+            className="group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center"
-            >
+            <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
               <FiPlay className="text-pink-500 text-2xl ml-1" />
-            </motion.div>
+            </div>
           </div>
           <div className="absolute bottom-3 right-3 bg-black/70 text-white text-sm px-2 py-1 rounded">
             <FiClock className="inline mr-1" />
@@ -67,6 +65,6 @@ export default function VideoCard({ id, title, thumbnail, duration, views, categ
           </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }
