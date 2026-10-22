@@ -30,7 +30,6 @@ const videos = [
   { id: 16, src: '/videos/VID_20240626_175924_238.mp4', title: 'Рецепт', category: 'food' },
   { id: 17, src: '/videos/VID_20240626_180252_113.mp4', title: 'Маслаҳат', category: 'lifestyle' },
   { id: 18, src: '/videos/VID_20240626_180423_159.mp4', title: 'Лаҳзалар', category: 'lifestyle' },
-  { id: 19, src: '/videos/lv_6974676169459354882_20231225112634.mp4', title: 'Махсус видео', category: 'tv' },
 ];
 
 function VideoCard({ video, onClick }: { video: typeof videos[0]; onClick: () => void }) {
