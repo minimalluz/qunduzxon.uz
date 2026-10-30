@@ -3,7 +3,7 @@ import VideoCard from '@/components/ui/VideoCard';
 import BlogCard from '@/components/ui/BlogCard';
 import Button from '@/components/ui/Button';
 import Link from 'next/link';
-import Image from 'next/image';
+
 import { FiArrowRight, FiAward, FiMic, FiCamera, FiHeart } from 'react-icons/fi';
 
 const featuredVideos = [

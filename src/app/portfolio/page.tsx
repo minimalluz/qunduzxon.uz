@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
+
 import { FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 const categories = [
@@ -110,11 +110,11 @@ export default function PortfolioPage() {
                   className="relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer group"
                   onClick={() => setSelectedPhoto(photo)}
                 >
-                  <Image
+                  <img
                     src={photo.src}
                     alt={photo.title}
-                    fill
-                    className="object-cover object-[center_25%] group-hover:scale-110 transition-transform duration-500"
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%', transition: 'transform 0.5s' }}
+                    className="group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="absolute bottom-0 left-0 right-0 p-4 text-white translate-y-full group-hover:translate-y-0 transition-transform">
@@ -166,14 +166,13 @@ export default function PortfolioPage() {
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
-              className="relative max-w-4xl max-h-[80vh] w-full h-full"
+              style={{ position: 'relative', maxWidth: '900px', maxHeight: '80vh', width: '100%', height: '100%' }}
               onClick={(e) => e.stopPropagation()}
             >
-              <Image
+              <img
                 src={selectedPhoto.src}
                 alt={selectedPhoto.title}
-                fill
-                className="object-contain"
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
             </motion.div>
 

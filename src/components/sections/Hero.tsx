@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+
 import Link from 'next/link';
 import { FiInstagram, FiYoutube, FiPlay } from 'react-icons/fi';
 import { FaTelegram } from 'react-icons/fa';

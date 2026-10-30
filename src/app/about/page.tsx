@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+
 import { FiAward, FiMic, FiCamera, FiHeart, FiStar, FiTrendingUp } from 'react-icons/fi';
 
 const achievements = [
@@ -75,13 +75,11 @@ export default function AboutPage() {
             >
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-pink-400 to-rose-500 rounded-3xl transform -rotate-6 scale-105 opacity-20" />
-                <div className="relative w-full max-w-sm sm:max-w-md mx-auto aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl">
-                  <Image
+                <div style={{ position: 'relative', width: '100%', maxWidth: '400px', aspectRatio: '3/4', borderRadius: '1.5rem', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', margin: '0 auto' }}>
+                  <img
                     src="/images/about.jpg"
                     alt="Қундузхон Абдуллаева"
-                    fill
-                    className="object-cover object-[center_25%]"
-                    priority
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%' }}
                   />
                 </div>
               </div>
