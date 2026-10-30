@@ -153,7 +153,7 @@ export default function Hero() {
                 transition={{ delay: 1 }}
                 className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl p-4"
               >
-                <p className="text-3xl font-bold text-pink-500">100+</p>
+                <p className="text-3xl font-bold text-pink-500">1000+</p>
                 <p className="text-sm text-gray-500">Телекўрсатувлар</p>
               </motion.div>
               <motion.div
