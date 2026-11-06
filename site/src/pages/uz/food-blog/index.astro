@@ -1,0 +1,66 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHero from '../../../components/PageHero.astro';
+import ReviewCard from '../../../components/ReviewCard.astro';
+import { allReviews } from '../../../lib/reviews';
+import food from '../../../assets/photos/food.jpg';
+
+const reviews = await allReviews();
+const cuisines = ['Миллий', 'Европа', 'Турк', 'Осиё', 'Fast-food', 'Қаҳвахона'];
+const cities = [...new Set(reviews.map((r) => r.data.city))].sort();
+const crumbs = [{ href: '/uz/food-blog/', label: 'Фуд-блог' }];
+---
+<Base title="Фуд-блог ва гастро-гид" description="Ўзбекистон бўйлаб ресторан, қаҳвахона ва миллий таомлар ҳақида Қундузхон Абдуллаеванинг шарҳлари: таом, хизмат, муҳит ва нарх бўйича баҳолар." image={food} crumbs={crumbs} ruHref="/ru/food-blog/">
+  <PageHero crumbs={crumbs} eyebrow="Фуд-блог" lead="Ресторанлар, қаҳвахоналар ва миллий таомлар ҳақида ҳалол шарҳлар — таом мазаси, хизмат, муҳит ва нарх бўйича баҳо.">
+    Гастро-<em>гид</em>
+  </PageHero>
+
+  <section class="sec food-sec">
+    <div class="wrap">
+      <form class="filters" id="filters" role="search" onsubmit="return false">
+        <input type="search" id="q" placeholder="Ресторан ёки таом номи…" aria-label="Қидириш" />
+        <select id="cuisine" aria-label="Ошхона тури"><option value="">Барча ошхоналар</option>{cuisines.map((c) => <option>{c}</option>)}</select>
+        <select id="city" aria-label="Шаҳар"><option value="">Барча шаҳарлар</option>{cities.map((c) => <option>{c}</option>)}</select>
+        <select id="sort" aria-label="Саралаш"><option value="new">Энг янгилари</option><option value="score">Энг юқори баҳо</option></select>
+      </form>
+      <p class="count" id="count" aria-live="polite">{reviews.length} та шарҳ</p>
+      <div class="grid" id="grid">{reviews.map((r) => <ReviewCard review={r} />)}</div>
+      <p class="empty" id="empty" hidden>Ҳеч нарса топилмади. Филтрни ўзгартириб кўринг.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .filters { display: grid; gap: 10px; }
+  .filters input, .filters select { min-height: 48px; border-radius: 12px; border: 1px solid #F0D9C4; background: #fff; padding: 0 14px; font: 15px var(--font-sans); width: 100%; }
+  @media (min-width: 860px) { .filters { grid-template-columns: 2fr 1fr 1fr 1fr; } }
+  .count { margin: 18px 0 8px; font-size: 14px; color: var(--color-muted); }
+  .grid { display: grid; gap: 16px; }
+  @media (min-width: 720px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  .empty { padding: 40px 0; text-align: center; color: var(--color-muted); }
+</style>
+
+<script>
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const q = $<HTMLInputElement>('q'), cuisine = $<HTMLSelectElement>('cuisine'), city = $<HTMLSelectElement>('city'), sort = $<HTMLSelectElement>('sort');
+  const grid = $('grid'), count = $('count'), empty = $('empty');
+  const cards = [...grid.querySelectorAll<HTMLElement>('article')];
+  const original = [...cards];
+  const apply = () => {
+    const text = q.value.trim().toLowerCase();
+    let shown = 0;
+    for (const c of cards) {
+      const ok = (!text || c.dataset.text!.includes(text))
+        && (!cuisine.value || c.dataset.cuisine!.split('|').includes(cuisine.value))
+        && (!city.value || c.dataset.city === city.value);
+      c.hidden = !ok;
+      if (ok) shown++;
+    }
+    const order = sort.value === 'score' ? [...cards].sort((a, b) => +b.dataset.score! - +a.dataset.score!) : original;
+    order.forEach((c) => grid.appendChild(c));
+    count.textContent = `${shown} та шарҳ`;
+    empty.hidden = shown > 0;
+  };
+  [q, cuisine, city, sort].forEach((el) => el.addEventListener('input', apply));
+</script>

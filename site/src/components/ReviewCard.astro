@@ -1,0 +1,33 @@
+---
+import { Image } from 'astro:assets';
+import { total, som, type Review } from '../lib/reviews';
+interface Props { review: Review }
+const { review } = Astro.props;
+const d = review.data;
+---
+<article class="card rcard" data-cuisine={d.cuisine.join('|')} data-city={d.city} data-score={total(review)} data-text={`${d.title} ${d.summary} ${d.city}`.toLowerCase()}>
+  <a href={`/uz/food-blog/${review.id}/`}>
+    <div class="ph">
+      <Image src={d.cover} alt={d.title} widths={[400, 640]} sizes="(min-width:720px) 33vw, 100vw" loading="lazy" />
+      <span class="score">{total(review).toFixed(1)}</span>
+      {d.sample && <span class="smp">намуна</span>}
+    </div>
+    <div class="bd">
+      <h3>{d.title}</h3>
+      <div class="meta"><span>{d.cuisine.join(' · ')}</span><span>{d.city}</span><span>{som(d.averageCheck)}</span></div>
+      <p>{d.summary}</p>
+    </div>
+  </a>
+</article>
+
+<style>
+  .ph { position: relative; aspect-ratio: 4/3; }
+  .ph img { width: 100%; height: 100%; object-fit: cover; }
+  .score { position: absolute; right: 12px; top: 12px; }
+  .smp { position: absolute; left: 12px; top: 12px; background: rgba(0,0,0,.6); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: .05em; }
+  .bd { padding: 16px 18px 18px; }
+  h3 { font-size: 25px; }
+  .meta { margin-top: 6px; }
+  p { font-size: 14.5px; margin-top: 10px; }
+  a:hover h3 { color: var(--color-rose-dk); }
+</style>

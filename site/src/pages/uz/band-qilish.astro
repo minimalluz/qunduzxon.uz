@@ -1,0 +1,43 @@
+---
+// Бу саҳифа тайёр, лекин вақтинча ўчиқ: менюда йўқ, қидирувга берилмайди (noindex, robots.txt, sitemap filter).
+// «Банд қилиш» тугмалари ҳозирча Telegram'га олиб боради (config.ts → TG_URL).
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import LeadForm from '../../components/LeadForm.astro';
+import { TG_URL, TG_USER, PHONE, PHONE_LABEL, EMAIL, SOCIAL } from '../../config';
+const crumbs = [{ href: '/uz/band-qilish/', label: 'Банд қилиш' }];
+---
+<Base title="Санани банд қилиш ва алоқа" crumbs={crumbs} noindex>
+  <PageHero crumbs={crumbs} eyebrow="Алоқа" lead="Тўй, корпоратив тадбир, фуд-обзор ёки дикторлик — аризани қолдиринг, тез орада боғланамиз.">
+    Санани <em>банд қилиш</em>
+  </PageHero>
+  <section class="sec">
+    <div class="wrap two">
+      <div>
+        <h2>Ариза</h2>
+        <LeadForm full submitLabel="Ариза юбориш" />
+      </div>
+      <aside class="contacts">
+        <h2>Тўғридан-тўғри</h2>
+        <ul>
+          <li><span>Маъмур телефони</span>{PHONE ? <a href={`tel:${PHONE}`}>{PHONE_LABEL}</a> : <b>{PHONE_LABEL}</b>}</li>
+          <li><span>Telegram</span><a href={TG_URL} target="_blank" rel="noopener">{TG_USER ? `@${TG_USER}` : 'Telegram'}</a></li>
+          <li><span>Instagram</span>{SOCIAL.instagram ? <a href={SOCIAL.instagram} target="_blank" rel="noopener">Instagram</a> : <b>—</b>}</li>
+          <li><span>Email</span><a href={`mailto:${EMAIL}`}>{EMAIL}</a></li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .two { display: grid; gap: 40px; }
+  @media (min-width: 900px) { .two { grid-template-columns: 1.4fr 1fr; } }
+  .two h2 { font-size: 34px; }
+  .contacts { background: #fff; border-radius: var(--r); padding: 24px; box-shadow: 0 1px 0 var(--color-line); align-self: start; }
+  .contacts ul { margin-top: 16px; display: grid; gap: 14px; }
+  .contacts li { display: grid; gap: 2px; }
+  .contacts span { font-size: 13px; color: var(--color-muted); }
+  .contacts a, .contacts b { font-weight: 600; font-size: 17px; }
+  .contacts a { color: var(--color-rose-dk); }
+</style>

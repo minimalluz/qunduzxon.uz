@@ -1,0 +1,131 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Base from '../layouts/Base.astro';
+import PageHero from './PageHero.astro';
+import VideoCard from './VideoCard.astro';
+import LeadForm from './LeadForm.astro';
+import { SITE, TG_URL, videoUrl } from '../config';
+
+export interface Video { file: string; poster: ImageMetadata; title: string; tag?: string }
+interface Props {
+  slug: string;
+  title: string;
+  titleHtml: string;
+  serviceType: string;
+  description: string;
+  image: ImageMetadata;
+  intro: string[];
+  features: { t: string; d: string }[];
+  videos: Video[];
+  gallery?: ImageMetadata[];
+  steps: { t: string; d: string }[];
+  faq: { q: string; a: string }[];
+  direction: string;
+  testimonialsNote?: boolean;
+}
+const p = Astro.props;
+const crumbs = [{ href: '/uz/boshlovchi/', label: 'Бошловчи' }, { href: `/uz/boshlovchi/${p.slug}/`, label: p.title }];
+const url = new URL(`/uz/boshlovchi/${p.slug}/`, SITE.url).href;
+const ld = [
+  {
+    '@context': 'https://schema.org', '@type': 'Service', name: p.title, serviceType: p.serviceType, description: p.description, url,
+    areaServed: { '@type': 'Country', name: 'Ўзбекистон' },
+    provider: { '@type': 'Person', name: SITE.name, url: SITE.url },
+  },
+  {
+    '@context': 'https://schema.org', '@type': 'FAQPage',
+    mainEntity: p.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  ...p.videos.map((v) => ({
+    '@context': 'https://schema.org', '@type': 'VideoObject', name: v.title, description: `${v.title} — ${SITE.name}`,
+    contentUrl: videoUrl(v.file), thumbnailUrl: new URL(v.poster.src, SITE.url).href, uploadDate: '2026-01-01',
+  })),
+];
+---
+<Base title={p.title} description={p.description} image={p.image} crumbs={crumbs} jsonLd={ld} ruHref={`/ru/boshlovchi/${p.slug}/`}>
+  <PageHero crumbs={crumbs} eyebrow="Бошловчилик хизматлари" lead={p.description}>
+    <Fragment set:html={p.titleHtml} />
+    <div slot="after" class="hcta"><a class="btn btn-rose" href={TG_URL} target="_blank" rel="noopener">Санани банд қилиш</a></div>
+  </PageHero>
+
+  <section class="sec">
+    <div class="wrap two">
+      <div class="prose-q">{p.intro.map((t) => <p>{t}</p>)}</div>
+      <Image src={p.image} alt={p.title} widths={[480, 800]} sizes="(min-width:860px) 40vw, 100vw" class="side" />
+    </div>
+    <div class="wrap feats">
+      {p.features.map((f) => <div class="feat"><h3>{f.t}</h3><p>{f.d}</p></div>)}
+    </div>
+  </section>
+
+  {p.videos.length > 0 && (
+    <section class="sec onair">
+      <div class="wrap">
+        <p class="eyebrow">Видео</p>
+        <h2>Тадбирлардан лавҳалар</h2>
+        <div class="rail">{p.videos.map((v) => <VideoCard {...v} />)}</div>
+      </div>
+    </section>
+  )}
+
+  {p.gallery && p.gallery.length > 0 && (
+    <section class="sec">
+      <div class="wrap">
+        <p class="eyebrow">Фотогалерея</p>
+        <div class="gal">{p.gallery.map((g) => <Image src={g} alt="" widths={[360, 600]} sizes="(min-width:720px) 25vw, 50vw" loading="lazy" />)}</div>
+      </div>
+    </section>
+  )}
+
+  <section class="sec" style="background:#fff">
+    <div class="wrap">
+      <p class="eyebrow">Қандай ишлаймиз</p>
+      <h2>Ишлаш босқичлари</h2>
+      <ol class="steps" style="margin-top:28px">{p.steps.map((s) => <li><b>{s.t}</b>{s.d}</li>)}</ol>
+    </div>
+  </section>
+
+  {p.testimonialsNote && (
+    <section class="sec" style="padding-bottom:0">
+      <div class="wrap">
+        <p class="eyebrow">Фикрлар</p>
+        <h2>Тўй эгаларининг фикрлари</h2>
+        <p class="placeholder" style="margin-top:20px">Отзивлар (исм, сана, қисқа фикр, расм) келгач шу ерда кўрсатилади.</p>
+      </div>
+    </section>
+  )}
+
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">Саволлар</p>
+      <h2>Кўп бериладиган саволлар</h2>
+      <div class="faq" style="margin-top:20px">
+        {p.faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec onair">
+    <div class="wrap">
+      <p class="eyebrow">Банд қилиш</p>
+      <h2>Санани текширинг</h2>
+      <p class="lead">Сана ва телефон рақамингизни қолдиринг — тез орада боғланамиз.</p>
+      <LeadForm direction={p.direction} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hcta { margin-top: 24px; }
+  .two { display: grid; gap: 32px; align-items: center; }
+  .two :global(.side) { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: var(--r); }
+  @media (min-width: 860px) { .two { grid-template-columns: 1.15fr .85fr; gap: 56px; } }
+  .feats { display: grid; gap: 14px; margin-top: 40px; }
+  .feat { padding: 22px; border-radius: var(--r); background: #fff; box-shadow: 0 1px 0 var(--color-line); }
+  .feat h3 { font-size: 24px; } .feat p { color: var(--color-muted); margin-top: 6px; font-size: 15px; }
+  @media (min-width: 720px) { .feats { grid-template-columns: repeat(3, 1fr); } }
+  .gal { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; }
+  .gal :global(img) { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 14px; }
+  @media (min-width: 720px) { .gal { grid-template-columns: repeat(4, 1fr); } }
+</style>

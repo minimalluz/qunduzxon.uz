@@ -1,0 +1,63 @@
+---
+import { NAV, TG_URL } from '../config';
+interface Props { ruHref?: string }
+const { ruHref = '/ru/' } = Astro.props;
+const path = Astro.url.pathname;
+---
+<header id="hdr" class="hdr">
+  <div class="wrap hbar">
+    <a class="logo" href="/uz/" aria-label="Бош саҳифа">Қундузхон <i>Абдуллаева</i></a>
+    <nav class="main" aria-label="Асосий меню">
+      {NAV.map((n) => <a href={n.href} aria-current={path.startsWith(n.href) ? 'page' : undefined}>{n.label}</a>)}
+    </nav>
+    <div class="lang" role="group" aria-label="Тил"><a class="on" href={path} hreflang="uz">ЎЗ</a><a href={ruHref} hreflang="ru">РУ</a></div>
+    <a class="btn btn-rose hcta" href={TG_URL} target="_blank" rel="noopener">Банд қилиш</a>
+    <button class="burger" id="burger" aria-label="Меню" aria-expanded="false" aria-controls="drawer"><span></span></button>
+  </div>
+</header>
+<nav class="drawer" id="drawer" aria-label="Мобил меню">
+  {NAV.map((n) => <a href={n.href}>{n.label}</a>)}
+  <a href={TG_URL} target="_blank" rel="noopener" class="drawer-cta">Банд қилиш</a>
+</nav>
+
+<style>
+  .hdr { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .25s; }
+  .hdr.solid, :global(.menu-open) .hdr { background: rgba(28,18,24,.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .hbar { display: flex; align-items: center; gap: 10px; height: 64px; color: #fff; }
+  .logo { font-family: var(--font-serif); font-weight: 700; font-size: 20px; white-space: nowrap; min-width: 0; }
+  .logo i { color: var(--color-rose-lt); font-style: italic; font-weight: 600; }
+  @media (min-width: 420px) { .logo { font-size: 23px; } .hbar { gap: 16px; } }
+  nav.main { display: none; gap: 22px; margin-left: auto; font-size: 14.5px; }
+  nav.main a { opacity: .82; } nav.main a:hover, nav.main a[aria-current] { opacity: 1; }
+  nav.main a[aria-current] { box-shadow: inset 0 -2px var(--color-rose-lt); }
+  .lang { display: flex; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; font-size: 12px; font-weight: 600; margin-left: auto; }
+  .lang a { padding: 5px 10px; border-radius: 999px; } .lang a.on { background: #fff; color: var(--color-onair); }
+  .hcta { display: none; }
+  .burger { flex: none; width: 44px; height: 44px; display: grid; place-items: center; margin-right: -8px; }
+  .burger span, .burger span::before, .burger span::after { display: block; width: 22px; height: 2px; background: #fff; position: relative; transition: .2s; }
+  .burger span::before, .burger span::after { content: ""; position: absolute; left: 0; }
+  .burger span::before { top: -7px; } .burger span::after { top: 7px; }
+  :global(.menu-open) .burger span { background: transparent; }
+  :global(.menu-open) .burger span::before { top: 0; transform: rotate(45deg); }
+  :global(.menu-open) .burger span::after { top: 0; transform: rotate(-45deg); }
+  .drawer { position: fixed; inset: 64px 0 0; background: var(--color-onair); color: #fff; padding: 24px var(--pad); display: none; flex-direction: column; gap: 4px; z-index: 49; overflow-y: auto; }
+  :global(.menu-open) .drawer { display: flex; }
+  .drawer a { font-family: var(--font-serif); font-weight: 600; font-size: 30px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .drawer-cta { color: var(--color-rose-lt); }
+  @media (min-width: 1000px) { nav.main { display: flex; } .lang { margin-left: 8px; } .hcta { display: inline-flex; min-height: 40px; } .burger { display: none; } }
+</style>
+
+<script>
+  const hdr = document.getElementById('hdr')!;
+  const burger = document.getElementById('burger')!;
+  const onScroll = () => hdr.classList.toggle('solid', scrollY > 40);
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  const close = () => { document.body.classList.remove('menu-open'); burger.setAttribute('aria-expanded', 'false'); };
+  burger.addEventListener('click', () => {
+    const open = document.body.classList.toggle('menu-open');
+    burger.setAttribute('aria-expanded', String(open));
+  });
+  document.querySelectorAll('#drawer a').forEach((a) => a.addEventListener('click', close));
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+</script>

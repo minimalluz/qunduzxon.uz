@@ -1,0 +1,148 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import PageHero from '../../../components/PageHero.astro';
+import ReviewCard from '../../../components/ReviewCard.astro';
+import { SITE, TG_URL, videoUrl } from '../../../config';
+import { allReviews, total, som, RATING_LABELS, type Review } from '../../../lib/reviews';
+
+export async function getStaticPaths() {
+  const reviews = await allReviews();
+  return reviews.map((review) => ({ params: { slug: review.id }, props: { review, reviews } }));
+}
+interface Props { review: Review; reviews: Review[] }
+const { review, reviews } = Astro.props;
+const d = review.data;
+const { Content } = await render(review);
+const score = total(review);
+const similar = reviews
+  .filter((r) => r.id !== review.id)
+  .sort((a, b) => +b.data.cuisine.some((c) => d.cuisine.includes(c)) - +a.data.cuisine.some((c) => d.cuisine.includes(c)))
+  .slice(0, 3);
+const url = new URL(`/uz/food-blog/${review.id}/`, SITE.url).href;
+const crumbs = [{ href: '/uz/food-blog/', label: 'Фуд-блог' }, { href: `/uz/food-blog/${review.id}/`, label: d.title }];
+const mapUrl = d.mapUrl ?? `https://yandex.uz/maps/?text=${encodeURIComponent(`${d.title} ${d.city}`)}`;
+
+const ld: Record<string, unknown>[] = [
+  {
+    '@context': 'https://schema.org', '@type': 'Review', url,
+    name: d.title, reviewBody: d.summary, datePublished: d.date.toISOString().slice(0, 10),
+    author: { '@type': 'Person', name: SITE.name },
+    itemReviewed: { '@type': 'Restaurant', name: d.title, servesCuisine: d.cuisine, address: d.address },
+    reviewRating: { '@type': 'Rating', ratingValue: score, bestRating: 10, worstRating: 0 },
+  },
+];
+if (d.video) ld.push({
+  '@context': 'https://schema.org', '@type': 'VideoObject', name: d.title, description: d.summary,
+  contentUrl: videoUrl(d.video), thumbnailUrl: new URL(d.cover.src, SITE.url).href, uploadDate: d.date.toISOString().slice(0, 10),
+});
+---
+<Base title={`${d.title} — шарҳ`} description={d.summary} image={d.cover} crumbs={crumbs} jsonLd={ld} ruHref="/ru/food-blog/" noindex={d.sample}>
+  <PageHero crumbs={crumbs} eyebrow={`${d.cuisine.join(' · ')} · ${d.city}`}>
+    {d.title}
+    <div slot="after" class="hmeta">
+      <span class="score big">{score.toFixed(1)}</span>
+      <span>{som(d.averageCheck)} ўртача чек</span>
+      {d.sample && <span class="smp">намуна шарҳ</span>}
+    </div>
+  </PageHero>
+
+  <section class="sec">
+    <div class="wrap layout">
+      <div class="media">
+        {d.video ? (
+          <div class:list={['vcard', { wide: !d.videoVertical }]} data-src={videoUrl(d.video)}>
+            <Image src={d.cover} alt={d.title} widths={[480, 720]} sizes="(min-width:1000px) 420px, 100vw" loading="eager" />
+            <button class="play" type="button" aria-label="Видео-обзорни кўриш"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span></button>
+            <p>Видео-обзор</p>
+          </div>
+        ) : (
+          <Image src={d.cover} alt={d.title} widths={[480, 720]} sizes="(min-width:1000px) 420px, 100vw" loading="eager" class="cover" />
+        )}
+      </div>
+
+      <div>
+        <div class="prose-q"><Content /></div>
+
+        <div class="ratings">
+          <h2>Баҳолар</h2>
+          {Object.entries(d.ratings).map(([k, v]) => (
+            <div class="rrow">
+              <span>{RATING_LABELS[k as keyof typeof RATING_LABELS]}</span>
+              <div class="bar"><i style={`width:${v * 10}%`}></i></div>
+              <b>{v.toFixed(1)}</b>
+            </div>
+          ))}
+          <div class="rrow totalrow"><span>Умумий балл</span><div></div><b>{score.toFixed(1)}</b></div>
+        </div>
+
+        <dl class="info">
+          <div><dt>Манзил</dt><dd>{d.address} · <a href={mapUrl} target="_blank" rel="noopener">Харитада кўриш</a></dd></div>
+          <div><dt>Иш вақти</dt><dd>{d.hours}</dd></div>
+          <div><dt>Ўртача чек</dt><dd>{som(d.averageCheck)}</dd></div>
+        </dl>
+
+        <div class="share">
+          <span>Улашиш:</span>
+          <a href={`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(d.title)}`} target="_blank" rel="noopener">Telegram</a>
+          <a href={`https://wa.me/?text=${encodeURIComponent(`${d.title} ${url}`)}`} target="_blank" rel="noopener">WhatsApp</a>
+          <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`} target="_blank" rel="noopener">Facebook</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {d.gallery.length > 0 && (
+    <section class="sec" style="padding-top:0">
+      <div class="wrap">
+        <p class="eyebrow">Фотогалерея</p>
+        <div class="gal">{d.gallery.map((g) => <Image src={g} alt={d.title} widths={[300, 500]} sizes="(min-width:720px) 25vw, 50vw" loading="lazy" />)}</div>
+      </div>
+    </section>
+  )}
+
+  {similar.length > 0 && (
+    <section class="sec food-sec">
+      <div class="wrap">
+        <p class="eyebrow">Ўхшаш жойлар</p>
+        <h2>Яна нимани татиб кўриш мумкин</h2>
+        <div class="grid">{similar.map((r) => <ReviewCard review={r} />)}</div>
+        <a class="btn btn-rose" href={TG_URL} target="_blank" rel="noopener" style="margin-top:28px">Ресторанингиз учун обзор буюртма қилиш</a>
+      </div>
+    </section>
+  )}
+</Base>
+
+<script>
+  import '../../../scripts/facade';
+</script>
+
+<style>
+  .hmeta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 18px; color: rgba(255,255,255,.8); }
+  .score.big { font-size: 22px; padding: 6px 14px; }
+  .smp { background: rgba(255,255,255,.15); padding: 4px 10px; border-radius: 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  .layout { display: grid; gap: 32px; }
+  @media (min-width: 1000px) { .layout { grid-template-columns: 420px 1fr; gap: 56px; align-items: start; } .media { position: sticky; top: 88px; } }
+  .media :global(.cover) { width: 100%; border-radius: var(--r); aspect-ratio: 4/5; object-fit: cover; }
+  .media .vcard { max-width: 420px; margin: 0 auto; }
+  .ratings { margin-top: 32px; padding: 24px; border-radius: var(--r); background: #FFF4EA; }
+  .ratings h2 { font-size: 30px; margin-bottom: 12px; }
+  .rrow { display: grid; grid-template-columns: 1fr 1.2fr auto; gap: 12px; align-items: center; padding: 8px 0; font-size: 15px; }
+  .bar { height: 8px; border-radius: 99px; background: #F5DCC4; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--color-saffron); border-radius: 99px; }
+  .rrow b { font-variant-numeric: tabular-nums; }
+  .totalrow { border-top: 1px solid #F0D9C4; margin-top: 6px; padding-top: 14px; font-weight: 700; }
+  .totalrow b { color: #C9650C; font-size: 20px; }
+  .info { margin-top: 24px; display: grid; gap: 10px; }
+  .info div { display: grid; grid-template-columns: 120px 1fr; gap: 12px; }
+  .info dt { color: var(--color-muted); font-size: 14px; }
+  .info a { color: var(--color-rose-dk); text-decoration: underline; }
+  .share { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 14px; }
+  .share a { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--color-line); background: #fff; font-weight: 600; }
+  .grid { display: grid; gap: 16px; margin-top: 28px; }
+  @media (min-width: 720px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  .gal { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; }
+  .gal :global(img) { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 14px; }
+  @media (min-width: 720px) { .gal { grid-template-columns: repeat(4, 1fr); } }
+</style>

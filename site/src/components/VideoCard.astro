@@ -1,0 +1,19 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { videoUrl } from '../config';
+interface Props { file: string; poster: ImageMetadata; title: string; tag?: string; wide?: boolean; sizes?: string }
+const { file, poster, title, tag, wide = false, sizes = '(min-width:1000px) 25vw, 70vw' } = Astro.props;
+---
+<div class:list={['vcard', { wide }]} data-src={videoUrl(file)}>
+  <Image src={poster} alt="" widths={[360, 540, 720]} sizes={sizes} loading="lazy" />
+  {tag && <span class="tag">{tag}</span>}
+  <button class="play" type="button" aria-label={`Видеони кўриш: ${title}`}>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span>
+  </button>
+  <p>{title}</p>
+</div>
+
+<script>
+  import '../scripts/facade';
+</script>

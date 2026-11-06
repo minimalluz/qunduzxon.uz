@@ -16,3 +16,5 @@ dist/
 .astro/
 .env
 .env.*
+!.env.development
+.wrangler/

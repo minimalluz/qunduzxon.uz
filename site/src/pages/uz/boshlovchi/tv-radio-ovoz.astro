@@ -1,0 +1,44 @@
+---
+import ServicePage from '../../../components/ServicePage.astro';
+import radio from '../../../assets/photos/radio.jpg';
+import mic from '../../../assets/photos/mic.jpg';
+import studio from '../../../assets/photos/studio.jpg';
+import orange from '../../../assets/photos/orange.jpg';
+import football from '../../../assets/photos/football.jpg';
+import hero from '../../../assets/photos/hero.jpg';
+---
+<ServicePage
+  slug="tv-radio-ovoz"
+  title="ТВ, радио ва дикторлик"
+  titleHtml="ТВ, радио ва <em>дикторлик</em>"
+  serviceType="Телерадио бошловчи ва диктор"
+  description="Телекўрсатувлар, радио эфирлари, реклама роликларини овозлаштириш (voiceover) ва дикторлик хизматлари."
+  image={radio}
+  intro={[
+    'Эфирда 16 йил: телеканаллар ва радиоларда кўрсатувлар, жонли эфирлар ва интервьюлар.',
+    'Реклама роликлари, тақдимот ва ҳужжатли видеолар учун овоз бериш (voiceover) буюртмаларини қабул қиламан.',
+  ]}
+  features={[
+    { t: 'Телевидение', d: 'Кўрсатувлар, жонли эфирлар ва студия интервьюлари.' },
+    { t: 'Радио', d: 'Тонгги ва кундузги эфирлар, рубрикалар, интервьюлар.' },
+    { t: 'Овоз бериш', d: 'Реклама, тақдимот ва видеолар учун дикторлик.' },
+  ]}
+  videos={[
+    { file: 'hit-fm-efirida.mp4', poster: mic, title: 'Hit FM эфирида', tag: 'Радио' },
+    { file: 'radio-studiyasida.mp4', poster: orange, title: 'Радио студиясида', tag: 'Студия' },
+    { file: 'hit-fm-bilan-bir-kun.mp4', poster: studio, title: 'Hit FM билан бир кун', tag: 'Радио' },
+    { file: 'efirdan-savollar.mp4', poster: hero, title: 'Эфирдан саволлар', tag: 'Эфир' },
+  ]}
+  gallery={[radio, studio, football, mic]}
+  steps={[
+    { t: 'Матн ёки бриф', d: 'Реклама матни ёки кўрсатув ғоясини юборасиз.' },
+    { t: 'Услуб', d: 'Овоз оҳанги, темп ва давомийлик келишилади.' },
+    { t: 'Ёзув', d: 'Студияда ёзиб олинади ва тайёр файл топширилади.' },
+  ]}
+  faq={[
+    { q: 'Реклама учун овоз бериш қанча вақт олади?', a: 'Матн ва ҳажмга боғлиқ. Аниқ муддатни Telegram орқали келишамиз.' },
+    { q: 'Қайси тилларда овоз берасиз?', a: 'Ўзбек ва рус тилларида.' },
+    { q: 'Овоз намуналарини қаердан эшитсам бўлади?', a: 'Бош саҳифадаги «Овозимни тингланг» бўлимида.' },
+  ]}
+  direction="tv"
+/>

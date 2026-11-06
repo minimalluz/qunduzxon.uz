@@ -1,0 +1,118 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import { SITE, STATS, SOCIAL } from '../../config';
+import about from '../../assets/photos/about.jpg';
+import studio from '../../assets/photos/studio.jpg';
+import yangiHayot from '../../assets/photos/yangi-hayot.jpg';
+import greenGown from '../../assets/photos/green-gown.jpg';
+import radio from '../../assets/photos/radio.jpg';
+import blueIkat from '../../assets/photos/blue-ikat.jpg';
+import football from '../../assets/photos/football.jpg';
+
+const crumbs = [{ href: '/uz/about/', label: 'Мен ҳақимда' }];
+const img = await getImage({ src: about, width: 800, format: 'jpg' });
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.name,
+  url: new URL('/uz/about/', SITE.url).href,
+  image: new URL(img.src, SITE.url).href,
+  jobTitle: SITE.roles,
+  birthPlace: { '@type': 'Place', name: 'Фарғона, Ўзбекистон' },
+  sameAs: Object.values(SOCIAL).filter((u) => u && u !== 'https://t.me/'),
+};
+
+// Очиқ манбалардан олинган, лекин эгаси тасдиқлаши керак бўлган фактлар — README'да манбалари билан.
+const path = [
+  { t: 'Фарғонада туғилиб ўсган', d: 'Илк қадамлар, сўз ва саҳнага бўлган муҳаббат.' },
+  { t: 'Телевидение ва радио', d: 'Бир қанча телеканал ва радиоларда бошловчи бўлиб ишлаган, жумладан «Миллий» телеканали ва «Ёшлар» радиосида.' },
+  { t: 'Радио эфирлари', d: 'Hit FM ва 90.8 FM эфирларида тингловчилар билан ҳар куни учрашув.' },
+  { t: '«Севимли» телеканали', d: 'Ҳозирги кунда «Севимли» телеканалида бошловчи.' },
+  { t: 'Устоз сифатида', d: 'Журналистика талабаларига телерадио бошловчилиги бўйича маҳорат дарслари ўтади.' },
+  { t: 'Фуд-блог', d: 'Ўзбекистон бўйлаб ресторан ва миллий таомлар ҳақида ҳалол шарҳлар.' },
+];
+const values = [
+  { t: 'Самимийлик', d: 'Ҳар бир эфир ва тадбирда — дилдан чиққан сўз.' },
+  { t: 'Пухта тайёргарлик', d: 'Сценарий, меҳмонлар ва ҳар бир дақиқа олдиндан ўйланади.' },
+  { t: 'Миллий қадрият', d: 'Анъаналарни ҳурмат қилиб, замонавий услубда олиб бориш.' },
+];
+const gallery = [studio, yangiHayot, greenGown, radio, blueIkat, football];
+---
+<Base title="Мен ҳақимда" description="Қундузхон Абдуллаева — телерадио бошловчи, нотиқ, тантаналар бошловчиси ва фуд-блогер. Эфирда 16 йил." image={about} crumbs={crumbs} jsonLd={[person]} ruHref="/ru/about/">
+  <PageHero crumbs={crumbs} eyebrow="Мен ҳақимда">
+    Эфирда <em>16 йил</em>
+  </PageHero>
+
+  <section class="sec">
+    <div class="wrap intro">
+      <Image src={about} alt="Қундузхон Абдуллаева" widths={[480, 800]} sizes="(min-width:860px) 40vw, 100vw" class="portrait" loading="eager" />
+      <div class="prose-q">
+        <p class="hello">Ассалому алайкум! Мен — Қундузхон Абдуллаева.</p>
+        <p>Теле ва радио бошловчи, нотиқ, тўй ва тантаналар бошловчиси, фуд-блогерман. 16 йилдан бери эфирдаман: телеканаллар ва радиоларда кўрсатувлар олиб бордим, минглаб тингловчи ва томошабинлар билан ҳар куни учрашдим.</p>
+        <p>Бугун тўйлар, корпоратив тадбирлар ва расмий маросимларни олиб бораман, рекламаларни овозлаштираман ва фуд-блогимда Ўзбекистон таомлари ҳақида ҳикоя қиламан.</p>
+        <p class="placeholder">Бу ерга сайт эгасининг ўз сўзлари билан ёзилган биография қўйилади (storytelling). Ҳозирги матн очиқ манбалар асосида ёзилган ва тасдиқланиши керак.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec onair">
+    <div class="wrap">
+      <div class="stats">
+        {STATS.map((s) => <div><b>{s.n}{s.suffix && <small>{s.suffix}</small>}</b><span>{s.label}</span></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">Йўл</p>
+      <h2>Эфир ва саҳнадаги фаолият</h2>
+      <ol class="tl">
+        {path.map((p) => <li><b>{p.t}</b><p>{p.d}</p></li>)}
+      </ol>
+      <p class="note">Йиллар ва аниқ саналар тасдиқлангач қўшилади.</p>
+    </div>
+  </section>
+
+  <section class="sec" style="background:#fff">
+    <div class="wrap">
+      <p class="eyebrow">Қадриятлар</p>
+      <h2>Ишлаш принципларим</h2>
+      <div class="vals">{values.map((v) => <div class="val"><h3>{v.t}</h3><p>{v.d}</p></div>)}</div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">Ютуқлар ва ОАВ</p>
+      <h2>Эфирлар, мукофотлар, чиқишлар</h2>
+      <div class="gal">{gallery.map((g) => <Image src={g} alt="" widths={[360, 600]} sizes="(min-width:720px) 33vw, 50vw" loading="lazy" />)}</div>
+      <p class="placeholder" style="margin-top:20px">Мукофотлар, сертификатлар ва ОАВдаги чиқишлар рўйхати керак — ҳозирча фақат расмлар.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .intro { display: grid; gap: 32px; align-items: center; }
+  .intro :global(.portrait) { width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: 50% 25%; border-radius: var(--r); }
+  .hello { font-family: var(--font-serif); font-size: 30px; font-weight: 700; line-height: 1.2; }
+  @media (min-width: 860px) { .intro { grid-template-columns: .85fr 1.15fr; gap: 56px; } }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; gap: 8px; }
+  .stats b { display: block; font-family: var(--font-serif); font-size: clamp(38px, 9vw, 72px); color: var(--color-rose-lt); line-height: 1; white-space: nowrap; }
+  .stats small { font-size: .45em; }
+  .stats span { font-size: 13px; opacity: .75; display: block; margin-top: 8px; }
+  .tl { margin-top: 32px; border-left: 2px solid var(--color-line); padding-left: 24px; display: grid; gap: 26px; }
+  .tl li { position: relative; }
+  .tl li::before { content: ""; position: absolute; left: -32px; top: 6px; width: 14px; height: 14px; border-radius: 50%; background: var(--color-rose); box-shadow: 0 0 0 4px var(--color-ivory); }
+  .tl b { font-family: var(--font-serif); font-size: 24px; }
+  .tl p { color: var(--color-muted); margin-top: 2px; }
+  .vals { display: grid; gap: 14px; margin-top: 28px; }
+  .val { padding: 24px; border-radius: var(--r); background: var(--color-ivory); }
+  .val h3 { font-size: 26px; } .val p { color: var(--color-muted); margin-top: 6px; }
+  @media (min-width: 720px) { .vals { grid-template-columns: repeat(3, 1fr); } }
+  .gal { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 28px; }
+  .gal :global(img) { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 14px; }
+  @media (min-width: 720px) { .gal { grid-template-columns: repeat(3, 1fr); } }
+</style>
