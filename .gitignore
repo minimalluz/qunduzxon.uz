@@ -1,0 +1,18 @@
+# Videos are too large for Git (≈278 MB) — they go to Cloudflare R2
+video/
+*.mp4
+*.mov
+*.webm
+
+# OS / editor
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+
+# Build output and dependencies (for the Astro site later)
+node_modules/
+dist/
+.astro/
+.env
+.env.*
