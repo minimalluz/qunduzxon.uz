@@ -1,24 +1,29 @@
 ---
-import { DIRECTIONS, TURNSTILE_SITE_KEY } from '../config';
+import { TURNSTILE_SITE_KEY } from '../config';
+import { DIRECTIONS_L, UI, type Lang } from '../i18n';
 interface Props {
+  lang?: Lang;
   /** Олдиндан танланган йўналиш */
   direction?: string;
   /** Тўлиқ форма (исм ва изоҳ билан) ёки қисқа «сана текшириш» формаси */
   full?: boolean;
   submitLabel?: string;
 }
-const { direction, full = false, submitLabel = 'Юбориш' } = Astro.props;
+const { lang = 'uz', direction, full = false } = Astro.props;
+const t = UI[lang];
+const DIRECTIONS = DIRECTIONS_L[lang];
+const { submitLabel = t.fSend } = Astro.props;
 ---
-<form class="form lead-form" method="post" action="/api/lead" novalidate>
-  {full && <label>Исмингиз<input name="name" autocomplete="name" required maxlength="80" /></label>}
-  <label>Тадбир санаси<input type="date" name="date" /></label>
-  <label class:list={{ full: !full }}>Йўналиш
+<form class="form lead-form" method="post" action="/api/lead" novalidate data-err-phone={t.fErrPhone} data-ok={t.fOk} data-err={t.fErr}>
+  {full && <label>{t.fName}<input name="name" autocomplete="name" required maxlength="80" /></label>}
+  <label>{t.fDate}<input type="date" name="date" /></label>
+  <label class:list={{ full: !full }}>{t.fDirection}
     <select name="direction">
       {DIRECTIONS.map((d) => <option value={d.value} selected={d.value === direction}>{d.label}</option>)}
     </select>
   </label>
-  <label class:list={['full']}>Телефон<input type="tel" name="phone" inputmode="tel" autocomplete="tel" placeholder="+998 (__) ___-__-__" required /></label>
-  {full && <label class="full">Изоҳ (ихтиёрий)<textarea name="comment" maxlength="1000"></textarea></label>}
+  <label class:list={['full']}>{t.fPhone}<input type="tel" name="phone" inputmode="tel" autocomplete="tel" placeholder="+998 (__) ___-__-__" required /></label>
+  {full && <label class="full">{t.fComment}<textarea name="comment" maxlength="1000"></textarea></label>}
   <input type="text" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
   {TURNSTILE_SITE_KEY && <div class="cf-turnstile full" data-sitekey={TURNSTILE_SITE_KEY} data-appearance="interaction-only"></div>}
   <button class="btn btn-rose full" type="submit">{submitLabel}</button>
@@ -56,7 +61,7 @@ const { direction, full = false, submitLabel = 'Юбориш' } = Astro.props;
       e.preventDefault();
       msg.className = 'form-msg full';
       if (tel.value.replace(/\D/g, '').length !== 12) {
-        msg.textContent = 'Телефон рақамини тўлиқ киритинг.';
+        msg.textContent = form.dataset.errPhone!;
         msg.classList.add('err');
         tel.focus();
         return;
@@ -67,11 +72,11 @@ const { direction, full = false, submitLabel = 'Юбориш' } = Astro.props;
       try {
         const res = await fetch(form.action, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) });
         if (!res.ok) throw new Error(String(res.status));
-        msg.textContent = 'Раҳмат! Аризангиз қабул қилинди, тез орада боғланамиз.';
+        msg.textContent = form.dataset.ok!;
         msg.classList.add('ok');
         form.reset();
       } catch {
-        msg.textContent = 'Юборишда хато бўлди. Илтимос, Telegram орқали ёзинг.';
+        msg.textContent = form.dataset.err!;
         msg.classList.add('err');
       } finally {
         btn.disabled = false;

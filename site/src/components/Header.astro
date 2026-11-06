@@ -1,23 +1,30 @@
 ---
-import { NAV, TG_URL } from '../config';
-interface Props { ruHref?: string }
-const { ruHref = '/ru/' } = Astro.props;
+import { TG_URL } from '../config';
+import { NAV_L, UI, type Lang } from '../i18n';
+interface Props { lang?: Lang; /** Бошқа тилдаги жуфт саҳифа */ altHref: string }
+const { lang = 'uz', altHref } = Astro.props;
+const NAV = NAV_L[lang];
+const t = UI[lang];
 const path = Astro.url.pathname;
+const uzHref = lang === 'uz' ? path : altHref;
+const ruHref = lang === 'ru' ? path : altHref;
 ---
 <header id="hdr" class="hdr">
   <div class="wrap hbar">
-    <a class="logo" href="/uz/" aria-label="Бош саҳифа">Қундузхон <i>Абдуллаева</i></a>
-    <nav class="main" aria-label="Асосий меню">
+    {lang === 'ru'
+      ? <a class="logo" href="/ru/" aria-label={t.home}>Кундузхон <i>Абдуллаева</i></a>
+      : <a class="logo" href="/uz/" aria-label={t.home}>Қундузхон <i>Абдуллаева</i></a>}
+    <nav class="main" aria-label={t.mainMenu}>
       {NAV.map((n) => <a href={n.href} aria-current={path.startsWith(n.href) ? 'page' : undefined}>{n.label}</a>)}
     </nav>
-    <div class="lang" role="group" aria-label="Тил"><a class="on" href={path} hreflang="uz">ЎЗ</a><a href={ruHref} hreflang="ru">РУ</a></div>
-    <a class="btn btn-rose hcta" href={TG_URL} target="_blank" rel="noopener">Банд қилиш</a>
-    <button class="burger" id="burger" aria-label="Меню" aria-expanded="false" aria-controls="drawer"><span></span></button>
+    <div class="lang" role="group" aria-label={t.langGroup}><a class:list={{ on: lang === 'uz' }} href={uzHref} hreflang="uz">ЎЗ</a><a class:list={{ on: lang === 'ru' }} href={ruHref} hreflang="ru">РУ</a></div>
+    <a class="btn btn-rose hcta" href={TG_URL} target="_blank" rel="noopener">{t.book}</a>
+    <button class="burger" id="burger" aria-label={t.menu} aria-expanded="false" aria-controls="drawer"><span></span></button>
   </div>
 </header>
-<nav class="drawer" id="drawer" aria-label="Мобил меню">
+<nav class="drawer" id="drawer" aria-label={t.mobileMenu}>
   {NAV.map((n) => <a href={n.href}>{n.label}</a>)}
-  <a href={TG_URL} target="_blank" rel="noopener" class="drawer-cta">Банд қилиш</a>
+  <a href={TG_URL} target="_blank" rel="noopener" class="drawer-cta">{t.book}</a>
 </nav>
 
 <style>

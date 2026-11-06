@@ -1,0 +1,317 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import VideoCard from '../components/VideoCard.astro';
+import ReviewCard from '../components/ReviewCard.astro';
+import LeadForm from '../components/LeadForm.astro';
+import { SITE as SITE_UZ, TG_URL, videoUrl, SOCIAL } from '../config';
+import { SITE_L, STATS_L, href, type Lang } from '../i18n';
+import { allReviews } from '../lib/reviews';
+import hero from '../assets/photos/hero.jpg';
+import toy from '../assets/photos/toy.jpg';
+import radio from '../assets/photos/radio.jpg';
+import food from '../assets/photos/food.jpg';
+import mic from '../assets/photos/mic.jpg';
+import green from '../assets/photos/green.jpg';
+import national from '../assets/photos/national.jpg';
+import orange from '../assets/photos/orange.jpg';
+import ona1 from '../assets/ona/ona-1.jpg';
+import ona2 from '../assets/ona/ona-2.jpg';
+import ona3 from '../assets/ona/ona-3.jpg';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const SITE = { ...SITE_L[lang], url: SITE_UZ.url };
+const STATS = STATS_L[lang];
+const L = (p: string) => href(lang, p);
+
+const T = {
+  uz: {
+    heroAlt: 'Қундузхон Абдуллаева радио студиясида', reel: 'Шоурил', soundOn: 'Овозни ёқиш', soundOff: 'Овозни ўчириш',
+    official: 'Расмий сайт', first: 'Қундузхон', last: 'Абдуллаева', bookEvent: 'Тадбир учун банд қилиш', adFood: 'Реклама / Фуд-блог',
+    dirs: 'Йўналишлар', dirsH: 'Саҳнада, эфирда ва дастурхон устида',
+    toyAlt: 'Тантана бошловчиси', toyH: 'Тўй ва тантаналар', toyP: 'Миллий ва замонавий услубда, икки тилда',
+    tvAlt: 'Радио эфирида', tvH: 'ТВ, радио ва корпоратив', tvP: 'Эфир, дикторлик, форум ва тақдимотлар',
+    foodAlt: 'Ресторанда', foodH: 'Фуд-блог', foodP: 'Ресторан шарҳлари ва гастро-гид',
+    more: 'Батафсил →', seeReviews: 'Шарҳларни кўриш →',
+    audio: 'Аудио-визитка', audioH: 'Овозимни тингланг', play: 'Ижро этиш', audioNote: 'Аудио демолар ҳали йўқ — файллар келганда плеер ишлайди.',
+    cases: 'Видео-кейслар', casesH: 'Эфир ва саҳнадан лавҳалар', allMedia: 'Барча видео ва расмлар',
+    food: 'Фуд-блог', foodLatest: 'Сўнгги шарҳлар', allReviews: 'Барча шарҳларни кўриш',
+    partners: 'Ҳамкорлар', partnersNote: 'Логотиплар келгач, номлар ўрнига логотиплар қўйилади.',
+    momAlt: 'Онам билан', mom: 'Менинг онам', momH: 'Ҳаётимдаги энг қимматли инсон', momVals: ['Меҳр', 'Дуо', 'Ҳурмат'],
+    momQuote: '«Она — бу дунёдаги энг муқаддас сўз, она меҳри — энг буюк неъмат.»', momBtn: 'Онам ҳақида',
+    date: 'Бўш санани текшириш', dateH: 'Тадбирингиз қачон?', dateLead: 'Сана ва телефон рақамингизни қолдиринг — тез орада боғланамиз.',
+    partnerNames: ['Hit FM', '90.8 FM', 'Янги ҳаёт', 'Marina'],
+    demos: [{ t: 'Тўй / лирик', d: '0:25' }, { t: 'Расмий ТВ', d: '0:20' }, { t: 'Драйв радио', d: '0:15' }, { t: 'Реклама', d: '0:30' }],
+    videos: [
+      { file: 'hit-fm-efirida.mp4', poster: mic, title: 'Hit FM эфирида', tag: 'Радио' },
+      { file: 'qizil-gilamda.mp4', poster: green, title: 'Қизил гиламда', tag: 'Саҳна' },
+      { file: 'toyga-ham-ulgurdim.mp4', poster: national, title: 'Тўйга ҳам улгурдим', tag: 'Тўй' },
+      { file: 'radio-studiyasida.mp4', poster: orange, title: 'Радио студиясида', tag: 'Студия' },
+    ],
+  },
+  ru: {
+    heroAlt: 'Кундузхон Абдуллаева в радиостудии', reel: 'Шоурил', soundOn: 'Включить звук', soundOff: 'Выключить звук',
+    official: 'Официальный сайт', first: 'Кундузхон', last: 'Абдуллаева', bookEvent: 'Забронировать на мероприятие', adFood: 'Реклама / Фуд-блог',
+    dirs: 'Направления', dirsH: 'На сцене, в эфире и за дастарханом',
+    toyAlt: 'Ведущая торжества', toyH: 'Свадьбы и торжества', toyP: 'В национальном и современном стиле, на двух языках',
+    tvAlt: 'В радиоэфире', tvH: 'ТВ, радио и корпоративы', tvP: 'Эфир, дикторская работа, форумы и презентации',
+    foodAlt: 'В ресторане', foodH: 'Фуд-блог', foodP: 'Обзоры ресторанов и гастрогид',
+    more: 'Подробнее →', seeReviews: 'Смотреть обзоры →',
+    audio: 'Аудиовизитка', audioH: 'Послушайте мой голос', play: 'Воспроизвести', audioNote: 'Аудиодемо пока нет — плеер заработает, когда появятся файлы.',
+    cases: 'Видеокейсы', casesH: 'Фрагменты из эфира и со сцены', allMedia: 'Все видео и фото',
+    food: 'Фуд-блог', foodLatest: 'Последние обзоры', allReviews: 'Смотреть все обзоры',
+    partners: 'Партнёры', partnersNote: 'Когда появятся логотипы, они заменят названия.',
+    momAlt: 'С мамой', mom: 'Моя мама', momH: 'Самый дорогой человек в моей жизни', momVals: ['Любовь', 'Молитва', 'Уважение'],
+    momQuote: '«Мама — самое святое слово на свете, материнская любовь — величайший дар.»', momBtn: 'О моей маме',
+    date: 'Проверить свободную дату', dateH: 'Когда ваше мероприятие?', dateLead: 'Оставьте дату и номер телефона — мы скоро свяжемся с вами.',
+    partnerNames: ['Hit FM', '90.8 FM', 'Янги хаёт', 'Marina'],
+    demos: [{ t: 'Свадьба / лирика', d: '0:25' }, { t: 'Официальное ТВ', d: '0:20' }, { t: 'Драйв-радио', d: '0:15' }, { t: 'Реклама', d: '0:30' }],
+    videos: [
+      { file: 'hit-fm-efirida.mp4', poster: mic, title: 'В эфире Hit FM', tag: 'Радио' },
+      { file: 'qizil-gilamda.mp4', poster: green, title: 'На красной дорожке', tag: 'Сцена' },
+      { file: 'toyga-ham-ulgurdim.mp4', poster: national, title: 'Успела и на свадьбу', tag: 'Свадьба' },
+      { file: 'radio-studiyasida.mp4', poster: orange, title: 'В радиостудии', tag: 'Студия' },
+    ],
+  },
+}[lang];
+
+const reviews = (await allReviews(lang)).slice(0, 3);
+const poster = await getImage({ src: hero, width: 960, format: 'webp', quality: 70 });
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.name,
+  url: SITE.url,
+  image: new URL(poster.src, SITE.url).href,
+  jobTitle: SITE.roles,
+  sameAs: Object.values(SOCIAL).filter((u) => u && u !== 'https://t.me/'),
+};
+---
+<Base lang={lang} title={SITE.name} jsonLd={[person]}>
+  <link slot="head" rel="preload" as="image" href={poster.src} fetchpriority="high" />
+
+  <!-- HERO -->
+  <section class="hero">
+    <Image class="poster" src={hero} alt={T.heroAlt} widths={[480, 960]} sizes="(min-width:1000px) 440px, 100vw" loading="eager" fetchpriority="high" />
+    <video id="reel" muted loop playsinline preload="none" poster={poster.src} aria-label={T.reel}>
+      <source src={videoUrl('showreel.mp4')} type="video/mp4" />
+    </video>
+    <button class="sound" id="sound" type="button" aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" /><path id="wave" d="m17 9 4 6m0-6-4 6" /></svg>
+      <span data-on={T.soundOn} data-off={T.soundOff}>{T.soundOn}</span>
+    </button>
+    <div class="wrap">
+      <div class="txt">
+        <p class="eyebrow" style="color:var(--color-rose-lt)">{T.official}</p>
+        <h1>{T.first}<em>{T.last}</em></h1>
+        <div class="roles">{SITE.roles.map((r) => <span>{r}</span>)}</div>
+        <div class="cta">
+          <a class="btn btn-rose" href={TG_URL} target="_blank" rel="noopener">{T.bookEvent}</a>
+          <a class="btn btn-ghost" href={L('/uz/hamkorlik/')}>{T.adFood}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIRECTIONS -->
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">{T.dirs}</p>
+      <h2>{T.dirsH}</h2>
+      <div class="dirs">
+        <a class="dir" href={L('/uz/boshlovchi/toy-va-tantanalar/')}>
+          <Image src={toy} alt={T.toyAlt} widths={[480, 800]} sizes="(min-width:720px) 33vw, 100vw" loading="lazy" />
+          <div><h3>{T.toyH}</h3><p>{T.toyP}</p><span class="go">{T.more}</span></div>
+        </a>
+        <a class="dir" href={L('/uz/boshlovchi/tv-radio-ovoz/')}>
+          <Image src={radio} alt={T.tvAlt} widths={[480, 800]} sizes="(min-width:720px) 33vw, 100vw" loading="lazy" />
+          <div><h3>{T.tvH}</h3><p>{T.tvP}</p><span class="go">{T.more}</span></div>
+        </a>
+        <a class="dir food" href={L('/uz/food-blog/')}>
+          <Image src={food} alt={T.foodAlt} widths={[480, 800]} sizes="(min-width:720px) 33vw, 100vw" loading="lazy" />
+          <div><h3>{T.foodH}</h3><p>{T.foodP}</p><span class="go">{T.seeReviews}</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS + AUDIO -->
+  <section class="sec onair">
+    <div class="wrap">
+      <div class="stats">
+        {STATS.map((s) => <div class="stat"><b data-n={s.n} data-s={s.suffix}>{s.n}{s.suffix && <small>{s.suffix}</small>}</b><span>{s.label}</span></div>)}
+      </div>
+      <div style="margin-top:72px">
+        <p class="eyebrow">{T.audio}</p>
+        <h2>{T.audioH}</h2>
+        <div class="audio-grid">
+          {T.demos.map((d) => (
+            <div class="track"><button disabled type="button" aria-label={`${T.play}: ${d.t}`}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></button><div><b>{d.t}</b><small>{d.d}</small></div><div class="bars" aria-hidden="true">{Array.from({ length: 14 }, (_, i) => <i style={`height:${6 + ((i * 37) % 22)}px`}></i>)}</div></div>
+          ))}
+        </div>
+        <p class="note" style="color:rgba(255,255,255,.5)">{T.audioNote}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIDEO CASES -->
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">{T.cases}</p>
+      <h2>{T.casesH}</h2>
+      <div class="rail">
+        {T.videos.map((v) => <VideoCard {...v} lang={lang} />)}
+      </div>
+      <a class="btn btn-line" href={L('/uz/media/')} style="margin-top:28px">{T.allMedia}</a>
+    </div>
+  </section>
+
+  <!-- FOOD -->
+  <section class="sec food-sec">
+    <div class="wrap">
+      <p class="eyebrow">{T.food}</p>
+      <h2>{T.foodLatest}</h2>
+      <div class="fcards">{reviews.map((r) => <ReviewCard review={r} lang={lang} />)}</div>
+      <a class="btn btn-line more" href={L('/uz/food-blog/')}>{T.allReviews}</a>
+    </div>
+  </section>
+
+  <!-- PARTNERS -->
+  <section class="sec" style="padding-bottom:0">
+    <div class="wrap">
+      <p class="eyebrow">{T.partners}</p>
+      <div class="partners">{T.partnerNames.map((p) => <span>{p}</span>)}</div>
+      <p class="note">{T.partnersNote}</p>
+    </div>
+  </section>
+
+  <!-- MOTHER -->
+  <section class="sec mom-sec">
+    <div class="wrap mom">
+      <div class="mom-pics">
+        <Image src={ona1} alt={T.momAlt} widths={[400, 700]} sizes="(min-width:860px) 25vw, 50vw" loading="lazy" />
+        <Image src={ona2} alt={T.momAlt} widths={[300, 500]} sizes="(min-width:860px) 20vw, 50vw" loading="lazy" />
+        <Image src={ona3} alt={T.momAlt} widths={[300, 500]} sizes="(min-width:860px) 20vw, 50vw" loading="lazy" />
+      </div>
+      <div>
+        <p class="eyebrow">{T.mom}</p>
+        <h2>{T.momH}</h2>
+        <div class="values">{T.momVals.map((v) => <span>{v}</span>)}</div>
+        <blockquote>{T.momQuote}</blockquote>
+        <a class="btn btn-rose" href={L('/uz/onam/')}>{T.momBtn}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATE CHECK -->
+  <section class="sec onair" id="sana">
+    <div class="wrap">
+      <p class="eyebrow">{T.date}</p>
+      <h2>{T.dateH}</h2>
+      <p class="lead">{T.dateLead}</p>
+      <LeadForm lang={lang} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { position: relative; min-height: 100svh; display: flex; align-items: flex-end; color: #fff; background: var(--color-onair); overflow: hidden; }
+  .hero :global(.poster), .hero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 25%; transition: opacity .4s; }
+  .hero video { opacity: 0; }
+  .hero.playing video { opacity: 1; }
+  .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(28,18,24,.35) 0%, rgba(28,18,24,0) 30%, rgba(28,18,24,.55) 62%, rgba(28,18,24,.95) 100%); }
+  .hero .wrap { position: relative; z-index: 2; padding-bottom: clamp(40px, 8vh, 88px); width: 100%; }
+  .hero h1 { font-size: clamp(48px, 11vw, 96px); }
+  .hero h1 em { display: block; font-style: italic; font-weight: 600; color: var(--color-rose-lt); }
+  .roles { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 26px; }
+  .roles span { font-size: 13px; padding: 6px 12px; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; background: rgba(255,255,255,.06); }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .sound { position: absolute; z-index: 3; right: var(--pad); top: 80px; display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; background: rgba(0,0,0,.45); backdrop-filter: blur(6px); color: #fff; font-size: 13px; font-weight: 600; }
+  .sound svg { width: 18px; height: 18px; }
+  @media (min-width: 1000px) {
+    .hero { align-items: center; background: radial-gradient(circle at 75% 40%, #3a2230, var(--color-onair) 60%); }
+    .hero .wrap { padding-bottom: 0; }
+    .hero .txt { max-width: 560px; }
+    .hero :global(.poster), .hero video { left: auto; right: max(32px, calc((100vw - var(--max)) / 2 + 32px)); top: 50%; transform: translateY(-50%); width: auto; height: min(78vh, 760px); aspect-ratio: 9/16; border-radius: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+    .hero::after { background: linear-gradient(90deg, rgba(28,18,24,.6), transparent 50%); }
+    .sound { top: auto; bottom: calc(50% - min(39vh, 380px) + 16px); right: max(48px, calc((100vw - var(--max)) / 2 + 48px)); }
+  }
+
+  .dirs { display: grid; gap: 14px; margin-top: 32px; }
+  .dir { position: relative; border-radius: var(--r); overflow: hidden; aspect-ratio: 4/5; color: #fff; isolation: isolate; }
+  .dir :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+  .dir:hover :global(img) { transform: scale(1.04); }
+  .dir::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(28,18,24,.9)); }
+  .dir div { position: absolute; inset: auto 0 0; padding: 22px; z-index: 1; }
+  .dir h3 { font-size: 30px; }
+  .dir p { font-size: 14px; opacity: .85; margin-top: 4px; }
+  .go { display: inline-block; margin-top: 12px; font-size: 14px; font-weight: 600; border-bottom: 1.5px solid currentColor; }
+  .dir.food .go { color: #FFC48A; }
+  @media (min-width: 720px) { .dirs { grid-template-columns: repeat(3, 1fr); } }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+  .stat b { display: block; font-family: var(--font-serif); font-weight: 700; font-size: clamp(38px, 9vw, 72px); color: var(--color-rose-lt); line-height: 1; white-space: nowrap; }
+  .stat b :global(small) { font-size: .45em; font-weight: 600; margin-left: 2px; }
+  .stat span { font-size: 13px; opacity: .75; display: block; margin-top: 8px; }
+
+  .audio-grid { display: grid; gap: 12px; margin-top: 28px; }
+  .track { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 14px; background: var(--color-onair-2); border: 1px solid rgba(255,255,255,.06); }
+  .track button { flex: none; width: 48px; height: 48px; border-radius: 50%; background: #4a3a43; display: grid; place-items: center; cursor: not-allowed; }
+  .track svg { width: 18px; height: 18px; fill: #fff; }
+  .track b { display: block; font-size: 15px; } .track small { opacity: .6; font-size: 12.5px; }
+  .bars { margin-left: auto; display: flex; gap: 3px; align-items: center; height: 28px; }
+  .bars i { width: 3px; background: var(--color-rose-lt); opacity: .35; border-radius: 2px; }
+  @media (min-width: 720px) { .audio-grid { grid-template-columns: 1fr 1fr; } }
+
+  .fcards { display: grid; gap: 16px; margin-top: 28px; }
+  @media (min-width: 720px) { .fcards { grid-template-columns: repeat(3, 1fr); } }
+  .more { border-color: #C9650C; color: #9A4C08; margin-top: 28px; }
+
+  .partners { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; margin-top: 22px; }
+  .partners span { flex: none; padding: 14px 22px; border: 1px solid var(--color-line); border-radius: 12px; font-weight: 700; color: var(--color-muted); background: #fff; }
+
+  .mom-sec { background: #FDF0F5; }
+  .mom { display: grid; gap: 24px; align-items: center; }
+  .mom-pics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mom-pics :global(img) { border-radius: 14px; aspect-ratio: 3/4; object-fit: cover; width: 100%; }
+  .mom-pics :global(img:first-child) { grid-row: span 2; height: 100%; aspect-ratio: auto; }
+  .values { display: flex; gap: 10px; margin: 18px 0; }
+  .values span { padding: 8px 14px; border-radius: 999px; background: #F7E6EE; color: var(--color-mauve); font-weight: 600; font-size: 14px; }
+  blockquote { font-family: var(--font-serif); font-style: italic; font-weight: 500; font-size: clamp(23px, 3.8vw, 30px); line-height: 1.35; border-left: 3px solid var(--color-rose); padding-left: 16px; margin: 8px 0 22px; }
+  @media (min-width: 860px) { .mom { grid-template-columns: 1fr 1.1fr; gap: 56px; } }
+</style>
+
+<script>
+  // Hero видео: саҳифа юклангач, овозсиз бошланади
+  const hero = document.querySelector<HTMLElement>('.hero')!;
+  const reel = document.getElementById('reel') as HTMLVideoElement;
+  const sound = document.getElementById('sound')!;
+  addEventListener('load', () => { reel.preload = 'auto'; reel.play().catch(() => {}); });
+  reel.addEventListener('playing', () => hero.classList.add('playing'));
+  sound.addEventListener('click', () => {
+    reel.muted = !reel.muted;
+    if (reel.paused) reel.play();
+    sound.setAttribute('aria-pressed', String(!reel.muted));
+    const label = sound.querySelector('span')!;
+    label.textContent = (reel.muted ? label.dataset.on : label.dataset.off)!;
+    document.getElementById('wave')!.setAttribute('d', reel.muted ? 'm17 9 4 6m0-6-4 6' : 'M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13');
+  });
+  // Бошқа видео ўйнаса, шоурил тўхтайди
+  document.addEventListener('play', (e) => { if (e.target !== reel) reel.pause(); }, true);
+
+  // Рақамлар ҳисоблагичи
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return;
+    io.unobserve(e.target);
+    const el = e.target as HTMLElement, n = +el.dataset.n!, s = el.dataset.s ?? '', t0 = performance.now();
+    const step = (t: number) => {
+      const p = Math.min((t - t0) / 1200, 1);
+      el.innerHTML = Math.round(n * (1 - Math.pow(1 - p, 3))) + (s ? `<small>${s}</small>` : '');
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }), { threshold: .6 });
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.querySelectorAll('[data-n]').forEach((el) => io.observe(el));
+</script>

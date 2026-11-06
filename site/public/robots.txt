@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /uz/band-qilish/
+Disallow: /ru/band-qilish/
 
 Sitemap: https://qunduzxon.uz/sitemap-index.xml

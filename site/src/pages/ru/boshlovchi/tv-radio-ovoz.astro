@@ -1,0 +1,45 @@
+---
+import ServicePage from '../../../components/ServicePage.astro';
+import radio from '../../../assets/photos/radio.jpg';
+import mic from '../../../assets/photos/mic.jpg';
+import studio from '../../../assets/photos/studio.jpg';
+import orange from '../../../assets/photos/orange.jpg';
+import football from '../../../assets/photos/football.jpg';
+import hero from '../../../assets/photos/hero.jpg';
+---
+<ServicePage
+  lang="ru"
+  slug="tv-radio-ovoz"
+  title="ТВ, радио и дикторская работа"
+  titleHtml="ТВ, радио и <em>дикторская работа</em>"
+  serviceType="Теле- и радиоведущая, диктор"
+  description="Телепередачи, радиоэфиры, озвучивание рекламных роликов (voiceover) и дикторские услуги."
+  image={radio}
+  intro={[
+    '16 лет в эфире: передачи на телеканалах и радиостанциях, прямые эфиры и интервью.',
+    'Принимаю заказы на озвучивание (voiceover) рекламных роликов, презентаций и документальных видео.',
+  ]}
+  features={[
+    { t: 'Телевидение', d: 'Передачи, прямые эфиры и студийные интервью.' },
+    { t: 'Радио', d: 'Утренние и дневные эфиры, рубрики, интервью.' },
+    { t: 'Озвучивание', d: 'Дикторская работа для рекламы, презентаций и видео.' },
+  ]}
+  videos={[
+    { file: 'hit-fm-efirida.mp4', poster: mic, title: 'В эфире Hit FM', tag: 'Радио' },
+    { file: 'radio-studiyasida.mp4', poster: orange, title: 'В радиостудии', tag: 'Студия' },
+    { file: 'hit-fm-bilan-bir-kun.mp4', poster: studio, title: 'Один день с Hit FM', tag: 'Радио' },
+    { file: 'efirdan-savollar.mp4', poster: hero, title: 'Вопросы из эфира', tag: 'Эфир' },
+  ]}
+  gallery={[radio, studio, football, mic]}
+  steps={[
+    { t: 'Текст или бриф', d: 'Вы присылаете рекламный текст или идею передачи.' },
+    { t: 'Стиль', d: 'Согласуем тон голоса, темп и продолжительность.' },
+    { t: 'Запись', d: 'Запись делается в студии, вы получаете готовый файл.' },
+  ]}
+  faq={[
+    { q: 'Сколько времени занимает озвучивание рекламы?', a: 'Зависит от текста и объёма. Точный срок согласуем в Telegram.' },
+    { q: 'На каких языках вы озвучиваете?', a: 'На узбекском и русском языках.' },
+    { q: 'Где можно послушать образцы голоса?', a: 'На главной странице, в разделе «Послушайте мой голос».' },
+  ]}
+  direction="tv"
+/>

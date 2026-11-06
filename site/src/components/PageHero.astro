@@ -1,13 +1,15 @@
 ---
 import type { Crumb } from '../layouts/Base.astro';
-interface Props { eyebrow?: string; crumbs?: Crumb[]; lead?: string }
-const { eyebrow, crumbs = [], lead } = Astro.props;
+import { UI, type Lang } from '../i18n';
+interface Props { lang?: Lang; eyebrow?: string; crumbs?: Crumb[]; lead?: string }
+const { lang = 'uz', eyebrow, crumbs = [], lead } = Astro.props;
+const t = UI[lang];
 ---
 <section class="page-hero">
   <div class="wrap">
     {crumbs.length > 0 && (
-      <nav class="crumbs" aria-label="Нон ушоқлари">
-        <a href="/uz/">Бош саҳифа</a>
+      <nav class="crumbs" aria-label={t.crumbs}>
+        <a href={`/${lang}/`}>{t.home}</a>
         {crumbs.map((c, i) => (
           <>
             <span aria-hidden="true">/</span>

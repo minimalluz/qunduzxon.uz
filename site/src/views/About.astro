@@ -1,0 +1,167 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { SITE as SITE_UZ, SOCIAL } from '../config';
+import { SITE_L, STATS_L, type Lang } from '../i18n';
+import about from '../assets/photos/about.jpg';
+import studio from '../assets/photos/studio.jpg';
+import yangiHayot from '../assets/photos/yangi-hayot.jpg';
+import greenGown from '../assets/photos/green-gown.jpg';
+import radio from '../assets/photos/radio.jpg';
+import blueIkat from '../assets/photos/blue-ikat.jpg';
+import football from '../assets/photos/football.jpg';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const SITE = { ...SITE_L[lang], url: SITE_UZ.url };
+const STATS = STATS_L[lang];
+
+// Очиқ манбалардан олинган, лекин эгаси тасдиқлаши керак бўлган фактлар — README'да манбалари билан.
+const T = {
+  uz: {
+    crumb: 'Мен ҳақимда', title: 'Мен ҳақимда',
+    description: 'Қундузхон Абдуллаева — телерадио бошловчи, нотиқ, тантаналар бошловчиси ва фуд-блогер. Эфирда 16 йил.',
+    birthPlace: 'Фарғона, Ўзбекистон', eyebrow: 'Мен ҳақимда', h1a: 'Эфирда ', h1b: '16 йил', h1c: '',
+    hello: 'Ассалому алайкум! Мен — Қундузхон Абдуллаева.',
+    intro: [
+      'Теле ва радио бошловчи, нотиқ, тўй ва тантаналар бошловчиси, фуд-блогерман. 16 йилдан бери эфирдаман: телеканаллар ва радиоларда кўрсатувлар олиб бордим, минглаб тингловчи ва томошабинлар билан ҳар куни учрашдим.',
+      'Бугун тўйлар, корпоратив тадбирлар ва расмий маросимларни олиб бораман, рекламаларни овозлаштираман ва фуд-блогимда Ўзбекистон таомлари ҳақида ҳикоя қиламан.',
+    ],
+    introNote: 'Бу ерга сайт эгасининг ўз сўзлари билан ёзилган биография қўйилади (storytelling). Ҳозирги матн очиқ манбалар асосида ёзилган ва тасдиқланиши керак.',
+    pathEy: 'Йўл', pathH: 'Эфир ва саҳнадаги фаолият', pathNote: 'Йиллар ва аниқ саналар тасдиқлангач қўшилади.',
+    path: [
+      { t: 'Фарғонада туғилиб ўсган', d: 'Илк қадамлар, сўз ва саҳнага бўлган муҳаббат.' },
+      { t: 'Телевидение ва радио', d: 'Бир қанча телеканал ва радиоларда бошловчи бўлиб ишлаган, жумладан «Миллий» телеканали ва «Ёшлар» радиосида.' },
+      { t: 'Радио эфирлари', d: 'Hit FM ва 90.8 FM эфирларида тингловчилар билан ҳар куни учрашув.' },
+      { t: '«Севимли» телеканали', d: 'Ҳозирги кунда «Севимли» телеканалида бошловчи.' },
+      { t: 'Устоз сифатида', d: 'Журналистика талабаларига телерадио бошловчилиги бўйича маҳорат дарслари ўтади.' },
+      { t: 'Фуд-блог', d: 'Ўзбекистон бўйлаб ресторан ва миллий таомлар ҳақида ҳалол шарҳлар.' },
+    ],
+    valEy: 'Қадриятлар', valH: 'Ишлаш принципларим',
+    values: [
+      { t: 'Самимийлик', d: 'Ҳар бир эфир ва тадбирда — дилдан чиққан сўз.' },
+      { t: 'Пухта тайёргарлик', d: 'Сценарий, меҳмонлар ва ҳар бир дақиқа олдиндан ўйланади.' },
+      { t: 'Миллий қадрият', d: 'Анъаналарни ҳурмат қилиб, замонавий услубда олиб бориш.' },
+    ],
+    galEy: 'Ютуқлар ва ОАВ', galH: 'Эфирлар, мукофотлар, чиқишлар',
+    galNote: 'Мукофотлар, сертификатлар ва ОАВдаги чиқишлар рўйхати керак — ҳозирча фақат расмлар.',
+  },
+  ru: {
+    crumb: 'Обо мне', title: 'Обо мне',
+    description: 'Кундузхон Абдуллаева — теле- и радиоведущая, оратор, ведущая торжеств и фуд-блогер. 16 лет в эфире.',
+    birthPlace: 'Фергана, Узбекистан', eyebrow: 'Обо мне', h1a: '', h1b: '16 лет', h1c: ' в эфире',
+    hello: 'Ассалому алайкум! Я — Кундузхон Абдуллаева.',
+    intro: [
+      'Теле- и радиоведущая, оратор, ведущая свадеб и торжеств, фуд-блогер. Я в эфире уже 16 лет: вела передачи на телеканалах и радиостанциях, каждый день встречалась с тысячами слушателей и зрителей.',
+      'Сегодня я веду свадьбы, корпоративные мероприятия и официальные церемонии, озвучиваю рекламу, а в своём фуд-блоге рассказываю о блюдах Узбекистана.',
+    ],
+    introNote: 'Здесь будет биография, написанная владелицей сайта своими словами (storytelling). Текущий текст основан на открытых источниках и требует подтверждения.',
+    pathEy: 'Путь', pathH: 'В эфире и на сцене', pathNote: 'Годы и точные даты будут добавлены после подтверждения.',
+    path: [
+      { t: 'Родилась и выросла в Фергане', d: 'Первые шаги, любовь к слову и сцене.' },
+      { t: 'Телевидение и радио', d: 'Работала ведущей на нескольких телеканалах и радиостанциях, в том числе на телеканале «Миллий» и радио «Ёшлар».' },
+      { t: 'Радиоэфиры', d: 'Ежедневные встречи со слушателями в эфирах Hit FM и 90.8 FM.' },
+      { t: 'Телеканал «Севимли»', d: 'Сегодня — ведущая на телеканале «Севимли».' },
+      { t: 'Как наставник', d: 'Проводит мастер-классы по теле- и радиоведению для студентов-журналистов.' },
+      { t: 'Фуд-блог', d: 'Честные обзоры ресторанов и национальных блюд по всему Узбекистану.' },
+    ],
+    valEy: 'Ценности', valH: 'Мои принципы работы',
+    values: [
+      { t: 'Искренность', d: 'В каждом эфире и на каждом мероприятии — слова от души.' },
+      { t: 'Тщательная подготовка', d: 'Сценарий, гости и каждая минута продумываются заранее.' },
+      { t: 'Национальные ценности', d: 'Уважение к традициям и современный стиль ведения.' },
+    ],
+    galEy: 'Достижения и СМИ', galH: 'Эфиры, награды, выступления',
+    galNote: 'Нужен список наград, сертификатов и публикаций в СМИ — пока только фотографии.',
+  },
+}[lang];
+
+const crumbs = [{ href: `/${lang}/about/`, label: T.crumb }];
+const img = await getImage({ src: about, width: 800, format: 'jpg' });
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.name,
+  url: new URL(`/${lang}/about/`, SITE.url).href,
+  image: new URL(img.src, SITE.url).href,
+  jobTitle: SITE.roles,
+  birthPlace: { '@type': 'Place', name: T.birthPlace },
+  sameAs: Object.values(SOCIAL).filter((u) => u && u !== 'https://t.me/'),
+};
+const gallery = [studio, yangiHayot, greenGown, radio, blueIkat, football];
+---
+<Base lang={lang} title={T.title} description={T.description} image={about} crumbs={crumbs} jsonLd={[person]}>
+  <PageHero lang={lang} crumbs={crumbs} eyebrow={T.eyebrow}>
+    {T.h1a}<em>{T.h1b}</em>{T.h1c}
+  </PageHero>
+
+  <section class="sec">
+    <div class="wrap intro">
+      <Image src={about} alt={SITE.name} widths={[480, 800]} sizes="(min-width:860px) 40vw, 100vw" class="portrait" loading="eager" />
+      <div class="prose-q">
+        <p class="hello">{T.hello}</p>
+        {T.intro.map((p) => <p>{p}</p>)}
+        <p class="placeholder">{T.introNote}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec onair">
+    <div class="wrap">
+      <div class="stats">
+        {STATS.map((s) => <div><b>{s.n}{s.suffix && <small>{s.suffix}</small>}</b><span>{s.label}</span></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">{T.pathEy}</p>
+      <h2>{T.pathH}</h2>
+      <ol class="tl">
+        {T.path.map((p) => <li><b>{p.t}</b><p>{p.d}</p></li>)}
+      </ol>
+      <p class="note">{T.pathNote}</p>
+    </div>
+  </section>
+
+  <section class="sec" style="background:#fff">
+    <div class="wrap">
+      <p class="eyebrow">{T.valEy}</p>
+      <h2>{T.valH}</h2>
+      <div class="vals">{T.values.map((v) => <div class="val"><h3>{v.t}</h3><p>{v.d}</p></div>)}</div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">{T.galEy}</p>
+      <h2>{T.galH}</h2>
+      <div class="gal">{gallery.map((g) => <Image src={g} alt="" widths={[360, 600]} sizes="(min-width:720px) 33vw, 50vw" loading="lazy" />)}</div>
+      <p class="placeholder" style="margin-top:20px">{T.galNote}</p>
+    </div>
+  </section>
+</Base>
+<style>
+  .intro { display: grid; gap: 32px; align-items: center; }
+  .intro :global(.portrait) { width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: 50% 25%; border-radius: var(--r); }
+  .hello { font-family: var(--font-serif); font-size: 30px; font-weight: 700; line-height: 1.2; }
+  @media (min-width: 860px) { .intro { grid-template-columns: .85fr 1.15fr; gap: 56px; } }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; gap: 8px; }
+  .stats b { display: block; font-family: var(--font-serif); font-size: clamp(38px, 9vw, 72px); color: var(--color-rose-lt); line-height: 1; white-space: nowrap; }
+  .stats small { font-size: .45em; }
+  .stats span { font-size: 13px; opacity: .75; display: block; margin-top: 8px; }
+  .tl { margin-top: 32px; border-left: 2px solid var(--color-line); padding-left: 24px; display: grid; gap: 26px; }
+  .tl li { position: relative; }
+  .tl li::before { content: ""; position: absolute; left: -32px; top: 6px; width: 14px; height: 14px; border-radius: 50%; background: var(--color-rose); box-shadow: 0 0 0 4px var(--color-ivory); }
+  .tl b { font-family: var(--font-serif); font-size: 24px; }
+  .tl p { color: var(--color-muted); margin-top: 2px; }
+  .vals { display: grid; gap: 14px; margin-top: 28px; }
+  .val { padding: 24px; border-radius: var(--r); background: var(--color-ivory); }
+  .val h3 { font-size: 26px; } .val p { color: var(--color-muted); margin-top: 6px; }
+  @media (min-width: 720px) { .vals { grid-template-columns: repeat(3, 1fr); } }
+  .gal { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 28px; }
+  .gal :global(img) { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 14px; }
+  @media (min-width: 720px) { .gal { grid-template-columns: repeat(3, 1fr); } }
+</style>

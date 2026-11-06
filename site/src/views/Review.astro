@@ -1,0 +1,162 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ReviewCard from '../components/ReviewCard.astro';
+import { SITE as SITE_UZ, TG_URL, videoUrl } from '../config';
+import { SITE_L, UI, type Lang } from '../i18n';
+import { total, som, cuisineLabel, RATING_LABELS, type Review } from '../lib/reviews';
+
+interface Props { lang: Lang; review: Review; reviews: Review[] }
+const { lang, review, reviews } = Astro.props;
+const SITE = { ...SITE_L[lang], url: SITE_UZ.url };
+const T = {
+  uz: {
+    crumb: 'Фуд-блог', review: 'шарҳ', avgCheck: 'ўртача чек', sample: 'намуна шарҳ', watch: 'Видео-обзорни кўриш', videoReview: 'Видео-обзор',
+    ratings: 'Баҳолар', overall: 'Умумий балл', address: 'Манзил', map: 'Харитада кўриш', hours: 'Иш вақти', avg: 'Ўртача чек',
+    share: 'Улашиш:', gallery: 'Фотогалерея', similar: 'Ўхшаш жойлар', similarH: 'Яна нимани татиб кўриш мумкин',
+    order: 'Ресторанингиз учун обзор буюртма қилиш',
+  },
+  ru: {
+    crumb: 'Фуд-блог', review: 'обзор', avgCheck: 'средний чек', sample: 'образец обзора', watch: 'Смотреть видеообзор', videoReview: 'Видеообзор',
+    ratings: 'Оценки', overall: 'Общий балл', address: 'Адрес', map: 'Посмотреть на карте', hours: 'Часы работы', avg: 'Средний чек',
+    share: 'Поделиться:', gallery: 'Фотогалерея', similar: 'Похожие места', similarH: 'Что ещё стоит попробовать',
+    order: 'Заказать обзор для вашего ресторана',
+  },
+}[lang];
+const d = review.data;
+const tx = review.t;
+const { Content } = await render(review.entry);
+const score = total(review);
+const similar = reviews
+  .filter((r) => r.id !== review.id)
+  .sort((a, b) => +b.data.cuisine.some((c) => d.cuisine.includes(c)) - +a.data.cuisine.some((c) => d.cuisine.includes(c)))
+  .slice(0, 3);
+const url = new URL(`/${lang}/food-blog/${review.id}/`, SITE.url).href;
+const crumbs = [{ href: `/${lang}/food-blog/`, label: T.crumb }, { href: `/${lang}/food-blog/${review.id}/`, label: tx.title }];
+// Харита ҳаволаси ўзбекча ном бўйича қидиради (ресторан номи ва шаҳар ўзгармайди)
+const mapUrl = d.mapUrl ?? `https://yandex.uz/maps/?text=${encodeURIComponent(`${d.title} ${d.city}`)}`;
+
+const ld: Record<string, unknown>[] = [
+  {
+    '@context': 'https://schema.org', '@type': 'Review', url,
+    name: tx.title, reviewBody: tx.summary, datePublished: d.date.toISOString().slice(0, 10),
+    author: { '@type': 'Person', name: SITE.name },
+    itemReviewed: { '@type': 'Restaurant', name: tx.title, servesCuisine: d.cuisine.map((c) => cuisineLabel(c, lang)), address: tx.address },
+    reviewRating: { '@type': 'Rating', ratingValue: score, bestRating: 10, worstRating: 0 },
+  },
+];
+if (d.video) ld.push({
+  '@context': 'https://schema.org', '@type': 'VideoObject', name: tx.title, description: tx.summary,
+  contentUrl: videoUrl(d.video), thumbnailUrl: new URL(d.cover.src, SITE.url).href, uploadDate: d.date.toISOString().slice(0, 10),
+});
+---
+<Base lang={lang} title={`${tx.title} — ${T.review}`} description={tx.summary} image={d.cover} crumbs={crumbs} jsonLd={ld} noindex={d.sample}>
+  <PageHero lang={lang} crumbs={crumbs} eyebrow={`${d.cuisine.map((c) => cuisineLabel(c, lang)).join(' · ')} · ${tx.city}`}>
+    {tx.title}
+    <div slot="after" class="hmeta">
+      <span class="score big">{score.toFixed(1)}</span>
+      <span>{som(d.averageCheck, lang)} {T.avgCheck}</span>
+      {d.sample && <span class="smp">{T.sample}</span>}
+    </div>
+  </PageHero>
+
+  <section class="sec">
+    <div class="wrap layout">
+      <div class="media">
+        {d.video ? (
+          <div class:list={['vcard', { wide: !d.videoVertical }]} data-src={videoUrl(d.video)}>
+            <Image src={d.cover} alt={tx.title} widths={[480, 720]} sizes="(min-width:1000px) 420px, 100vw" loading="eager" />
+            <button class="play" type="button" aria-label={T.watch}><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span></button>
+            <p>{T.videoReview}</p>
+          </div>
+        ) : (
+          <Image src={d.cover} alt={tx.title} widths={[480, 720]} sizes="(min-width:1000px) 420px, 100vw" loading="eager" class="cover" />
+        )}
+      </div>
+
+      <div>
+        <div class="prose-q"><Content /></div>
+
+        <div class="ratings">
+          <h2>{T.ratings}</h2>
+          {Object.entries(d.ratings).map(([k, v]) => (
+            <div class="rrow">
+              <span>{RATING_LABELS[lang][k as keyof typeof RATING_LABELS.uz]}</span>
+              <div class="bar"><i style={`width:${v * 10}%`}></i></div>
+              <b>{v.toFixed(1)}</b>
+            </div>
+          ))}
+          <div class="rrow totalrow"><span>{T.overall}</span><div></div><b>{score.toFixed(1)}</b></div>
+        </div>
+
+        <dl class="info">
+          <div><dt>{T.address}</dt><dd>{tx.address} · <a href={mapUrl} target="_blank" rel="noopener">{T.map}</a></dd></div>
+          <div><dt>{T.hours}</dt><dd>{d.hours}</dd></div>
+          <div><dt>{T.avg}</dt><dd>{som(d.averageCheck, lang)}</dd></div>
+        </dl>
+
+        <div class="share">
+          <span>{T.share}</span>
+          <a href={`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(tx.title)}`} target="_blank" rel="noopener">Telegram</a>
+          <a href={`https://wa.me/?text=${encodeURIComponent(`${tx.title} ${url}`)}`} target="_blank" rel="noopener">WhatsApp</a>
+          <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`} target="_blank" rel="noopener">Facebook</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {d.gallery.length > 0 && (
+    <section class="sec" style="padding-top:0">
+      <div class="wrap">
+        <p class="eyebrow">{T.gallery}</p>
+        <div class="gal">{d.gallery.map((g) => <Image src={g} alt={tx.title} widths={[300, 500]} sizes="(min-width:720px) 25vw, 50vw" loading="lazy" />)}</div>
+      </div>
+    </section>
+  )}
+
+  {similar.length > 0 && (
+    <section class="sec food-sec">
+      <div class="wrap">
+        <p class="eyebrow">{T.similar}</p>
+        <h2>{T.similarH}</h2>
+        <div class="grid">{similar.map((r) => <ReviewCard review={r} lang={lang} />)}</div>
+        <a class="btn btn-rose" href={TG_URL} target="_blank" rel="noopener" style="margin-top:28px">{T.order}</a>
+      </div>
+    </section>
+  )}
+</Base>
+
+<script>
+  import '../scripts/facade';
+</script>
+
+<style>
+  .hmeta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 18px; color: rgba(255,255,255,.8); }
+  .score.big { font-size: 22px; padding: 6px 14px; }
+  .smp { background: rgba(255,255,255,.15); padding: 4px 10px; border-radius: 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  .layout { display: grid; gap: 32px; }
+  @media (min-width: 1000px) { .layout { grid-template-columns: 420px 1fr; gap: 56px; align-items: start; } .media { position: sticky; top: 88px; } }
+  .media :global(.cover) { width: 100%; border-radius: var(--r); aspect-ratio: 4/5; object-fit: cover; }
+  .media .vcard { max-width: 420px; margin: 0 auto; }
+  .ratings { margin-top: 32px; padding: 24px; border-radius: var(--r); background: #FFF4EA; }
+  .ratings h2 { font-size: 30px; margin-bottom: 12px; }
+  .rrow { display: grid; grid-template-columns: 1fr 1.2fr auto; gap: 12px; align-items: center; padding: 8px 0; font-size: 15px; }
+  .bar { height: 8px; border-radius: 99px; background: #F5DCC4; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--color-saffron); border-radius: 99px; }
+  .rrow b { font-variant-numeric: tabular-nums; }
+  .totalrow { border-top: 1px solid #F0D9C4; margin-top: 6px; padding-top: 14px; font-weight: 700; }
+  .totalrow b { color: #C9650C; font-size: 20px; }
+  .info { margin-top: 24px; display: grid; gap: 10px; }
+  .info div { display: grid; grid-template-columns: 120px 1fr; gap: 12px; }
+  .info dt { color: var(--color-muted); font-size: 14px; }
+  .info a { color: var(--color-rose-dk); text-decoration: underline; }
+  .share { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 14px; }
+  .share a { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--color-line); background: #fff; font-weight: 600; }
+  .grid { display: grid; gap: 16px; margin-top: 28px; }
+  @media (min-width: 720px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  .gal { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; }
+  .gal :global(img) { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 14px; }
+  @media (min-width: 720px) { .gal { grid-template-columns: repeat(4, 1fr); } }
+</style>

@@ -1,0 +1,58 @@
+---
+// Бу саҳифа тайёр, лекин вақтинча ўчиқ: менюда йўқ, қидирувга берилмайди (noindex, robots.txt, sitemap filter).
+// «Банд қилиш» тугмалари ҳозирча Telegram'га олиб боради (config.ts → TG_URL).
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import LeadForm from '../components/LeadForm.astro';
+import { TG_URL, TG_USER, PHONE, PHONE_LABEL, EMAIL, SOCIAL } from '../config';
+import type { Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const T = {
+  uz: {
+    crumb: 'Банд қилиш', title: 'Санани банд қилиш ва алоқа', eyebrow: 'Алоқа',
+    lead: 'Тўй, корпоратив тадбир, фуд-обзор ёки дикторлик — аризани қолдиринг, тез орада боғланамиз.',
+    h1a: 'Санани ', h1b: 'банд қилиш', formH: 'Ариза', submit: 'Ариза юбориш', direct: 'Тўғридан-тўғри', phone: 'Маъмур телефони',
+  },
+  ru: {
+    crumb: 'Бронирование', title: 'Бронирование даты и контакты', eyebrow: 'Контакты',
+    lead: 'Свадьба, корпоратив, фуд-обзор или дикторская работа — оставьте заявку, и мы скоро свяжемся с вами.',
+    h1a: 'Забронировать ', h1b: 'дату', formH: 'Заявка', submit: 'Отправить заявку', direct: 'Напрямую', phone: 'Телефон администратора',
+  },
+}[lang];
+const crumbs = [{ href: `/${lang}/band-qilish/`, label: T.crumb }];
+---
+<Base lang={lang} title={T.title} crumbs={crumbs} noindex>
+  <PageHero lang={lang} crumbs={crumbs} eyebrow={T.eyebrow} lead={T.lead}>
+    {T.h1a}<em>{T.h1b}</em>
+  </PageHero>
+  <section class="sec">
+    <div class="wrap two">
+      <div>
+        <h2>{T.formH}</h2>
+        <LeadForm lang={lang} full submitLabel={T.submit} />
+      </div>
+      <aside class="contacts">
+        <h2>{T.direct}</h2>
+        <ul>
+          <li><span>{T.phone}</span>{PHONE ? <a href={`tel:${PHONE}`}>{PHONE_LABEL}</a> : <b>{PHONE_LABEL}</b>}</li>
+          <li><span>Telegram</span><a href={TG_URL} target="_blank" rel="noopener">{TG_USER ? `@${TG_USER}` : 'Telegram'}</a></li>
+          <li><span>Instagram</span>{SOCIAL.instagram ? <a href={SOCIAL.instagram} target="_blank" rel="noopener">Instagram</a> : <b>—</b>}</li>
+          <li><span>Email</span><a href={`mailto:${EMAIL}`}>{EMAIL}</a></li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+</Base>
+<style>
+  .two { display: grid; gap: 40px; }
+  @media (min-width: 900px) { .two { grid-template-columns: 1.4fr 1fr; } }
+  .two h2 { font-size: 34px; }
+  .contacts { background: #fff; border-radius: var(--r); padding: 24px; box-shadow: 0 1px 0 var(--color-line); align-self: start; }
+  .contacts ul { margin-top: 16px; display: grid; gap: 14px; }
+  .contacts li { display: grid; gap: 2px; }
+  .contacts span { font-size: 13px; color: var(--color-muted); }
+  .contacts a, .contacts b { font-weight: 600; font-size: 17px; }
+  .contacts a { color: var(--color-rose-dk); }
+</style>

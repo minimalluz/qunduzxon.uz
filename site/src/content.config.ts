@@ -31,4 +31,17 @@ const reviews = defineCollection({
     }),
 });
 
-export const collections = { reviews };
+// Шарҳларнинг рус тилидаги матни. Файл номи ўзбекча шарҳ билан бир хил бўлиши керак
+// (src/content/reviews-ru/marina.md ↔ src/content/reviews/marina.md). Баллар, расм, видео,
+// нарх ва иш вақти ўзбекча файлдан олинади — бу ерда фақат матнлар.
+const reviewsRu = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/reviews-ru' }),
+  schema: z.object({
+    title: z.string(),
+    summary: z.string(),
+    city: z.string(),
+    address: z.string(),
+  }),
+});
+
+export const collections = { reviews, reviewsRu };
