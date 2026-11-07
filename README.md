@@ -30,7 +30,9 @@
 
 ## Эски сайт (`main` шохчаси)
 
-`main` — Next.js'даги ҳозирги сайт, qunduzxon.uz'да **ишлаб турибди** (Netlify). Янги сайт `redesign` шохчасида; тайёр бўлмагунча `main`'га тегилмайди.
+`main` — Next.js'даги ҳозирги сайт, qunduzxon.uz'да **ишлаб турибди** (Netlify).
+
+Домен: регистратор — ahost.uz, name-серверлар — Cloudflare (`eve.ns.cloudflare.com`, `giancarlo.ns.cloudflare.com`), яъни DNS Cloudflare аккаунтида. Ҳозирги DNS ёзувлари Netlify'га қарайди. Янги сайт аввал Cloudflare Pages'нинг `*.pages.dev` манзилида текширилади, тайёр бўлгач qunduzxon.uz шу Pages лойиҳасига уланади (Custom domains). Янги сайт `redesign` шохчасида; тайёр бўлмагунча `main`'га тегилмайди.
 
 Эски сайтдан олинган файллар `eski-sayt/` папкасида:
 
