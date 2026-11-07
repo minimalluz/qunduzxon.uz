@@ -10,6 +10,8 @@
 
 | Папка | Нима |
 | --- | --- |
+| `site/` | Astro сайти (`site/README.md`) |
+| `studio/` | Админ панел — Sanity Studio (`studio/README.md`) |
 | `prototype/` | Бош саҳифанинг HTML прототипи (`prototype/index.html`) ва сиқилган WebP расмлар |
 | `foto/` | Асл расмлар (46 та) |
 | `ona/` | «Менинг онам» саҳифаси расмлари (3 та) |

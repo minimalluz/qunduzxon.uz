@@ -40,11 +40,8 @@ export const NAV_L: Record<Lang, { href: string; label: string }[]> = {
 
 export const STATS_L: Record<Lang, { n: number; suffix: string; label: string }[]> = {
   uz: STATS,
-  ru: [
-    { n: 16, suffix: '', label: 'лет в эфире' },
-    { n: 1000, suffix: '', label: 'мероприятий (примерно)' },
-    { n: 500, suffix: ' тыс.+', label: 'подписчиков' },
-  ],
+  // Рақамлар ўзбекча рўйхатдан (config.ts / админ панел) олинади, фақат ёзуви русча
+  ru: STATS.map((s, i) => ({ n: s.n, suffix: [s.suffix, '', ' тыс.+'][i], label: ['лет в эфире', 'мероприятий (примерно)', 'подписчиков'][i] })),
 };
 
 /** Форма йўналишлари: value бир хил (functions/api/lead.ts шуни кутади), фақат ёзуви таржима */

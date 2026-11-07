@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import Pic from './Pic.astro';
 import { total, som, cuisineLabel, type Review } from '../lib/reviews';
 import { UI, type Lang } from '../i18n';
 interface Props { review: Review; lang?: Lang }
@@ -10,7 +10,7 @@ const tx = review.t;
 <article class="card rcard" data-cuisine={d.cuisine.join('|')} data-city={tx.city} data-score={total(review)} data-text={`${tx.title} ${tx.summary} ${tx.city}`.toLowerCase()}>
   <a href={`/${lang}/food-blog/${review.id}/`}>
     <div class="ph">
-      <Image src={d.cover} alt={tx.title} widths={[400, 640]} sizes="(min-width:720px) 33vw, 100vw" loading="lazy" />
+      <Pic src={d.cover} alt={tx.title} widths={[400, 640]} sizes="(min-width:720px) 33vw, 100vw" loading="lazy" />
       <span class="score">{total(review).toFixed(1)}</span>
       {d.sample && <span class="smp">{UI[lang].sample}</span>}
     </div>

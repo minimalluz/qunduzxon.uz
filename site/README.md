@@ -30,6 +30,8 @@ Environment variables:
 | `TELEGRAM_BOT_TOKEN` | **Secret** | @BotFather токени |
 | `TELEGRAM_CHAT_ID` | **Secret** | Аризалар келадиган гуруҳ ID |
 | `TURNSTILE_SECRET` | **Secret** | Turnstile secret key |
+| `SANITY_PROJECT_ID` | оддий | Sanity лойиҳаси ID. Берилса, шарҳлар, созламалар, отзивлар ва ҳамкорлар админ панелдан олинади |
+| `SANITY_DATASET` | оддий | `production` (берилмаса ҳам шу) |
 
 Аризалар `functions/api/lead.ts` (Pages Function) орқали Telegram'га боради.
 
@@ -46,9 +48,20 @@ Environment variables:
 | `/uz/media/` | Галерея (филтр + lightbox) |
 | `/uz/band-qilish/` | Ариза саҳифаси — **вақтинча ўчиқ** (менюда йўқ, noindex) |
 | `/uz/privacy-policy/` | Махфийлик сиёсати |
+| `/admin` | Админ панелга йўналтириш (`public/_redirects`) |
 | `/ru/...` | Юқоридаги ҳамма саҳифаларнинг рус тилидаги нусхаси (масалан `/ru/about/`, `/ru/boshlovchi/toy-va-tantanalar/`) |
 
 Созламалар битта жойда: `src/config.ts` (Telegram, телефон, ижтимоий тармоқлар, рақамлар, меню).
+
+## Админ панел (Sanity)
+
+Йўриқнома ва созлаш қадамлари: [`../studio/README.md`](../studio/README.md). Манзил: qunduzxon.uz/admin.
+
+- `SANITY_PROJECT_ID` **йўқ** бўлса — сайт ҳозиргидек файллардан ишлайди (`src/config.ts`, `src/content/reviews*`).
+- **Бор** бўлса — build пайтида Sanity'дан олинади (`src/lib/cms.ts`): шарҳлар (файлдагилар ўрнига), «Сайт созламалари» (бўш майдон учун `config.ts` даги қиймат), отзивлар (хизмат саҳифаларида), ҳамкорлар (бош саҳифада). Фақат эълон қилинган (Publish) ҳужжатлар.
+- Sanity'га уланиб бўлмаса, build хато билан тўхтайди — эски сайт ишлаб тураверади.
+- Расмлар Sanity CDN'дан ўлчами ўзгартирилиб олинади (`src/components/Pic.astro`), фокус нуқтаси (hotspot) ҳисобга олинади.
+- Маҳаллий текширув учун mock-сервер: `SANITY_PROJECT_ID=test SANITY_API_URL=http://localhost:5555 npm run build`.
 
 ## Икки тил қандай ишлайди
 
@@ -69,8 +82,9 @@ Environment variables:
 
 ## Эгадан кутилаётган маълумотлар
 
-- [ ] Telegram username ва телефон рақам → `src/config.ts` (`TG_USER`, `PHONE`)
-- [ ] Ижтимоий тармоқ ҳаволалари → `src/config.ts` (`SOCIAL`)
+- [ ] Sanity лойиҳасини очиш ва улаш (`studio/README.md`, «Созлаш»)
+- [ ] Telegram username ва телефон рақам → админ панел «Сайт созламалари» (ёки `src/config.ts`)
+- [ ] Ижтимоий тармоқ ҳаволалари → админ панел «Сайт созламалари»
 - [ ] Ўз сўзлари билан биография, йиллар, мукофотлар → `src/views/About.astro` (иккала тилда)
 - [ ] Ҳақиқий фуд-блог шарҳлари (матн, баллар, манзил) → `src/content/reviews/` ва `src/content/reviews-ru/` (`sample: true` ни олиб ташлаш)
 - [ ] Ҳамкорлар логотиплари → бош саҳифа

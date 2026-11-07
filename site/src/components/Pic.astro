@@ -1,0 +1,25 @@
+---
+// Расм: маҳаллий файл (astro:assets) ёки Sanity CDN дан. Иккаласида ҳам srcset ва lazy-load.
+import { Image } from 'astro:assets';
+import { isRemote, picUrl, type Pic } from '../lib/cms';
+interface Props { src: Pic; alt: string; widths: number[]; sizes: string; loading?: 'lazy' | 'eager'; class?: string; [attr: string]: unknown }
+// rest: class ва Astro'нинг стил атрибутлари (data-astro-cid-*) — ота компонент стиллари ишлаши учун
+const { src, alt, widths, sizes, loading = 'lazy', ...rest } = Astro.props;
+const remote = isRemote(src) ? src : null;
+---
+{remote ? (
+  <img
+    src={picUrl(remote, widths[widths.length - 1])}
+    srcset={widths.map((w) => `${picUrl(remote, w)} ${Math.min(w, remote.width)}w`).join(', ')}
+    sizes={sizes}
+    alt={alt}
+    width={remote.width}
+    height={remote.height}
+    loading={loading}
+    decoding="async"
+    {...rest}
+    style={remote.x != null ? `object-position:${(remote.x * 100).toFixed(1)}% ${((remote.y ?? 0.5) * 100).toFixed(1)}%` : undefined}
+  />
+) : (
+  <Image src={src as Exclude<Pic, { url: string }>} alt={alt} widths={widths} sizes={sizes} loading={loading} {...rest} />
+)}

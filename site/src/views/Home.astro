@@ -7,6 +7,7 @@ import LeadForm from '../components/LeadForm.astro';
 import { SITE as SITE_UZ, TG_URL, videoUrl, SOCIAL } from '../config';
 import { SITE_L, STATS_L, href, type Lang } from '../i18n';
 import { allReviews } from '../lib/reviews';
+import { cmsPartners, picUrl } from '../lib/cms';
 import hero from '../assets/photos/hero.jpg';
 import toy from '../assets/photos/toy.jpg';
 import radio from '../assets/photos/radio.jpg';
@@ -77,6 +78,10 @@ const T = {
 }[lang];
 
 const reviews = (await allReviews(lang)).slice(0, 3);
+// Ҳамкорлар: админ панелда бор бўлса — ўшалар (логотип билан), бўлмаса — номлар рўйхати
+const cmsP = await cmsPartners();
+const partners = cmsP?.length ? cmsP : T.partnerNames.map((name) => ({ name, url: undefined, logo: undefined }));
+const hasLogos = partners.some((p) => p.logo);
 const poster = await getImage({ src: hero, width: 960, format: 'webp', quality: 70 });
 
 const person = {
@@ -182,8 +187,13 @@ const person = {
   <section class="sec" style="padding-bottom:0">
     <div class="wrap">
       <p class="eyebrow">{T.partners}</p>
-      <div class="partners">{T.partnerNames.map((p) => <span>{p}</span>)}</div>
-      <p class="note">{T.partnersNote}</p>
+      <div class="partners">
+        {partners.map((p) => {
+          const inner = p.logo ? <img src={picUrl(p.logo, 320)} alt={p.name} width={p.logo.width} height={p.logo.height} loading="lazy" decoding="async" /> : p.name;
+          return p.url ? <a class="p" href={p.url} target="_blank" rel="noopener">{inner}</a> : <span class="p">{inner}</span>;
+        })}
+      </div>
+      {!hasLogos && <p class="note">{T.partnersNote}</p>}
     </div>
   </section>
 
@@ -270,7 +280,8 @@ const person = {
   .more { border-color: #C9650C; color: #9A4C08; margin-top: 28px; }
 
   .partners { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; margin-top: 22px; }
-  .partners span { flex: none; padding: 14px 22px; border: 1px solid var(--color-line); border-radius: 12px; font-weight: 700; color: var(--color-muted); background: #fff; }
+  .partners .p { display: flex; align-items: center; flex: none; padding: 14px 22px; border: 1px solid var(--color-line); border-radius: 12px; font-weight: 700; color: var(--color-muted); background: #fff; }
+  .partners img { height: 36px; width: auto; max-width: 140px; object-fit: contain; }
 
   .mom-sec { background: #FDF0F5; }
   .mom { display: grid; gap: 24px; align-items: center; }

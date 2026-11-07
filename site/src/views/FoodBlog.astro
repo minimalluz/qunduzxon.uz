@@ -46,7 +46,7 @@ const crumbs = [{ href: `/${lang}/food-blog/`, label: T.crumb }];
       </form>
       <p class="count" id="count" aria-live="polite">{T.count.replace('{n}', String(reviews.length))}</p>
       <div class="grid" id="grid">{reviews.map((r) => <ReviewCard review={r} lang={lang} />)}</div>
-      <p class="empty" id="empty" hidden>{T.empty}</p>
+      <p class="empty" id="empty" hidden={reviews.length > 0}>{T.empty}</p>
     </div>
   </section>
 </Base>

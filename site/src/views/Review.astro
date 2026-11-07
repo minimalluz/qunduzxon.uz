@@ -1,10 +1,12 @@
 ---
-import { Image } from 'astro:assets';
 import { render } from 'astro:content';
+import { toHTML } from '@portabletext/to-html';
+import Pic from '../components/Pic.astro';
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import ReviewCard from '../components/ReviewCard.astro';
-import { SITE as SITE_UZ, TG_URL, videoUrl } from '../config';
+import { SITE as SITE_UZ, TG_URL } from '../config';
+import { isRemote, picUrl } from '../lib/cms';
 import { SITE_L, UI, type Lang } from '../i18n';
 import { total, som, cuisineLabel, RATING_LABELS, type Review } from '../lib/reviews';
 
@@ -27,7 +29,10 @@ const T = {
 }[lang];
 const d = review.data;
 const tx = review.t;
-const { Content } = await render(review.entry);
+// Тана: файлдаги шарҳ — Markdown, Sanity'дагиси — Portable Text
+const Content = review.body.kind === 'md' ? (await render(review.body.entry)).Content : null;
+const bodyHtml = review.body.kind === 'pt' ? toHTML(review.body.blocks as Parameters<typeof toHTML>[0]) : '';
+const thumb = isRemote(d.cover) ? picUrl(d.cover, 1280) : new URL(d.cover.src, SITE.url).href;
 const score = total(review);
 const similar = reviews
   .filter((r) => r.id !== review.id)
@@ -49,7 +54,7 @@ const ld: Record<string, unknown>[] = [
 ];
 if (d.video) ld.push({
   '@context': 'https://schema.org', '@type': 'VideoObject', name: tx.title, description: tx.summary,
-  contentUrl: videoUrl(d.video), thumbnailUrl: new URL(d.cover.src, SITE.url).href, uploadDate: d.date.toISOString().slice(0, 10),
+  contentUrl: d.video, thumbnailUrl: thumb, uploadDate: d.date.toISOString().slice(0, 10),
 });
 ---
 <Base lang={lang} title={`${tx.title} — ${T.review}`} description={tx.summary} image={d.cover} crumbs={crumbs} jsonLd={ld} noindex={d.sample}>
@@ -66,18 +71,18 @@ if (d.video) ld.push({
     <div class="wrap layout">
       <div class="media">
         {d.video ? (
-          <div class:list={['vcard', { wide: !d.videoVertical }]} data-src={videoUrl(d.video)}>
-            <Image src={d.cover} alt={tx.title} widths={[480, 720]} sizes="(min-width:1000px) 420px, 100vw" loading="eager" />
+          <div class:list={['vcard', { wide: !d.videoVertical }]} data-src={d.video}>
+            <Pic src={d.cover} alt={tx.title} widths={[480, 720]} sizes="(min-width:1000px) 420px, 100vw" loading="eager" />
             <button class="play" type="button" aria-label={T.watch}><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span></button>
             <p>{T.videoReview}</p>
           </div>
         ) : (
-          <Image src={d.cover} alt={tx.title} widths={[480, 720]} sizes="(min-width:1000px) 420px, 100vw" loading="eager" class="cover" />
+          <Pic src={d.cover} alt={tx.title} widths={[480, 720]} sizes="(min-width:1000px) 420px, 100vw" loading="eager" class="cover" />
         )}
       </div>
 
       <div>
-        <div class="prose-q"><Content /></div>
+        <div class="prose-q">{Content ? <Content /> : <Fragment set:html={bodyHtml} />}</div>
 
         <div class="ratings">
           <h2>{T.ratings}</h2>
@@ -111,7 +116,7 @@ if (d.video) ld.push({
     <section class="sec" style="padding-top:0">
       <div class="wrap">
         <p class="eyebrow">{T.gallery}</p>
-        <div class="gal">{d.gallery.map((g) => <Image src={g} alt={tx.title} widths={[300, 500]} sizes="(min-width:720px) 25vw, 50vw" loading="lazy" />)}</div>
+        <div class="gal">{d.gallery.map((g) => <Pic src={g} alt={tx.title} widths={[300, 500]} sizes="(min-width:720px) 25vw, 50vw" loading="lazy" />)}</div>
       </div>
     </section>
   )}

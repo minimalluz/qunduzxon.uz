@@ -7,6 +7,7 @@ import VideoCard from './VideoCard.astro';
 import LeadForm from './LeadForm.astro';
 import { SITE as SITE_UZ, TG_URL, videoUrl } from '../config';
 import { SITE_L, type Lang } from '../i18n';
+import { cmsTestimonials, picUrl } from '../lib/cms';
 
 export interface Video { file: string; poster: ImageMetadata; title: string; tag?: string }
 interface Props {
@@ -33,18 +34,23 @@ const T = {
   uz: {
     crumb: 'Бошловчи', country: 'Ўзбекистон', eyebrow: 'Бошловчилик хизматлари', book: 'Санани банд қилиш',
     video: 'Видео', videoH: 'Тадбирлардан лавҳалар', gallery: 'Фотогалерея', how: 'Қандай ишлаймиз', steps: 'Ишлаш босқичлари',
-    fb: 'Фикрлар', fbH: 'Тўй эгаларининг фикрлари', fbNote: 'Отзивлар (исм, сана, қисқа фикр, расм) келгач шу ерда кўрсатилади.',
+    fb: 'Фикрлар', fbH: 'Тўй эгаларининг фикрлари', fbH2: 'Мижозларнинг фикрлари', fbNote: 'Отзивлар (исм, сана, қисқа фикр, расм) келгач шу ерда кўрсатилади.',
     faq: 'Саволлар', faqH: 'Кўп бериладиган саволлар', booking: 'Банд қилиш', check: 'Санани текширинг',
     lead: 'Сана ва телефон рақамингизни қолдиринг — тез орада боғланамиз.',
   },
   ru: {
     crumb: 'Ведущая', country: 'Узбекистан', eyebrow: 'Услуги ведущей', book: 'Забронировать дату',
     video: 'Видео', videoH: 'Фрагменты с мероприятий', gallery: 'Фотогалерея', how: 'Как мы работаем', steps: 'Этапы работы',
-    fb: 'Отзывы', fbH: 'Отзывы хозяев торжеств', fbNote: 'Отзывы (имя, дата, короткий отзыв, фото) появятся здесь, когда будут присланы.',
+    fb: 'Отзывы', fbH: 'Отзывы хозяев торжеств', fbH2: 'Отзывы клиентов', fbNote: 'Отзывы (имя, дата, короткий отзыв, фото) появятся здесь, когда будут присланы.',
     faq: 'Вопросы', faqH: 'Частые вопросы', booking: 'Бронирование', check: 'Проверьте дату',
     lead: 'Оставьте дату и номер телефона — мы скоро свяжемся с вами.',
   },
 }[lang];
+// Отзивлар админ панелдан: шу хизматга тегишли ва шу тилда матни борлари
+const testimonials = (await cmsTestimonials())
+  .filter((x) => x.service === p.slug)
+  .map((x) => ({ ...x, text: lang === 'ru' ? x.textRu : x.textUz }))
+  .filter((x) => x.text);
 const crumbs = [{ href: `/${lang}/boshlovchi/`, label: T.crumb }, { href: `/${lang}/boshlovchi/${p.slug}/`, label: p.title }];
 const url = new URL(`/${lang}/boshlovchi/${p.slug}/`, SITE.url).href;
 const ld = [
@@ -106,7 +112,25 @@ const ld = [
     </div>
   </section>
 
-  {p.testimonialsNote && (
+  {testimonials.length > 0 ? (
+    <section class="sec" style="padding-bottom:0">
+      <div class="wrap">
+        <p class="eyebrow">{T.fb}</p>
+        <h2>{p.slug === 'toy-va-tantanalar' ? T.fbH : T.fbH2}</h2>
+        <div class="tst">
+          {testimonials.map((x) => (
+            <figure>
+              <blockquote>{x.text}</blockquote>
+              <figcaption>
+                {x.photo && <img src={picUrl(x.photo, 120, '&h=120&fit=crop')} alt="" width="56" height="56" loading="lazy" />}
+                <span><b>{x.name}</b>{x.event && <small>{x.event}</small>}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : p.testimonialsNote && (
     <section class="sec" style="padding-bottom:0">
       <div class="wrap">
         <p class="eyebrow">{T.fb}</p>
@@ -148,4 +172,11 @@ const ld = [
   .gal { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; }
   .gal :global(img) { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 14px; }
   @media (min-width: 720px) { .gal { grid-template-columns: repeat(4, 1fr); } }
+  .tst { display: grid; gap: 14px; margin-top: 24px; }
+  @media (min-width: 720px) { .tst { grid-template-columns: repeat(2, 1fr); } }
+  .tst figure { background: #fff; border-radius: var(--r); padding: 22px; box-shadow: 0 1px 0 var(--color-line); display: flex; flex-direction: column; gap: 16px; }
+  .tst blockquote { font-family: var(--font-serif); font-size: 21px; line-height: 1.4; font-style: italic; flex: 1; }
+  .tst figcaption { display: flex; align-items: center; gap: 12px; }
+  .tst img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
+  .tst b { display: block; } .tst small { color: var(--color-muted); font-size: 13px; }
 </style>

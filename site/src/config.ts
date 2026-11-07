@@ -1,4 +1,9 @@
-// Сайтнинг умумий созламалари. Эга маълумот берганда шу ерни тўлдиринг.
+// Сайтнинг умумий созламалари.
+// Алоқа, тармоқлар ва рақамлар админ панелдаги «Сайт созламалари» дан олинади (Sanity уланган бўлса).
+// Админ панелда бўш қолган майдон учун шу ердаги қиймат ишлатилади.
+import { cmsSettings } from './lib/cms';
+
+const cms = (await cmsSettings()) ?? {};
 
 export const SITE = {
   name: 'Қундузхон Абдуллаева',
@@ -9,21 +14,24 @@ export const SITE = {
 };
 
 /** Telegram username (@ belgisiz), масалан 'qunduzxon'. Бўш бўлса, тугмалар t.me га олиб боради. */
-export const TG_USER = '';
+export const TG_USER: string = cms.telegram || '';
 export const TG_URL = TG_USER ? `https://t.me/${TG_USER}` : 'https://t.me/';
 
 /** Телефон рақами, масалан '+998901234567'. Бўш бўлса, «Қўнғироқ» тугмаси кўринмайди. */
-export const PHONE = '';
-export const PHONE_LABEL = PHONE || '+998 (__) ___-__-__';
+export const PHONE: string = cms.phone || '';
+/** +998901234567 → +998 (90) 123-45-67 */
+export const PHONE_LABEL = PHONE
+  ? PHONE.replace(/^\+998(\d{2})(\d{3})(\d{2})(\d{2})$/, '+998 ($1) $2-$3-$4')
+  : '+998 (__) ___-__-__';
 
-export const EMAIL = 'info@qunduzxon.uz';
+export const EMAIL = cms.email || 'info@qunduzxon.uz';
 
 export const SOCIAL = {
-  instagram: '',
+  instagram: cms.instagram || '',
   telegram: TG_URL,
-  youtube: '',
-  tiktok: '',
-  facebook: '',
+  youtube: cms.youtube || '',
+  tiktok: cms.tiktok || '',
+  facebook: cms.facebook || '',
 };
 
 /**
@@ -37,9 +45,9 @@ export const videoUrl = (file: string) => `${VIDEO_BASE.replace(/\/$/, '')}/${fi
 export const TURNSTILE_SITE_KEY: string = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
 
 export const STATS = [
-  { n: 16, suffix: '', label: 'йил эфирда' },
-  { n: 1000, suffix: '', label: 'га яқин тадбир' },
-  { n: 500, suffix: ' минг+', label: 'обуначи' },
+  { n: cms.years || 16, suffix: '', label: 'йил эфирда' },
+  { n: cms.events || 1000, suffix: '', label: 'га яқин тадбир' },
+  { n: cms.followers || 500, suffix: ' минг+', label: 'обуначи' },
 ];
 
 export const NAV = [

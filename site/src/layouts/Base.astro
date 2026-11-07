@@ -1,19 +1,19 @@
 ---
 import '../styles/global.css';
 import { getImage } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE, TG_URL, PHONE } from '../config';
 import { HTML_LANG, OG_LOCALE, SITE_L, UI, swapLang, type Lang } from '../i18n';
 import { allReviews } from '../lib/reviews';
+import { isRemote, picUrl, type Pic } from '../lib/cms';
 import defaultOg from '../assets/photos/hero.jpg';
 
 export interface Crumb { href: string; label: string }
 interface Props {
   title: string;
   description?: string;
-  image?: ImageMetadata;
+  image?: Pic;
   /** Нон ушоқлари (бош саҳифасиз). Берилса, BreadcrumbList JSON-LD ҳам чиқади. */
   crumbs?: Crumb[];
   jsonLd?: Record<string, unknown>[];
@@ -52,8 +52,9 @@ const ruUrl = new URL(ruPath, SITE.url).href;
 const altHref = hasTwin ? swapLang(path, other) : `/${other}/`;
 const canonical = new URL(path, SITE.url).href;
 const fullTitle = title === site.name ? `${site.name} — ${site.roles.join(', ').toLowerCase()}` : `${title} — ${site.name}`;
-const og = await getImage({ src: image, width: 1200, format: 'jpg', quality: 80 });
-const ogUrl = new URL(og.src, SITE.url).href;
+const ogUrl = isRemote(image)
+  ? picUrl(image, 1200, '&h=630&fit=crop&fm=jpg')
+  : new URL((await getImage({ src: image, width: 1200, format: 'jpg', quality: 80 })).src, SITE.url).href;
 
 const ld = [...jsonLd];
 if (crumbs?.length) {
