@@ -35,7 +35,7 @@
 Ҳозир сайт маълумотни файллардан олади. Sanity уланганда — админ панелдан. Улашгунча ҳеч нарса ўзгармайди.
 
 1. **Sanity лойиҳаси.** https://www.sanity.io/manage → Google билан кириш → **Create project** → номи `qunduzxon`, dataset `production` (public). **Project ID** ни кўчириб олинг (масалан `ab12cd34`).
-2. **Project ID ни ёзиш:** `studio/env.ts` даги `todo-project-id` ўрнига.
+2. **Project ID:** `rjdch0ch` (ёзилган — `studio/env.ts`).
 3. **Админ панелни жойлаш:**
    ```bash
    cd studio
@@ -47,7 +47,7 @@
 4. **Cloudflare Pages → Settings → Environment variables:**
    | Ном | Қиймат |
    | --- | --- |
-   | `SANITY_PROJECT_ID` | 1-қадамдаги Project ID |
+   | `SANITY_PROJECT_ID` | `rjdch0ch` |
    | `SANITY_DATASET` | `production` |
 
    Шундан кейин сайт созламалар, отзивлар ва ҳамкорларни Sanity'дан олади.
