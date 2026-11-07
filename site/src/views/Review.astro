@@ -1,6 +1,5 @@
 ---
 import { render } from 'astro:content';
-import { toHTML } from '@portabletext/to-html';
 import Pic from '../components/Pic.astro';
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
@@ -29,9 +28,7 @@ const T = {
 }[lang];
 const d = review.data;
 const tx = review.t;
-// Тана: файлдаги шарҳ — Markdown, Sanity'дагиси — Portable Text
-const Content = review.body.kind === 'md' ? (await render(review.body.entry)).Content : null;
-const bodyHtml = review.body.kind === 'pt' ? toHTML(review.body.blocks as Parameters<typeof toHTML>[0]) : '';
+const { Content } = await render(review.body.entry);
 const thumb = isRemote(d.cover) ? picUrl(d.cover, 1280) : new URL(d.cover.src, SITE.url).href;
 const score = total(review);
 const similar = reviews
@@ -82,7 +79,7 @@ if (d.video) ld.push({
       </div>
 
       <div>
-        <div class="prose-q">{Content ? <Content /> : <Fragment set:html={bodyHtml} />}</div>
+        <div class="prose-q"><Content /></div>
 
         <div class="ratings">
           <h2>{T.ratings}</h2>

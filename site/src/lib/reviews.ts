@@ -1,12 +1,12 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Lang } from '../i18n';
 import { videoUrl } from '../config';
-import { cmsEnabled, groq, PIC, type Pic, type RemotePic } from './cms';
+import type { Pic } from './cms';
 
 type Ratings = CollectionEntry<'reviews'>['data']['ratings'];
 
 /**
- * Тилга мос шарҳ. Манбаи — Sanity (CMS ёқилган бўлса) ёки `src/content/reviews*` даги файллар.
+ * Тилга мос шарҳ. Манбаи — `src/content/reviews*` даги файллар (админ панелда шарҳлар йўқ).
  * Баллар, расм ва бошқа умумий майдонлар — `data` да, тилга боғлиқ матнлар — `t` да, тана — `body` да.
  */
 export interface Review {
@@ -29,7 +29,7 @@ export interface Review {
     sample: boolean;
   };
   t: { title: string; summary: string; city: string; address: string };
-  body: { kind: 'md'; entry: CollectionEntry<'reviews'> | CollectionEntry<'reviewsRu'> } | { kind: 'pt'; blocks: unknown[] };
+  body: { kind: 'md'; entry: CollectionEntry<'reviews'> | CollectionEntry<'reviewsRu'> };
 }
 
 export const total = (r: Review) => {
@@ -56,41 +56,9 @@ async function fileReviews(lang: Lang): Promise<Review[]> {
   });
 }
 
-interface CmsReview {
-  slug: string; date: string; cuisine: string[]; averageCheck: number; ratings: Ratings; hours: string; mapUrl?: string;
-  sample?: boolean; videoVertical?: boolean; video?: string; videoName?: string; cover: RemotePic; gallery?: RemotePic[];
-  titleUz: string; summaryUz: string; cityUz: string; addressUz: string; bodyUz?: unknown[];
-  titleRu?: string; summaryRu?: string; cityRu?: string; addressRu?: string; bodyRu?: unknown[];
-}
-
-/** Sanity'даги шарҳлар. Рус тилида фақат русча номи ва хулосаси тўлдирилганлари чиқади. */
-async function cmsReviews(lang: Lang): Promise<Review[]> {
-  const list = await groq<CmsReview[]>(`*[_type == "review" && defined(slug.current) && defined(cover.asset)] | order(date desc){
-    "slug": slug.current, date, cuisine, averageCheck, ratings, hours, mapUrl, sample, videoVertical, videoName,
-    "video": video.asset->url, "cover": cover${PIC}, "gallery": gallery[defined(asset)]${PIC},
-    titleUz, summaryUz, cityUz, addressUz, bodyUz, titleRu, summaryRu, cityRu, addressRu, bodyRu
-  }`);
-  return list.flatMap((r) => {
-    if (lang === 'ru' && !(r.titleRu && r.summaryRu)) return [];
-    const ru = lang === 'ru';
-    return [{
-      id: r.slug,
-      data: {
-        title: r.titleUz, city: r.cityUz, date: new Date(r.date), cuisine: r.cuisine ?? [], averageCheck: r.averageCheck ?? 0,
-        ratings: r.ratings, cover: r.cover, gallery: r.gallery ?? [], video: r.video ?? (r.videoName ? videoUrl(r.videoName) : undefined),
-        videoVertical: r.videoVertical ?? true, mapUrl: r.mapUrl, hours: r.hours ?? '', sample: r.sample ?? false,
-      },
-      t: ru
-        ? { title: r.titleRu!, summary: r.summaryRu!, city: r.cityRu || r.cityUz, address: r.addressRu || r.addressUz }
-        : { title: r.titleUz, summary: r.summaryUz, city: r.cityUz, address: r.addressUz },
-      body: { kind: 'pt', blocks: (ru ? r.bodyRu : r.bodyUz) ?? [] },
-    }];
-  });
-}
-
 /** Шарҳлар рўйхати (янгилари олдинда) */
 export async function allReviews(lang: Lang = 'uz'): Promise<Review[]> {
-  return cmsEnabled ? cmsReviews(lang) : fileReviews(lang);
+  return fileReviews(lang);
 }
 
 /** Ошхона турлари (схемадаги қиймат ўзбекча; русчаси фақат кўрсатиш учун) */

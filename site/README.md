@@ -30,7 +30,7 @@ Environment variables:
 | `TELEGRAM_BOT_TOKEN` | **Secret** | @BotFather токени |
 | `TELEGRAM_CHAT_ID` | **Secret** | Аризалар келадиган гуруҳ ID |
 | `TURNSTILE_SECRET` | **Secret** | Turnstile secret key |
-| `SANITY_PROJECT_ID` | оддий | Sanity лойиҳаси ID. Берилса, шарҳлар, созламалар, отзивлар ва ҳамкорлар админ панелдан олинади |
+| `SANITY_PROJECT_ID` | оддий | Sanity лойиҳаси ID. Берилса, созламалар, отзивлар ва ҳамкорлар админ панелдан олинади |
 | `SANITY_DATASET` | оддий | `production` (берилмаса ҳам шу) |
 
 Аризалар `functions/api/lead.ts` (Pages Function) орқали Telegram'га боради.
@@ -57,8 +57,9 @@ Environment variables:
 
 Йўриқнома ва созлаш қадамлари: [`../studio/README.md`](../studio/README.md). Манзил: qunduzxon.uz/admin.
 
-- `SANITY_PROJECT_ID` **йўқ** бўлса — сайт ҳозиргидек файллардан ишлайди (`src/config.ts`, `src/content/reviews*`).
-- **Бор** бўлса — build пайтида Sanity'дан олинади (`src/lib/cms.ts`): шарҳлар (файлдагилар ўрнига), «Сайт созламалари» (бўш майдон учун `config.ts` даги қиймат), отзивлар (хизмат саҳифаларида), ҳамкорлар (бош саҳифада). Фақат эълон қилинган (Publish) ҳужжатлар.
+- `SANITY_PROJECT_ID` **йўқ** бўлса — сайт ҳозиргидек файллардан ишлайди (`src/config.ts`).
+- **Бор** бўлса — build пайтида Sanity'дан олинади (`src/lib/cms.ts`): «Сайт созламалари» (бўш майдон учун `config.ts` даги қиймат), отзивлар (хизмат саҳифаларида), ҳамкорлар (бош саҳифада). Фақат эълон қилинган (Publish) ҳужжатлар.
+- Фуд-блог шарҳлари админ панелда **йўқ** — доим `src/content/reviews*` файлларидан.
 - Sanity'га уланиб бўлмаса, build хато билан тўхтайди — эски сайт ишлаб тураверади.
 - Расмлар Sanity CDN'дан ўлчами ўзгартирилиб олинади (`src/components/Pic.astro`), фокус нуқтаси (hotspot) ҳисобга олинади.
 - Маҳаллий текширув учун mock-сервер: `SANITY_PROJECT_ID=test SANITY_API_URL=http://localhost:5555 npm run build`.

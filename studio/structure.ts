@@ -9,7 +9,6 @@ export const structure: StructureResolver = (S) =>
     .items([
       S.listItem().title('Сайт созламалари').id('settings').child(S.document().schemaType('settings').documentId('settings').title('Сайт созламалари')),
       S.divider(),
-      S.documentTypeListItem('review').title('Фуд-блог шарҳлари'),
       S.documentTypeListItem('testimonial').title('Отзывлар'),
       S.documentTypeListItem('partner').title('Ҳамкорлар'),
     ])
