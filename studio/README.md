@@ -36,14 +36,13 @@
 
 1. **Sanity лойиҳаси.** https://www.sanity.io/manage → Google билан кириш → **Create project** → номи `qunduzxon`, dataset `production` (public). **Project ID** ни кўчириб олинг (масалан `ab12cd34`).
 2. **Project ID:** `rjdch0ch` (ёзилган — `studio/env.ts`).
-3. **Админ панелни жойлаш:**
+3. **Админ панел жойланган:** https://qunduzxon.sanity.studio (2026-11-07). Ўзгаришлардан кейин қайта жойлаш:
    ```bash
    cd studio
    npm install
    npx sanity login
    npm run deploy
    ```
-   Манзил `https://qunduzxon.sanity.studio` бўлади. Бу ном банд бўлса, `sanity.cli.ts` даги `studioHost` ни ва `site/public/_redirects` даги `/admin` қаторини ўзгартиринг.
 4. **Cloudflare Pages → Settings → Environment variables:**
    | Ном | Қиймат |
    | --- | --- |
