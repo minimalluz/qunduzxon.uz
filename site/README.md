@@ -85,8 +85,8 @@ Environment variables:
 
 - [ ] Sanity лойиҳасини очиш ва улаш (`studio/README.md`, «Созлаш»)
 - [ ] Telegram username ва телефон рақам → админ панел «Сайт созламалари» (ёки `src/config.ts`)
-- [x] Instagram → `src/config.ts`
-- [ ] Бошқа ижтимоий тармоқ ҳаволалари (YouTube, Facebook; TikTok йўқ) → админ панел «Сайт созламалари»
+- [x] Instagram ва Facebook (`facebook.com/qunduzxon.abdullayeva`) → `src/config.ts`
+- [ ] YouTube ҳаволаси (TikTok йўқ) → админ панел «Сайт созламалари»
 - [ ] Ўз сўзлари билан биография, йиллар, мукофотлар → `src/views/About.astro` (иккала тилда)
 - [ ] Ҳақиқий фуд-блог шарҳлари (матн, баллар, манзил) → `src/content/reviews/` ва `src/content/reviews-ru/` (`sample: true` ни олиб ташлаш)
 - [ ] Ҳамкорлар логотиплари → бош саҳифа
