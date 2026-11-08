@@ -27,7 +27,7 @@ export const PHONE_LABEL = PHONE
 export const EMAIL = cms.email || 'info@qunduzxon.uz';
 
 export const SOCIAL = {
-  instagram: cms.instagram || '',
+  instagram: cms.instagram || 'https://www.instagram.com/qunduzxon_abdullayeva/',
   telegram: TG_URL,
   youtube: cms.youtube || '',
   tiktok: cms.tiktok || '',

@@ -85,7 +85,8 @@ Environment variables:
 
 - [ ] Sanity лойиҳасини очиш ва улаш (`studio/README.md`, «Созлаш»)
 - [ ] Telegram username ва телефон рақам → админ панел «Сайт созламалари» (ёки `src/config.ts`)
-- [ ] Ижтимоий тармоқ ҳаволалари → админ панел «Сайт созламалари»
+- [x] Instagram → `src/config.ts`
+- [ ] Бошқа ижтимоий тармоқ ҳаволалари (YouTube, TikTok, Facebook) → админ панел «Сайт созламалари»
 - [ ] Ўз сўзлари билан биография, йиллар, мукофотлар → `src/views/About.astro` (иккала тилда)
 - [ ] Ҳақиқий фуд-блог шарҳлари (матн, баллар, манзил) → `src/content/reviews/` ва `src/content/reviews-ru/` (`sample: true` ни олиб ташлаш)
 - [ ] Ҳамкорлар логотиплари → бош саҳифа
@@ -120,11 +121,12 @@ Environment variables:
 | --- | --- | --- |
 | «Севимли»да «Bollivud battl» рукнида чиқиш | [Sevimli TV Telegram](https://t.me/s/tvsevimli?after=24038) | Ўртача |
 | «Авторадио» радиобошловчиси деб кўрсатилган | Тадбир иштирокчилари рўйхати (api.society.uz, PDF; очилмади, санаси номаълум) | Паст |
-| Instagram эҳтимол `@qunduzhon_abdullayeva_fm_mtv` (Milliy TV постида белгиланган) | [Milliy.TV Telegram](https://t.me/s/milliytv?before=1495) | Тасдиқланмаган |
 | Севара Назархон билан қариндош: манбаларда «холаси» ҳам, «cousin» ҳам дейилган | [afisha.uz](https://www.afisha.uz/uz/celebrities/2025/08/20/qarindoshlar), [zamin.uz](https://zamin.uz/en/culture/158432-artistic-talent-passed-down-from-generation-to-generation-famous-relatives-in-uzbek-media.html) | Зид — эгасидан сўраш |
 
 Сайтга **қўйилмасин**:
 - «Миллий академик театрда 2003 йилдан адабий эмакдош» — тасдиқловчи манба топилмади, эҳтимол бошқа одам.
 - 2026 йилги давлат мукофотлари рўйхатларида номи кўринмади (рўйхатлар тўлиқ очиб текширилмади).
 
-Эгасидан сўраш: Instagram аккаунти, ҳозир қайси каналда ишлаши, Авторадио ва Hit FM'да ишлаганми, йиллари билан тўлиқ иш тарихи.
+Instagram: [@qunduzxon_abdullayeva](https://www.instagram.com/qunduzxon_abdullayeva/) — эгаси томондан берилган (2026-11-08), `src/config.ts` да. Milliy TV постидаги `@qunduzhon_abdullayeva_fm_mtv` бошқа (эски) аккаунт бўлиши мумкин.
+
+Эгасидан сўраш: ҳозир қайси каналда ишлаши, Авторадио ва Hit FM'да ишлаганми, йиллари билан тўлиқ иш тарихи.
