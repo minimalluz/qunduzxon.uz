@@ -104,9 +104,27 @@ Environment variables:
 | Факт | Манба |
 | --- | --- |
 | Теле ва радио бошловчи, нотиқ; бир қанча телеканал ва радиоларда ишлаган; «Севимли» телеканалида бошловчи (2025 йил август) | [afisha.uz, 2025-08-20](https://www.afisha.uz/uz/celebrities/2025/08/20/qarindoshlar) |
-| Фарғонада туғилиб ўсган | [zamin.uz, 2022](https://zamin.uz/uz/madaniyat/99217-arindosh-jekanini-kpchilik-bilmajdigan-zbek-sanatkorlari-foto.html) |
+| Фарғонада туғилиб ўсган | [zamin.uz, 2022](https://zamin.uz/uz/madaniyat/99217-arindosh-jekanini-kpchilik-bilmajdigan-zbek-sanatkorlari-foto.html); «Севимли»да ишлаши — яна [zamin.uz, 2025-08-25](https://zamin.uz/en/culture/158432-artistic-talent-passed-down-from-generation-to-generation-famous-relatives-in-uzbek-media.html) |
 | «Миллий» телеканали ва «Ёшлар» радиоси бошловчиси; ТДШУ журналистика талабаларига маҳорат дарси | [t.me/tsuos/6157](https://t.me/tsuos/6157), [t.me/tsuos/6159](https://t.me/tsuos/6159) |
 | Журналистика талабаларига телерадио бўйича сабоқ берувчилар қаторида | [uza.uz](https://uza.uz/en/posts/sozi-va-qalami-otkir-zhurnalistlarni-tayyorlash-bugungi-davr-talabi_601460) |
 | Hit FM ва 90.8 FM эфирлари | Расм ва видео файл номларидан |
 
 Шахсий ҳаёт ҳақидаги мақолалар (масалан, daryo.uz 2026-08-17 интервьюси) сайтга атайлаб киритилмади.
+
+### Сайтда ҳали ишлатилмаган топилмалар (2026-11-08 қидирув)
+
+Қидирув натижаларидан йиғилган, саҳифаларнинг ўзи очиб текширилмаган. Сайтга қўйишдан олдин эгаси тасдиқлаши керак.
+
+| Топилма | Манба | Ишончлилик |
+| --- | --- | --- |
+| Milliy TV'нинг «Ширчой» тонгги кўрсатувида бошловчилардан бири (Дилниёз билан); пост санаси номаълум | [Milliy.TV Telegram](https://t.me/s/milliytv?before=1495), [milliy.tv — Ширчой](http://milliy.tv/en/shirchoy.html) | Ўртача |
+| «Севимли»да «Bollivud battl» рукнида чиқиш | [Sevimli TV Telegram](https://t.me/s/tvsevimli?after=24038) | Ўртача |
+| «Авторадио» радиобошловчиси деб кўрсатилган | Тадбир иштирокчилари рўйхати (api.society.uz, PDF; очилмади, санаси номаълум) | Паст |
+| Instagram эҳтимол `@qunduzhon_abdullayeva_fm_mtv` (Milliy TV постида белгиланган) | [Milliy.TV Telegram](https://t.me/s/milliytv?before=1495) | Тасдиқланмаган |
+| Севара Назархон билан қариндош: манбаларда «холаси» ҳам, «cousin» ҳам дейилган | [afisha.uz](https://www.afisha.uz/uz/celebrities/2025/08/20/qarindoshlar), [zamin.uz](https://zamin.uz/en/culture/158432-artistic-talent-passed-down-from-generation-to-generation-famous-relatives-in-uzbek-media.html) | Зид — эгасидан сўраш |
+
+Сайтга **қўйилмасин**:
+- «Миллий академик театрда 2003 йилдан адабий эмакдош» — тасдиқловчи манба топилмади, эҳтимол бошқа одам.
+- 2026 йилги давлат мукофотлари рўйхатларида номи кўринмади (рўйхатлар тўлиқ очиб текширилмади).
+
+Эгасидан сўраш: Instagram аккаунти, ҳозир қайси каналда ишлаши, Авторадио ва Hit FM'да ишлаганми, йиллари билан тўлиқ иш тарихи.
