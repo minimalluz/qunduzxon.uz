@@ -30,7 +30,6 @@ export const SOCIAL = {
   instagram: cms.instagram || 'https://www.instagram.com/qunduzxon_abdullayeva/',
   telegram: TG_URL,
   youtube: cms.youtube || '',
-  tiktok: cms.tiktok || '',
   facebook: cms.facebook || '',
 };
 

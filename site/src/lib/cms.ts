@@ -47,11 +47,11 @@ export const picUrl = (p: RemotePic, w: number, extra = '') => `${p.url}?w=${Mat
 
 export interface CmsSettings {
   telegram?: string; phone?: string; email?: string;
-  instagram?: string; youtube?: string; tiktok?: string; facebook?: string;
+  instagram?: string; youtube?: string; facebook?: string;
   years?: number; events?: number; followers?: number;
 }
 export const cmsSettings = async () =>
-  cmsEnabled ? await groq<CmsSettings | null>(`*[_id == "settings"][0]{ telegram, phone, email, instagram, youtube, tiktok, facebook, years, events, followers }`) : null;
+  cmsEnabled ? await groq<CmsSettings | null>(`*[_id == "settings"][0]{ telegram, phone, email, instagram, youtube, facebook, years, events, followers }`) : null;
 
 export interface CmsPartner { name: string; url?: string; logo?: RemotePic }
 export const cmsPartners = async () =>

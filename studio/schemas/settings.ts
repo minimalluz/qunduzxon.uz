@@ -15,7 +15,6 @@ export const settings = defineType({
     defineField({ name: 'email', title: 'Email', type: 'string', group: 'contact', validation: (r) => r.email() }),
     defineField({ name: 'instagram', title: 'Instagram ҳаволаси', type: 'url', group: 'social' }),
     defineField({ name: 'youtube', title: 'YouTube ҳаволаси', type: 'url', group: 'social' }),
-    defineField({ name: 'tiktok', title: 'TikTok ҳаволаси', type: 'url', group: 'social' }),
     defineField({ name: 'facebook', title: 'Facebook ҳаволаси', type: 'url', group: 'social' }),
     defineField({ name: 'years', title: 'Эфирда неча йил', type: 'number', group: 'stats', initialValue: 16 }),
     defineField({ name: 'events', title: 'Тадбирлар сони (тахминан)', type: 'number', group: 'stats', initialValue: 1000 }),
