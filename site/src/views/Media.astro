@@ -12,7 +12,7 @@ const { lang } = Astro.props;
 const files = import.meta.glob<{ default: ImageMetadata }>('../assets/photos/*.jpg', { eager: true });
 const cat: Record<string, 'toy' | 'tv' | 'food' | 'life'> = {
   toy: 'toy', 'teal-dress': 'toy', 'green-gown': 'toy', 'event-green': 'toy', 'night-roses': 'toy', flowers: 'life',
-  radio: 'tv', studio: 'tv', mic: 'tv', orange: 'tv', 'yangi-hayot': 'tv', football: 'tv', hero: 'tv', 'black-red': 'tv', blazer: 'toy',
+  radio: 'tv', 'zamin-fm': 'tv', studio: 'tv', mic: 'tv', orange: 'tv', 'yangi-hayot': 'tv', football: 'tv', hero: 'tv', 'black-red': 'tv', blazer: 'toy',
   food: 'food', national: 'food', green: 'food', autumn: 'life', about: 'life', denim: 'life', 'blue-ikat': 'life', mountain: 'life',
 };
 const photos = await Promise.all(

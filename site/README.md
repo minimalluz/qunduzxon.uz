@@ -110,6 +110,7 @@ Environment variables:
 | Milliy TV'нинг «Ширчой» тонгги кўрсатуви бошловчиларидан бири (Дилниёз билан); пост санаси номаълум. Сайтга 2026-11-08 да қўшилди | [Milliy.TV Telegram](https://t.me/s/milliytv?before=1495), [milliy.tv — Ширчой](http://milliy.tv/en/shirchoy.html) |
 | Журналистика талабаларига телерадио бўйича сабоқ берувчилар қаторида | [uza.uz](https://uza.uz/en/posts/sozi-va-qalami-otkir-zhurnalistlarni-tayyorlash-bugungi-davr-talabi_601460) |
 | Hit FM ва 90.8 FM эфирлари | Расм ва видео файл номларидан |
+| Zamin FM радиоси бошловчиси (йили номаълум) | Эгаси томонидан берилган расм, 2026-11-08 (`src/assets/photos/zamin-fm.jpg`, Медиа галереяда) |
 
 Шахсий ҳаёт ҳақидаги мақолалар (масалан, daryo.uz 2026-08-17 интервьюси) сайтга атайлаб киритилмади.
 
