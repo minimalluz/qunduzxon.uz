@@ -1,0 +1,10 @@
+title: "Fanat Resort'да дам олиш"
+titleRu: "Отдых в Fanat Resort"
+category: lifestyle
+image: ../../assets/videos/fanat-resortda.jpg
+video:
+  url: /videos/fanat-resortda.mp4
+  vertical: true
+featured: false
+date: 
+order: 0

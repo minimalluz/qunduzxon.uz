@@ -1,0 +1,10 @@
+title: "Тонгги йўл"
+titleRu: "Утренняя дорога"
+category: lifestyle
+image: ../../assets/videos/tonggi-yol.jpg
+video:
+  url: /videos/tonggi-yol.mp4
+  vertical: true
+featured: false
+date: 2024-03-13
+order: 0

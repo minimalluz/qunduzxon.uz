@@ -1,0 +1,306 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import AudioDemos from '../../components/AudioDemos.astro';
+import VideoFacade from '../../components/VideoFacade.astro';
+import ReviewCard from '../../components/ReviewCard.astro';
+import Partners from '../../components/Partners.astro';
+import LeadForm from '../../components/LeadForm.astro';
+import { useT, href, langStaticPaths, type Lang } from '../../i18n/ui';
+import { getSettings, getReviews, getCases } from '../../lib/content';
+import { personSchema } from '../../lib/schema';
+import imgToy from '../../assets/media/toy-ziyofat.jpg';
+import imgTv from '../../assets/media/radio-908fm.jpg';
+import imgFood from '../../assets/reviews/kafe-2.jpg';
+
+export const getStaticPaths = langStaticPaths;
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const s = await getSettings();
+const reviews = (await getReviews()).slice(0, 3);
+const featured = (await getCases()).filter((c) => c.data.featured).slice(0, 4);
+
+const directions = [
+  { title: t('dir.toy.title'), text: t('dir.toy.text'), img: imgToy, path: '/boshlovchi/toy-va-tantanalar/', icon: 'rings' as const, accent: 'gold' },
+  { title: t('dir.tv.title'), text: t('dir.tv.text'), img: imgTv, path: '/boshlovchi/tv-radio-ovoz/', icon: 'mic' as const, accent: 'gold' },
+  { title: t('dir.food.title'), text: t('dir.food.text'), img: imgFood, path: '/food-blog/', icon: 'dish' as const, accent: 'food' },
+];
+
+const stats = [
+  { n: s.stats.years, suffix: '+', label: t('stats.years') },
+  { n: s.stats.events, suffix: '+', label: t('stats.events') },
+  { n: s.stats.restaurants, suffix: '+', label: t('stats.restaurants') },
+  { n: s.stats.followers, suffix: '+', label: t('stats.followers'), compact: true },
+];
+const hasReel = !!(s.showreel.webm || s.showreel.mp4);
+---
+
+<Base lang={lang} title={`${t('site.name')} — ${t('site.roles')}`} overlayHeader schema={[await personSchema(lang, Astro.site!)]}>
+  <!-- HERO -->
+  <section class="relative isolate flex min-h-[100svh] items-end overflow-hidden bg-stage text-on-stage">
+    <div class="absolute inset-0 -z-10 lg:left-[42%]">
+      <Picture
+        src={s.showreel.poster}
+        alt={t('site.name')}
+        formats={['avif', 'webp']}
+        widths={[480, 720, 960, 1280]}
+        sizes="(min-width: 1024px) 58vw, 100vw"
+        class="h-full w-full object-cover object-[50%_20%]"
+        loading="eager"
+        fetchpriority="high"
+        layout="none"
+      />
+      {
+        hasReel && (
+          <video
+            data-hero-video
+            class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-1000"
+            muted
+            loop
+            playsinline
+            preload="none"
+            aria-hidden="true"
+          >
+            {s.showreel.webm && <source data-src={s.showreel.webm} type="video/webm" />}
+            {s.showreel.mp4 && <source data-src={s.showreel.mp4} type="video/mp4" />}
+          </video>
+        )
+      }
+    </div>
+    <div class="absolute inset-0 -z-10 bg-gradient-to-t from-stage from-40% via-stage/75 via-60% to-stage/10 lg:bg-gradient-to-r lg:from-stage lg:from-40% lg:via-stage/70 lg:via-50% lg:to-transparent"></div>
+    {
+      hasReel && (
+        <button
+          type="button"
+          data-hero-sound
+          hidden
+          aria-pressed="false"
+          data-label-on={t('hero.sound.on')}
+          data-label-off={t('hero.sound.off')}
+          class="absolute top-20 right-4 z-10 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-black/45 px-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-black/60 sm:top-24 lg:top-auto lg:right-8 lg:bottom-10"
+        >
+          <svg data-icon-off width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z" /><path d="m23 9-6 6M17 9l6 6" /></svg>
+          <svg data-icon-on class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z" /><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14" /></svg>
+          <span data-sound-label>{t('hero.sound.on')}</span>
+        </button>
+      )
+    }
+
+    <div class="container-site pt-28 pb-12 sm:pb-16 lg:py-32">
+      <p class="eyebrow">{t('hero.eyebrow')}</p>
+      <h1 class="mt-4 max-w-3xl text-[3.25rem] leading-[0.95] sm:text-7xl lg:text-8xl">
+        {t('site.name')}
+        <span class="mt-5 block font-sans text-base leading-relaxed font-normal tracking-normal text-on-stage/80 sm:text-xl">
+          <span class="text-gold">—</span> {t('hero.role.tv')}<br />
+          <span class="text-gold">—</span> {t('hero.role.mc')}<br />
+          <span class="text-gold">—</span> {t('hero.role.food')}
+        </span>
+      </h1>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <a href={href(lang, '/band-qilish/')} class="btn btn-primary">{t('hero.cta.book')} <Icon name="arrow" size={18} /></a>
+        <a href={href(lang, '/hamkorlik/')} class="btn btn-light">{t('hero.cta.food')}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- YO'NALISHLAR -->
+  <section class="section">
+    <div class="container-site">
+      <SectionHead eyebrow="01" title={t('dir.title')} lead={t('dir.lead')} />
+      <ul class="grid gap-4 md:grid-cols-3 md:gap-6">
+        {
+          directions.map((d, i) => (
+            <li data-reveal style={`transition-delay:${i * 90}ms`}>
+              <a href={href(lang, d.path)} class="group relative isolate flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-3xl bg-stage p-6 text-white sm:p-8">
+                <Picture
+                  src={d.img}
+                  alt=""
+                  formats={['avif', 'webp']}
+                  widths={[400, 600, 800]}
+                  sizes="(min-width: 768px) 33vw, 92vw"
+                  class="absolute inset-0 -z-10 h-full w-full object-cover transition duration-700 ease-out-soft group-hover:scale-105"
+                  loading="lazy"
+                  layout="none"
+                />
+                <div class="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                <span class:list={['mb-auto grid size-12 place-items-center rounded-full backdrop-blur', d.accent === 'food' ? 'bg-food/90' : 'bg-white/15']}>
+                  <Icon name={d.icon} size={22} />
+                </span>
+                <h3 class="text-3xl sm:text-4xl">{d.title}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-white/80">{d.text}</p>
+                <span class="mt-5 inline-flex items-center gap-2 text-sm font-semibold">
+                  {t('more')} <Icon name="arrow" size={16} class="transition group-hover:translate-x-1" />
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- RAQAMLAR -->
+  <section class="border-y border-line bg-surface">
+    <div class="container-site grid grid-cols-2 lg:grid-cols-4">
+      {
+        stats.map((st, i) => (
+          <div class:list={['px-2 py-10 text-center sm:py-14', i % 2 === 1 && 'border-l border-line', i >= 2 && 'border-t border-line lg:border-t-0', i === 2 && 'lg:border-l']}>
+            <p class="font-display text-5xl text-gold sm:text-6xl">
+              <span data-count={st.n} data-suffix={st.suffix} data-compact={st.compact ? '' : undefined}>
+                {st.compact && st.n >= 1000 ? `${Math.round(st.n / 1000)}K` : st.n}{st.suffix}
+              </span>
+            </p>
+            <p class="mt-2 text-sm text-muted">{st.label}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- AUDIO -->
+  <section class="section">
+    <div class="container-site grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+      <SectionHead eyebrow="02" title={t('audio.title')} lead={t('audio.lead')} class="lg:sticky lg:top-28 lg:self-start" />
+      <AudioDemos lang={lang} />
+    </div>
+  </section>
+
+  <!-- VIDEO KEYSLAR -->
+  <section class="section bg-stage text-on-stage">
+    <div class="container-site">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <SectionHead eyebrow="03" title={t('cases.title')} class="!mb-0" />
+        <a href={href(lang, '/media/')} class="btn btn-light">{t('cases.all')} <Icon name="arrow" size={18} /></a>
+      </div>
+      <ul class="no-scrollbar -mx-4 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 sm:mt-14 lg:mx-0 lg:grid lg:grid-cols-4 lg:overflow-visible lg:px-0">
+        {
+          featured.map((c) => (
+            <li class="w-[72%] shrink-0 snap-center sm:w-[42%] lg:w-auto" data-reveal>
+              <VideoFacade
+                poster={c.data.image}
+                title={lang === 'ru' && c.data.titleRu ? c.data.titleRu : c.data.title}
+                caption={lang === 'ru' && c.data.titleRu ? c.data.titleRu : c.data.title}
+                src={c.data.video.url}
+                vertical
+                playLabel={t('video.play')}
+              />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- FUD-BLOG -->
+  <section class="section">
+    <div class="container-site">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <SectionHead eyebrow="04" title={t('food.latest')} class="!mb-0" />
+        <a href={href(lang, '/food-blog/')} class="btn btn-food">{t('food.all')} <Icon name="arrow" size={18} /></a>
+      </div>
+      <div class="mt-10 grid gap-5 sm:mt-14 sm:grid-cols-2 lg:grid-cols-3">
+        {reviews.map((r) => <ReviewCard lang={lang} review={r} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- HAMKORLAR -->
+  <section class="pb-16 sm:pb-24">
+    <div class="container-site">
+      <p class="eyebrow mb-6 text-center">{t('partners.title')}</p>
+    </div>
+    <Partners />
+  </section>
+
+  <!-- TEZKOR FORMA -->
+  <section class="section bg-surface-2" id="sana">
+    <div class="container-site">
+      <div class="card p-6 sm:p-10 lg:p-12" data-reveal>
+        <SectionHead eyebrow="05" title={t('quick.title')} lead={t('quick.lead')} class="!mb-8" />
+        <LeadForm lang={lang} variant="quick" />
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Showreel video: LCP (poster) dan keyin, faqat tejamkor rejim bo'lmasa yuklanadi.
+    // Brauzerlar ovozli autoplay'ni bloklaydi: avval ovoz bilan urinib ko'ramiz, bo'lmasa
+    // ovozsiz o'ynab, foydalanuvchining birinchi bosishida (yoki tugma orqali) ovozni yoqamiz.
+    const v = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+    const btn = document.querySelector<HTMLButtonElement>('[data-hero-sound]');
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    if (v && !conn?.saveData && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      let userMuted = false;
+      let inView = true;
+
+      const render = () => {
+        if (!btn) return;
+        const on = !v.muted;
+        btn.setAttribute('aria-pressed', String(on));
+        btn.querySelector('[data-icon-on]')!.classList.toggle('hidden', !on);
+        btn.querySelector('[data-icon-off]')!.classList.toggle('hidden', on);
+        btn.querySelector('[data-sound-label]')!.textContent = (on ? btn.dataset.labelOff : btn.dataset.labelOn) ?? '';
+      };
+      const setSound = (on: boolean, restart = false) => {
+        if (on && restart) v.currentTime = 0;
+        v.muted = !on;
+        void v.play().catch(() => {
+          v.muted = true;
+          void v.play().catch(() => {});
+          render();
+        });
+        render();
+      };
+      const onFirstGesture = (e: Event) => {
+        if (btn?.contains(e.target as Node)) return;
+        removeEventListener('pointerdown', onFirstGesture, true);
+        removeEventListener('keydown', onFirstGesture, true);
+        if (v.muted && !userMuted && inView) setSound(true, true);
+      };
+
+      const start = () => {
+        v.querySelectorAll<HTMLSourceElement>('source[data-src]').forEach((s) => (s.src = s.dataset.src!));
+        v.load();
+        v.addEventListener(
+          'playing',
+          () => {
+            v.classList.remove('opacity-0');
+            if (btn) btn.hidden = false;
+            render();
+          },
+          { once: true },
+        );
+        v.muted = false;
+        v.play().then(render, () => {
+          v.muted = true;
+          void v.play().catch(() => {});
+          render();
+          addEventListener('pointerdown', onFirstGesture, true);
+          addEventListener('keydown', onFirstGesture, true);
+        });
+      };
+
+      btn?.addEventListener('click', () => {
+        userMuted = !v.muted;
+        setSound(v.muted, v.muted);
+      });
+      // Ekrandan chiqsa yoki boshqa audio/video o'ynasa — ovozni o'chiramiz
+      new IntersectionObserver(([e]) => {
+        inView = e.isIntersecting;
+        if (!inView && !v.muted) setSound(false);
+      }).observe(v);
+      document.addEventListener(
+        'play',
+        (e) => {
+          if (e.target !== v && !v.muted) setSound(false);
+        },
+        true,
+      );
+
+      if (document.readyState === 'complete') setTimeout(start, 300);
+      else addEventListener('load', () => setTimeout(start, 300), { once: true });
+    }
+  </script>
+</Base>

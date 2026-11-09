@@ -1,0 +1,193 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ---------- Ranglar (light / dark) ---------- */
+:root {
+  --bg: #faf6f1;
+  --surface: #ffffff;
+  --surface-2: #f3ece4;
+  --ink: #1b1613;
+  --muted: #6c5f56;
+  --line: #e7dcd0;
+  --gold: #80592a;
+  --gold-soft: #f4e8d4;
+  --food: #a8380f;
+  --food-soft: #fde6d8;
+  --stage: #120f0d;
+  --on-stage: #f6eee5;
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg: #0f0d0c;
+  --surface: #181513;
+  --surface-2: #211d1a;
+  --ink: #f4ece3;
+  --muted: #ab9d90;
+  --line: #2f2925;
+  --gold: #d6b073;
+  --gold-soft: #2a2218;
+  --food: #ff7d48;
+  --food-soft: #2e1a12;
+  color-scheme: dark;
+}
+
+/* Qorong'i "sahna" bloklari (hero, footer, video) har doim yorqin aksentdan foydalanadi */
+.bg-stage {
+  --gold: #d6b073;
+  --gold-soft: #2a2218;
+  --food: #ff7d48;
+}
+.bg-stage .btn-primary {
+  color: var(--stage);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-food: var(--food);
+  --color-food-soft: var(--food-soft);
+  --color-stage: var(--stage);
+  --color-on-stage: var(--on-stage);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-head);
+}
+
+@theme {
+  --container-site: 76rem;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Asos ---------- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-bg font-sans text-ink antialiased;
+    font-feature-settings: 'kern';
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display text-balance;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-gold;
+  }
+  ::selection {
+    background: var(--gold);
+    color: var(--bg);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}
+
+/* ---------- Komponent klasslari ---------- */
+@layer components {
+  .container-site {
+    @apply mx-auto w-full max-w-site px-4 sm:px-6 lg:px-8;
+  }
+  .section {
+    @apply py-16 sm:py-20 lg:py-28;
+  }
+  .eyebrow {
+    @apply text-xs font-semibold tracking-[0.2em] text-gold uppercase;
+  }
+  .h-section {
+    @apply text-4xl sm:text-5xl lg:text-6xl;
+  }
+  .lead {
+    @apply max-w-2xl text-base leading-relaxed text-muted sm:text-lg;
+  }
+
+  .btn {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold tracking-wide transition duration-300 ease-out-soft select-none active:scale-[0.98];
+  }
+  .btn-primary {
+    @apply bg-gold text-white hover:brightness-110 dark:text-stage;
+  }
+  .btn-food {
+    @apply bg-food text-white hover:brightness-110;
+  }
+  .btn-ghost {
+    @apply border border-current/30 hover:border-current hover:bg-current/5;
+  }
+  .btn-light {
+    @apply border border-white/40 text-white backdrop-blur-sm hover:bg-white/10;
+  }
+
+  .card {
+    @apply rounded-3xl border border-line bg-surface;
+  }
+
+  .field {
+    @apply block w-full min-h-12 rounded-2xl border border-line bg-surface px-4 text-base text-ink placeholder:text-muted/70 transition focus:border-gold focus:ring-2 focus:ring-gold/25 focus:outline-none;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-muted;
+  }
+
+  .chip {
+    @apply inline-flex min-h-10 items-center rounded-full border border-line bg-surface px-4 text-sm font-medium whitespace-nowrap transition hover:border-gold;
+  }
+  .chip[aria-pressed='true'],
+  .chip.is-active {
+    @apply border-ink bg-ink text-bg;
+  }
+
+  .prose-site p {
+    @apply mb-5 text-base leading-[1.8] text-ink/85 sm:text-lg;
+  }
+}
+
+/* Faqat skroll animatsiyasi; JS yo'q bo'lsa kontent ko'rinadi */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.8s var(--ease-out-soft),
+      transform 0.8s var(--ease-out-soft);
+  }
+  .js [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee 40s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}

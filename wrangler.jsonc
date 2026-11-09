@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "qunduzxon-uz",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "directory": "./dist/client", "binding": "ASSETS" },
+  "observability": { "enabled": true },
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "qunduzxon.uz", "custom_domain": true },
+    { "pattern": "www.qunduzxon.uz", "custom_domain": true }
+  ]
+  // PUBLIC_* qiymatlar (Turnstile site key, Keystatic app slug) BUILD vaqtida kerak:
+  // .env fayli yoki Workers Builds → Build variables orqali beriladi.
+  // Maxfiy kalitlar (kodga YOZILMAYDI):
+  //   npx wrangler secret put TELEGRAM_BOT_TOKEN
+  //   npx wrangler secret put TELEGRAM_CHAT_ID      (bir nechta bo'lsa vergul bilan)
+  //   npx wrangler secret put TURNSTILE_SECRET_KEY
+  //   npx wrangler secret put KEYSTATIC_GITHUB_CLIENT_ID / KEYSTATIC_GITHUB_CLIENT_SECRET / KEYSTATIC_SECRET
+}

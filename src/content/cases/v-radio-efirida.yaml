@@ -1,0 +1,10 @@
+title: "Радио эфирида"
+titleRu: "В радиоэфире"
+category: tv
+image: ../../assets/videos/radio-efirida.jpg
+video:
+  url: /videos/radio-efirida.mp4
+  vertical: true
+featured: false
+date: 
+order: 0

@@ -1,0 +1,10 @@
+title: "Шоколадли ширинликлар"
+titleRu: "Шоколадные сладости"
+category: food
+image: ../../assets/videos/shokoladli-shirinliklar.jpg
+video:
+  url: /videos/shokoladli-shirinliklar.mp4
+  vertical: true
+featured: false
+date: 2024-06-25
+order: 0

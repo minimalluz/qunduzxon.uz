@@ -1,0 +1,10 @@
+title: "Оқ либос"
+titleRu: "Белое платье"
+category: lifestyle
+image: ../../assets/videos/oq-libos.jpg
+video:
+  url: /videos/oq-libos.mp4
+  vertical: true
+featured: false
+date: 2024-06-26
+order: 0

@@ -1,0 +1,10 @@
+title: "Эфирдаги суҳбат"
+titleRu: "Интервью в эфире"
+category: tv
+image: ../../assets/media/tv-intervyu.jpg
+video:
+  url:
+  vertical: false
+featured: false
+date: 2023-11-10
+order: 0

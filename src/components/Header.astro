@@ -1,0 +1,134 @@
+---
+import Icon from './Icon.astro';
+import { useT, href, switchLang, langs, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  overlay?: boolean;
+}
+const { lang, overlay = false } = Astro.props;
+const t = useT(lang);
+const path = Astro.url.pathname;
+const isActive = (p: string) => path.startsWith(href(lang, p));
+
+const services = [
+  { label: t('nav.toy'), path: '/boshlovchi/toy-va-tantanalar/' },
+  { label: t('nav.korporativ'), path: '/boshlovchi/korporativ-tadbirlar/' },
+  { label: t('nav.tv'), path: '/boshlovchi/tv-radio-ovoz/' },
+];
+const nav = [
+  { label: t('nav.about'), path: '/about/' },
+  { label: t('nav.services'), path: '/boshlovchi/', children: services },
+  { label: t('nav.food'), path: '/food-blog/' },
+  { label: t('nav.partner'), path: '/hamkorlik/' },
+  { label: t('nav.media'), path: '/media/' },
+];
+const mobileExtra = [{ label: t('nav.onam'), path: '/onam/' }];
+---
+
+<header
+  id="site-header"
+  data-overlay={overlay ? '' : undefined}
+  class="group/h fixed inset-x-0 top-0 z-50 transition-colors duration-300
+         bg-bg/85 text-ink backdrop-blur-xl border-b border-line/60
+         data-[overlay]:not-data-[scrolled]:bg-transparent data-[overlay]:not-data-[scrolled]:text-white data-[overlay]:not-data-[scrolled]:border-transparent data-[overlay]:not-data-[scrolled]:backdrop-blur-none"
+>
+  <div class="container-site flex h-16 items-center justify-between gap-4 sm:h-20">
+    <a href={href(lang)} class="font-display text-2xl leading-none font-semibold tracking-tight sm:text-[1.7rem]">
+      {lang === 'uz' ? 'Қундузхон' : 'Кундузхон'}<span class="text-gold">.</span>
+    </a>
+
+    <nav aria-label="Main" class="hidden lg:block">
+      <ul class="flex items-center gap-1 text-sm font-medium">
+        {nav.map((item) => (
+          <li class="group/dd relative">
+            <a
+              href={href(lang, item.path)}
+              class:list={['inline-flex items-center gap-1 rounded-full px-4 py-2 transition hover:bg-current/8', isActive(item.path) && 'text-gold']}
+              aria-current={isActive(item.path) ? 'page' : undefined}
+            >
+              {item.label}
+              {item.children && <Icon name="chevron" size={14} />}
+            </a>
+            {item.children && (
+              <ul class="invisible absolute top-full left-0 min-w-64 translate-y-2 rounded-2xl border border-line bg-surface p-2 text-ink opacity-0 shadow-xl transition group-focus-within/dd:visible group-focus-within/dd:translate-y-0 group-focus-within/dd:opacity-100 group-hover/dd:visible group-hover/dd:translate-y-0 group-hover/dd:opacity-100">
+                {item.children.map((c) => (
+                  <li><a href={href(lang, c.path)} class="block rounded-xl px-4 py-3 hover:bg-surface-2">{c.label}</a></li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-1 sm:gap-2">
+      <div class="flex items-center rounded-full border border-current/20 p-0.5 text-xs font-semibold" aria-label={t('nav.lang')}>
+        {langs.map((l) => (
+          <a
+            href={switchLang(path, l)}
+            hreflang={l}
+            lang={l}
+            class:list={['grid h-8 min-w-9 place-items-center rounded-full px-2 uppercase transition', l === lang ? 'bg-current/15' : 'opacity-60 hover:opacity-100']}
+            aria-current={l === lang ? 'true' : undefined}
+          >
+            {l}
+          </a>
+        ))}
+      </div>
+      <button type="button" data-theme-toggle class="grid size-11 place-items-center rounded-full transition hover:bg-current/10" aria-label={t('nav.theme')}>
+        <Icon name="moon" class="dark:hidden" />
+        <Icon name="sun" class="hidden dark:block" />
+      </button>
+      <a href={href(lang, '/band-qilish/')} class="btn btn-primary hidden !min-h-11 sm:inline-flex">{t('nav.book')}</a>
+      <button
+        type="button"
+        data-menu-open
+        class="grid size-11 place-items-center rounded-full transition hover:bg-current/10 lg:hidden"
+        aria-label={t('nav.menu')}
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+      >
+        <Icon name="menu" size={24} />
+      </button>
+    </div>
+  </div>
+</header>
+
+<div
+  id="mobile-menu"
+  hidden
+  class="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-stage text-on-stage lg:hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-label={t('nav.menu')}
+>
+  <div class="container-site flex h-16 shrink-0 items-center justify-between">
+    <span class="font-display text-2xl font-semibold">{lang === 'uz' ? 'Қундузхон' : 'Кундузхон'}<span class="text-gold">.</span></span>
+    <button type="button" data-menu-close class="grid size-11 place-items-center rounded-full hover:bg-white/10" aria-label={t('nav.close')}>
+      <Icon name="close" size={24} />
+    </button>
+  </div>
+  <nav class="container-site flex-1 py-6" aria-label="Mobile">
+    <ul class="space-y-1">
+      <li><a href={href(lang)} class="block py-3 font-display text-3xl">{t('nav.home')}</a></li>
+      {nav.map((item) => (
+        <li>
+          <a href={href(lang, item.path)} class="block py-3 font-display text-3xl">{item.label}</a>
+          {item.children && (
+            <ul class="mb-2 space-y-1 border-l border-white/15 pl-4">
+              {item.children.map((c) => (
+                <li><a href={href(lang, c.path)} class="block py-2.5 text-base text-on-stage/75">{c.label}</a></li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))}
+      {mobileExtra.map((item) => <li><a href={href(lang, item.path)} class="block py-3 font-display text-3xl">{item.label}</a></li>)}
+      <li><a href={href(lang, '/band-qilish/')} class="block py-3 font-display text-3xl">{t('nav.contact')}</a></li>
+    </ul>
+  </nav>
+  <div class="container-site shrink-0 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+    <a href={href(lang, '/band-qilish/')} class="btn btn-primary w-full">{t('nav.book')}</a>
+  </div>
+</div>

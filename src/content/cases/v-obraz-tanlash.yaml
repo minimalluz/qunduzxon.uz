@@ -1,0 +1,10 @@
+title: "Образ танлаш"
+titleRu: "Выбор образа"
+category: lifestyle
+image: ../../assets/videos/obraz-tanlash.jpg
+video:
+  url: /videos/obraz-tanlash.mp4
+  vertical: true
+featured: false
+date: 2024-06-26
+order: 0

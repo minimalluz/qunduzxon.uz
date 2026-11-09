@@ -1,0 +1,211 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import Base from '../../../layouts/Base.astro';
+import Icon from '../../../components/Icon.astro';
+import VideoFacade from '../../../components/VideoFacade.astro';
+import ReviewCard from '../../../components/ReviewCard.astro';
+import Lightbox from '../../../components/Lightbox.astro';
+import { useT, href, pick, paragraphs, formatNumber, langs, type Lang } from '../../../i18n/ui';
+import { getReviews, totalScore, type Review } from '../../../lib/content';
+import { reviewSchema, videoSchemas } from '../../../lib/schema';
+
+export async function getStaticPaths() {
+  const reviews = await getReviews();
+  return langs.flatMap((lang) =>
+    reviews.map((review) => ({ params: { lang, slug: review.id }, props: { review, all: reviews } })),
+  );
+}
+
+interface Props {
+  review: Review;
+  all: Review[];
+}
+const { review, all } = Astro.props;
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const d = review.data;
+const score = totalScore(d.rating);
+const body = paragraphs(pick(d.body, lang));
+const summary = pick(d.summary, lang);
+const title = pick(d.seo?.title, lang) || `${d.name} — ${t('food.review')} (${d.city})`;
+const description = pick(d.seo?.description, lang) || summary;
+
+const similar = all
+  .filter((r) => r.id !== review.id)
+  .sort((a, b) => Number(b.data.cuisine === d.cuisine) - Number(a.data.cuisine === d.cuisine))
+  .slice(0, 3);
+
+const ratingRows = [
+  ['food.rating.taste', d.rating.taste],
+  ['food.rating.service', d.rating.service],
+  ['food.rating.interior', d.rating.interior],
+  ['food.rating.value', d.rating.value],
+] as const;
+
+const galleryFull = await Promise.all(d.gallery.map((g) => getImage({ src: g, width: 1400, format: 'webp' })));
+const site = Astro.site!;
+const pageUrl = new URL(Astro.url.pathname, site).href;
+const shareText = encodeURIComponent(`${d.name} — ${summary}`);
+const share = [
+  ['telegram', `https://t.me/share/url?url=${encodeURIComponent(pageUrl)}&text=${shareText}`, 'Telegram'],
+  ['whatsapp', `https://wa.me/?text=${shareText}%20${encodeURIComponent(pageUrl)}`, 'WhatsApp'],
+  ['facebook', `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`, 'Facebook'],
+] as const;
+
+const schema = [
+  ...(await reviewSchema(lang, site, review)),
+  ...(await videoSchemas(site, [{ name: title, url: d.video.url, image: d.videoPoster ?? d.cover, date: d.publishedAt }])),
+];
+const dateFmt = new Intl.DateTimeFormat(lang === 'uz' ? 'uz-Cyrl-UZ' : 'ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<Base
+  lang={lang}
+  title={title}
+  description={description}
+  ogImage={d.cover}
+  ogType="article"
+  crumbs={[
+    { name: t('nav.food'), path: '/food-blog/' },
+    { name: d.name, path: `/food-blog/${review.id}/` },
+  ]}
+  schema={schema}
+>
+  <article class="container-site pt-8 pb-16 sm:pb-24">
+    <header class="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-end lg:gap-16">
+      <div>
+        <p class="flex flex-wrap items-center gap-2 text-sm text-muted">
+          <span class="rounded-full bg-food-soft px-3 py-1 font-medium text-food">{t(`cuisine.${d.cuisine}`)}</span>
+          <span>{[d.city, pick(d.district, lang)].filter(Boolean).join(', ')}</span>
+          <span aria-hidden="true">·</span>
+          <time datetime={d.publishedAt.toISOString()}>{dateFmt.format(d.publishedAt)}</time>
+        </p>
+        <h1 class="mt-4 text-5xl sm:text-6xl lg:text-7xl">{d.name}</h1>
+        <p class="lead mt-5">{summary}</p>
+      </div>
+      <div class="flex items-center gap-5 rounded-3xl bg-food p-6 text-white sm:p-8">
+        <p class="font-display text-7xl leading-none">{score.toFixed(1)}</p>
+        <div>
+          <p class="text-sm tracking-widest uppercase">{t('food.rating.total')}</p>
+          <p class="mt-1 flex gap-0.5" role="img" aria-label={`${score} / 10`}>
+            {Array.from({ length: 5 }, (_, i) => <Icon name="star" size={18} class={i < Math.round(score / 2) ? '' : 'opacity-30'} />)}
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <div class="mt-10 grid gap-10 lg:mt-14 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
+      <div class="min-w-0">
+        {
+          d.video.url ? (
+            <div class:list={[d.video.vertical && 'mx-auto max-w-sm']}>
+              <VideoFacade poster={d.videoPoster ?? d.cover} title={d.name} src={d.video.url} vertical={d.video.vertical} playLabel={t('video.play')} />
+            </div>
+          ) : (
+            <div class="mx-auto aspect-[4/5] max-w-xl overflow-hidden rounded-3xl bg-surface-2">
+              <Picture
+                src={d.cover}
+                alt={pick(d.coverAlt, lang) || d.name}
+                formats={['avif', 'webp']}
+                widths={[480, 720, 1000]}
+                sizes="(min-width:1024px) 50vw, 92vw"
+                class="h-full w-full object-cover"
+                loading="eager"
+                fetchpriority="high"
+                layout="none"
+              />
+            </div>
+          )
+        }
+
+        <div class="prose-site mt-10">
+          {body.map((p) => <p>{p}</p>)}
+        </div>
+
+        {
+          d.gallery.length > 0 && (
+            <section class="mt-12">
+              <h2 class="text-3xl sm:text-4xl">{t('food.gallery')}</h2>
+              <ul class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {d.gallery.map((g, i) => (
+                  <li>
+                    <a href={galleryFull[i].src} data-lightbox="review" data-caption={d.name} class="group block aspect-[3/4] overflow-hidden rounded-2xl bg-surface-2">
+                      <Picture src={g} alt={`${d.name} — ${i + 1}`} formats={['avif', 'webp']} widths={[300, 500]} sizes="(min-width:640px) 30vw, 46vw" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" layout="none" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+      </div>
+
+      <aside class="space-y-5 lg:sticky lg:top-28 lg:self-start">
+        <section class="card p-6">
+          <h2 class="text-2xl">{t('food.rating')}</h2>
+          <dl class="mt-5 space-y-4">
+            {
+              ratingRows.map(([k, v]) => (
+                <div class="grid grid-cols-[1fr_auto] gap-x-3 gap-y-2 text-sm">
+                  <dt>{t(k)}</dt>
+                  <dd class="font-semibold tabular-nums">{v}/10</dd>
+                  <dd class="col-span-2 h-2 overflow-hidden rounded-full bg-line" aria-hidden="true">
+                    <div class="h-full rounded-full bg-food" style={`width:${v * 10}%`} />
+                  </dd>
+                </div>
+              ))
+            }
+            <div class="flex items-center justify-between border-t border-line pt-4">
+              <dt class="font-semibold">{t('food.rating.total')}</dt>
+              <dd class="font-display text-3xl text-food">{score.toFixed(1)}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="card p-6">
+          <h2 class="text-2xl">{t('food.info')}</h2>
+          <ul class="mt-5 space-y-4 text-sm">
+            {pick(d.address, lang) && (
+              <li class="flex gap-3"><Icon name="map" size={18} class="mt-0.5 shrink-0 text-food" /><span><span class="block text-muted">{t('food.address')}</span>{pick(d.address, lang)}</span></li>
+            )}
+            {d.hours && (
+              <li class="flex gap-3"><Icon name="clock" size={18} class="mt-0.5 shrink-0 text-food" /><span><span class="block text-muted">{t('food.hours')}</span>{d.hours}</span></li>
+            )}
+            {d.avgCheck ? (
+              <li class="flex gap-3"><Icon name="wallet" size={18} class="mt-0.5 shrink-0 text-food" /><span><span class="block text-muted">{t('food.check')}</span>{formatNumber(d.avgCheck, lang)} {t('food.sum')}</span></li>
+            ) : null}
+            {d.phone && (
+              <li class="flex gap-3"><Icon name="phone" size={18} class="mt-0.5 shrink-0 text-food" /><a href={`tel:${d.phone.replace(/[^\d+]/g, '')}`}>{d.phone}</a></li>
+            )}
+          </ul>
+          {d.mapUrl && <a href={d.mapUrl} target="_blank" rel="noopener" class="btn btn-food mt-6 w-full"><Icon name="map" size={18} />{t('food.map')}</a>}
+        </section>
+
+        <section class="card p-6">
+          <h2 class="text-sm font-semibold tracking-widest text-muted uppercase">{t('food.share')}</h2>
+          <div class="mt-4 flex flex-wrap gap-2">
+            {share.map(([icon, url, label]) => (
+              <a href={url} target="_blank" rel="noopener" aria-label={label} class="grid size-11 place-items-center rounded-full border border-line transition hover:border-food hover:text-food"><Icon name={icon} /></a>
+            ))}
+            <button type="button" data-share hidden aria-label={t('food.share')} class="grid size-11 place-items-center rounded-full border border-line transition hover:border-food hover:text-food"><Icon name="share" /></button>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </article>
+
+  {
+    similar.length > 0 && (
+      <section class="section border-t border-line bg-surface-2">
+        <div class="container-site">
+          <h2 class="h-section mb-10">{t('food.similar')}</h2>
+          <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {similar.map((r) => <ReviewCard lang={lang} review={r} />)}
+          </div>
+          <a href={href(lang, '/food-blog/')} class="btn btn-food mt-10">{t('food.all')} <Icon name="arrow" size={18} /></a>
+        </div>
+      </section>
+    )
+  }
+  <Lightbox />
+</Base>

@@ -1,0 +1,10 @@
+title: "Hit FM студияси"
+titleRu: "Студия Hit FM"
+category: tv
+image: ../../assets/videos/hit-fm-studiyasi.jpg
+video:
+  url: /videos/hit-fm-studiyasi.mp4
+  vertical: true
+featured: false
+date: 2024-06-26
+order: 0

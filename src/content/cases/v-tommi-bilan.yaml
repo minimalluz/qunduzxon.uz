@@ -1,0 +1,10 @@
+title: "Томми билан"
+titleRu: "С Томми"
+category: lifestyle
+image: ../../assets/videos/tommi-bilan.jpg
+video:
+  url: /videos/tommi-bilan.mp4
+  vertical: true
+featured: false
+date: 2026-11-03
+order: 0

@@ -1,0 +1,10 @@
+title: "Салом!"
+titleRu: "Привет!"
+category: lifestyle
+image: ../../assets/videos/salom.jpg
+video:
+  url: /videos/salom.mp4
+  vertical: true
+featured: false
+date: 2024-06-25
+order: 0

@@ -1,0 +1,10 @@
+title: "Шоколадли торт"
+titleRu: "Шоколадный торт"
+category: food
+image: ../../assets/videos/shokoladli-tort.jpg
+video:
+  url: /videos/shokoladli-tort.mp4
+  vertical: true
+featured: true
+date: 2024-06-26
+order: 0

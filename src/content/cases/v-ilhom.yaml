@@ -1,0 +1,10 @@
+title: "Илҳом"
+titleRu: "Вдохновение"
+category: lifestyle
+image: ../../assets/videos/ilhom.jpg
+video:
+  url: /videos/ilhom.mp4
+  vertical: true
+featured: false
+date: 2024-06-25
+order: 0

@@ -1,0 +1,10 @@
+---
+interface Props {
+  data: Record<string, unknown>[];
+}
+const { data } = Astro.props;
+// "</script>" ni xavfsiz qilish
+const json = (d: unknown) => JSON.stringify(d).replace(/</g, '\\u003c');
+---
+
+{data.map((d) => <script type="application/ld+json" set:html={json(d)} />)}

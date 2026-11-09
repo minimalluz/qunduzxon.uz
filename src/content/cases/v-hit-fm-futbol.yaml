@@ -1,0 +1,10 @@
+title: "Hit FM: футбол кайфияти"
+titleRu: "Hit FM: футбольное настроение"
+category: tv
+image: ../../assets/videos/hit-fm-futbol.jpg
+video:
+  url: /videos/hit-fm-futbol.mp4
+  vertical: true
+featured: false
+date: 
+order: 0

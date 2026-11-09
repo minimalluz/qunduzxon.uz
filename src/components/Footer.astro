@@ -1,0 +1,73 @@
+---
+import Icon, { type IconName } from './Icon.astro';
+import { useT, href, type Lang } from '../i18n/ui';
+import { getSettings } from '../lib/content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang);
+const s = await getSettings();
+
+const socials = (
+  [
+    ['instagram', s.instagram, 'Instagram'],
+    ['telegram', s.telegram, 'Telegram'],
+    ['youtube', s.youtube, 'YouTube'],
+    ['tiktok', s.tiktok, 'TikTok'],
+    ['facebook', s.facebook, 'Facebook'],
+  ] as [IconName, string | null | undefined, string][]
+).filter(([, url]) => !!url);
+
+const links = [
+  [t('nav.about'), '/about/'],
+  [t('nav.toy'), '/boshlovchi/toy-va-tantanalar/'],
+  [t('nav.korporativ'), '/boshlovchi/korporativ-tadbirlar/'],
+  [t('nav.tv'), '/boshlovchi/tv-radio-ovoz/'],
+  [t('nav.food'), '/food-blog/'],
+  [t('nav.partner'), '/hamkorlik/'],
+  [t('nav.media'), '/media/'],
+  [t('nav.onam'), '/onam/'],
+  [t('nav.book'), '/band-qilish/'],
+];
+const tel = s.phone.replace(/[^\d+]/g, '');
+---
+
+<footer class="bg-stage text-on-stage">
+  <div class="container-site grid gap-12 py-16 sm:py-20 md:grid-cols-12">
+    <div class="md:col-span-5">
+      <p class="font-display text-3xl font-semibold">{t('site.name')}<span class="text-gold">.</span></p>
+      <p class="mt-4 max-w-sm text-sm leading-relaxed text-on-stage/70">{t('footer.bio')}</p>
+      <ul class="mt-6 flex flex-wrap gap-2">
+        {socials.map(([icon, url, label]) => (
+          <li>
+            <a href={url} target="_blank" rel="noopener me" aria-label={label} class="grid size-11 place-items-center rounded-full border border-white/15 transition hover:border-gold hover:text-gold">
+              <Icon name={icon} />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <nav class="md:col-span-4" aria-label={t('footer.links')}>
+      <p class="eyebrow">{t('footer.links')}</p>
+      <ul class="mt-4 grid grid-cols-2 gap-x-6 gap-y-2.5 text-sm text-on-stage/80">
+        {links.map(([label, p]) => <li><a href={href(lang, p)} class="hover:text-gold">{label}</a></li>)}
+      </ul>
+    </nav>
+    <div class="md:col-span-3">
+      <p class="eyebrow">{t('footer.contact')}</p>
+      <ul class="mt-4 space-y-3 text-sm">
+        <li><a href={`tel:${tel}`} class="inline-flex items-center gap-2 hover:text-gold"><Icon name="phone" size={16} />{s.phone}</a></li>
+        {s.email && <li><a href={`mailto:${s.email}`} class="inline-flex items-center gap-2 hover:text-gold"><Icon name="mail" size={16} />{s.email}</a></li>}
+        {s.telegram && <li><a href={s.telegram} target="_blank" rel="noopener" class="inline-flex items-center gap-2 hover:text-gold"><Icon name="telegram" size={16} />Telegram</a></li>}
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <div class="container-site flex flex-col gap-2 py-6 text-xs text-on-stage/55 sm:flex-row sm:items-center sm:justify-between">
+      <p>© {new Date().getFullYear()} {t('site.name')}. {t('footer.rights')}</p>
+      <a href={href(lang, '/privacy-policy/')} class="hover:text-gold">{t('footer.privacy')}</a>
+    </div>
+  </div>
+</footer>

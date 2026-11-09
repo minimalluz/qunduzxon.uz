@@ -1,0 +1,10 @@
+title: "Байрам муборак!"
+titleRu: "С праздником!"
+category: lifestyle
+image: ../../assets/videos/bayram-muborak.jpg
+video:
+  url: /videos/bayram-muborak.mp4
+  vertical: true
+featured: false
+date: 2024-06-26
+order: 0

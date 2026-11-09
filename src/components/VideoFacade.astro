@@ -1,0 +1,52 @@
+---
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Icon from './Icon.astro';
+
+/**
+ * Smart Facade: avval yengil WebP/AVIF prevyu + Play tugmasi.
+ * Pleyer (YouTube/Instagram/MP4/HLS) faqat bosilganda yuklanadi.
+ */
+interface Props {
+  poster: ImageMetadata;
+  title: string;
+  src?: string | null;
+  vertical?: boolean;
+  playLabel: string;
+  sizes?: string;
+  class?: string;
+  caption?: string;
+}
+const { poster, title, src, vertical = false, playLabel, sizes, class: cls, caption } = Astro.props;
+---
+
+<figure class:list={['group relative isolate overflow-hidden rounded-3xl bg-stage', vertical ? 'aspect-[9/16]' : 'aspect-video', cls]}>
+  <Picture
+    src={poster}
+    alt={title}
+    formats={['avif', 'webp']}
+    widths={vertical ? [360, 540, 720] : [480, 800, 1200]}
+    sizes={sizes ?? (vertical ? '(min-width: 1024px) 22rem, 70vw' : '(min-width: 1024px) 50vw, 100vw')}
+    class="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out-soft group-hover:scale-[1.03]"
+    loading="lazy"
+    decoding="async"
+    layout="none"
+  />
+  <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+  {
+    src ? (
+      <button type="button" data-video-facade data-src={src} aria-label={`${playLabel}: ${title}`} class="absolute inset-0 z-10 grid place-items-center">
+        <span class="grid size-16 place-items-center rounded-full bg-white/90 text-stage shadow-2xl transition duration-300 group-hover:scale-110 sm:size-20">
+          <Icon name="play" size={28} class="translate-x-0.5" />
+        </span>
+      </button>
+    ) : null
+  }
+  {
+    caption && (
+      <figcaption class="pointer-events-none absolute inset-x-0 bottom-0 z-20 p-5 text-white">
+        <span class="font-display text-xl leading-tight sm:text-2xl">{caption}</span>
+      </figcaption>
+    )
+  }
+</figure>

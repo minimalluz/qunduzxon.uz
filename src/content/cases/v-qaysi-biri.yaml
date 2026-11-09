@@ -1,0 +1,10 @@
+title: "Қайси бири? 1 ёки 2"
+titleRu: "Какой выбрать? 1 или 2"
+category: lifestyle
+image: ../../assets/videos/qaysi-biri.jpg
+video:
+  url: /videos/qaysi-biri.mp4
+  vertical: true
+featured: false
+date: 2024-06-25
+order: 0

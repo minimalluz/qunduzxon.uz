@@ -1,0 +1,10 @@
+title: "Шамол ҳақида"
+titleRu: "О ветре"
+category: lifestyle
+image: ../../assets/videos/shamol.jpg
+video:
+  url: /videos/shamol.mp4
+  vertical: true
+featured: false
+date: 
+order: 0
