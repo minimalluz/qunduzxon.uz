@@ -49,9 +49,10 @@ export interface CmsSettings {
   telegram?: string; phone?: string; email?: string;
   instagram?: string; youtube?: string; facebook?: string;
   years?: number; events?: number; followers?: number;
+  showDateCheck?: boolean;
 }
 export const cmsSettings = async () =>
-  cmsEnabled ? await groq<CmsSettings | null>(`*[_id == "settings"][0]{ telegram, phone, email, instagram, youtube, facebook, years, events, followers }`) : null;
+  cmsEnabled ? await groq<CmsSettings | null>(`*[_id == "settings"][0]{ telegram, phone, email, instagram, youtube, facebook, years, events, followers, showDateCheck }`) : null;
 
 export interface CmsPartner { name: string; url?: string; logo?: RemotePic }
 export const cmsPartners = async () =>

@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import VideoCard from '../components/VideoCard.astro';
 import ReviewCard from '../components/ReviewCard.astro';
 import LeadForm from '../components/LeadForm.astro';
-import { SITE as SITE_UZ, TG_URL, videoUrl, SOCIAL } from '../config';
+import { SITE as SITE_UZ, TG_URL, videoUrl, SOCIAL, SHOW_DATE_CHECK } from '../config';
 import { SITE_L, STATS_L, href, type Lang } from '../i18n';
 import { allReviews } from '../lib/reviews';
 import { cmsPartners, picUrl } from '../lib/cms';
@@ -215,15 +215,17 @@ const person = {
     </div>
   </section>
 
-  <!-- DATE CHECK -->
-  <section class="sec onair" id="sana">
-    <div class="wrap">
-      <p class="eyebrow">{T.date}</p>
-      <h2>{T.dateH}</h2>
-      <p class="lead">{T.dateLead}</p>
-      <LeadForm lang={lang} />
-    </div>
-  </section>
+  <!-- DATE CHECK (админ панелдан ёқилади: SHOW_DATE_CHECK) -->
+  {SHOW_DATE_CHECK && (
+    <section class="sec onair" id="sana">
+      <div class="wrap">
+        <p class="eyebrow">{T.date}</p>
+        <h2>{T.dateH}</h2>
+        <p class="lead">{T.dateLead}</p>
+        <LeadForm lang={lang} />
+      </div>
+    </section>
+  )}
 </Base>
 
 <style>

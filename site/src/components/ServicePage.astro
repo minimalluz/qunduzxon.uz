@@ -5,7 +5,7 @@ import Base from '../layouts/Base.astro';
 import PageHero from './PageHero.astro';
 import VideoCard from './VideoCard.astro';
 import LeadForm from './LeadForm.astro';
-import { SITE as SITE_UZ, TG_URL, videoUrl } from '../config';
+import { SITE as SITE_UZ, TG_URL, videoUrl, SHOW_DATE_CHECK } from '../config';
 import { SITE_L, type Lang } from '../i18n';
 import { cmsTestimonials, picUrl } from '../lib/cms';
 
@@ -150,14 +150,16 @@ const ld = [
     </div>
   </section>
 
-  <section class="sec onair">
-    <div class="wrap">
-      <p class="eyebrow">{T.booking}</p>
-      <h2>{T.check}</h2>
-      <p class="lead">{T.lead}</p>
-      <LeadForm lang={lang} direction={p.direction} />
-    </div>
-  </section>
+  {SHOW_DATE_CHECK && (
+    <section class="sec onair">
+      <div class="wrap">
+        <p class="eyebrow">{T.booking}</p>
+        <h2>{T.check}</h2>
+        <p class="lead">{T.lead}</p>
+        <LeadForm lang={lang} direction={p.direction} />
+      </div>
+    </section>
+  )}
 </Base>
 
 <style>

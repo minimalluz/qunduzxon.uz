@@ -24,6 +24,12 @@ export const PHONE_LABEL = PHONE
   ? PHONE.replace(/^\+998(\d{2})(\d{3})(\d{2})(\d{2})$/, '+998 ($1) $2-$3-$4')
   : '+998 (__) ___-__-__';
 
+/**
+ * «Бўш санани текшириш» формалари (бош саҳифа ва хизмат саҳифалари).
+ * Админ панел → Сайт созламалари → Бўлимлар. Белгиланмаган бўлса — ўчиқ.
+ */
+export const SHOW_DATE_CHECK: boolean = cms.showDateCheck === true;
+
 export const EMAIL = cms.email || 'info@qunduzxon.uz';
 
 export const SOCIAL = {
