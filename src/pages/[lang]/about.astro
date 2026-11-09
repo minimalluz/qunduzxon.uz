@@ -1,0 +1,116 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import Icon from '../../components/Icon.astro';
+import { useT, href, pick, paragraphs, langStaticPaths, type Lang } from '../../i18n/ui';
+import { getAbout } from '../../lib/content';
+import { personSchema } from '../../lib/schema';
+
+export const getStaticPaths = langStaticPaths;
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const about = await getAbout();
+const bio = paragraphs(pick(about.bio, lang));
+const awardsFull = await Promise.all(about.awards.map((a) => getImage({ src: a.image, width: 1400, format: 'webp' })));
+---
+
+<Base
+  lang={lang}
+  title={t('about.title')}
+  description={bio[0]?.slice(0, 160) || t('site.description')}
+  ogImage={about.portrait}
+  ogType="profile"
+  crumbs={[{ name: t('about.title'), path: '/about/' }]}
+  schema={[await personSchema(lang, Astro.site!)]}
+>
+  <section class="container-site grid gap-10 pt-8 pb-16 lg:grid-cols-[1fr_1.15fr] lg:gap-20 lg:pb-24">
+    <div class="relative lg:sticky lg:top-28 lg:self-start">
+      <div class="aspect-[4/5] overflow-hidden rounded-[2rem] bg-surface-2">
+        <Picture
+          src={about.portrait}
+          alt={t('site.name')}
+          formats={['avif', 'webp']}
+          widths={[400, 640, 900]}
+          sizes="(min-width: 1024px) 40vw, 92vw"
+          class="h-full w-full object-cover object-top"
+          loading="eager"
+          fetchpriority="high"
+          layout="none"
+        />
+      </div>
+    </div>
+    <div>
+      <p class="eyebrow">{t('about.lead')}</p>
+      <h1 class="mt-3 text-5xl sm:text-6xl lg:text-7xl">{t('site.name')}</h1>
+      <p class="mt-4 text-muted">{t('site.roles')}</p>
+      <div class="prose-site mt-10">
+        {bio.map((p, i) => <p class:list={[i === 0 && 'first-letter:float-left first-letter:mr-3 first-letter:font-display first-letter:text-7xl first-letter:leading-[0.8] first-letter:text-gold']}>{p}</p>)}
+      </div>
+      <a href={href(lang, '/band-qilish/')} class="btn btn-primary mt-4">{t('nav.book')} <Icon name="arrow" size={18} /></a>
+    </div>
+  </section>
+
+  {
+    about.timeline.length > 0 && (
+      <section class="section border-t border-line">
+        <div class="container-site">
+          <SectionHead title={t('about.timeline')} />
+          <ol class="relative grid gap-6 border-l border-line pl-6 sm:pl-10 md:grid-cols-2 md:border-l-0 md:pl-0 lg:grid-cols-5">
+            {about.timeline.map((it) => (
+              <li class="relative md:border-t md:border-line md:pt-8" data-reveal>
+                <span class="absolute top-2 -left-[1.95rem] size-3 rounded-full bg-gold sm:-left-[2.95rem] md:-top-1.5 md:left-0" />
+                {it.year && <p class="font-display text-4xl text-gold">{it.year}</p>}
+                <h3 class:list={['text-2xl', it.year && 'mt-2']}>{pick(it.title, lang)}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-muted">{pick(it.text, lang)}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    about.values.length > 0 && (
+      <section class="section bg-stage text-on-stage">
+        <div class="container-site">
+          <SectionHead title={t('about.values')} />
+          <ul class="grid gap-4 md:grid-cols-3">
+            {about.values.map((v, i) => (
+              <li class="rounded-3xl border border-white/10 p-6 sm:p-8" data-reveal>
+                <p class="font-display text-5xl text-gold">0{i + 1}</p>
+                <h3 class="mt-4 text-3xl">{pick(v.title, lang)}</h3>
+                <p class="mt-3 leading-relaxed text-on-stage/70">{pick(v.text, lang)}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    about.awards.length > 0 && (
+      <section class="section">
+        <div class="container-site">
+          <SectionHead title={t('about.awards')} />
+          <ul class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+            {about.awards.map((a, i) => (
+              <li data-reveal>
+                <a href={awardsFull[i].src} data-lightbox="awards" data-caption={pick(a.caption, lang)} class="group block">
+                  <div class="aspect-[3/4] overflow-hidden rounded-3xl bg-surface-2">
+                    <Picture src={a.image} alt={pick(a.caption, lang)} formats={['avif', 'webp']} widths={[300, 500, 700]} sizes="(min-width:1024px) 25vw, 46vw" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" layout="none" />
+                  </div>
+                  <p class="mt-3 text-sm text-muted">{pick(a.caption, lang)}</p>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+  <Lightbox />
+</Base>

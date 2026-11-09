@@ -1,0 +1,136 @@
+---
+import Icon from './Icon.astro';
+import { useT, href, type Lang } from '../i18n/ui';
+
+type Purpose = 'toy' | 'korporativ' | 'food' | 'tv';
+interface Props {
+  lang: Lang;
+  variant?: 'quick' | 'booking' | 'partner' | 'service';
+  purpose?: Purpose;
+  /** Qorong'i fonda (stage) joylashganda */
+  dark?: boolean;
+  id?: string;
+}
+const { lang, variant = 'booking', purpose = 'toy', dark = false, id } = Astro.props;
+const t = useT(lang);
+const uid = id ?? `f-${variant}`;
+const purposes: Purpose[] = ['toy', 'korporativ', 'food', 'tv'];
+const showName = variant !== 'quick';
+const showDate = variant !== 'partner';
+const showCompany = variant === 'partner';
+const showComment = variant === 'booking' || variant === 'partner' || variant === 'service';
+const today = new Date().toISOString().slice(0, 10);
+---
+
+<form
+  data-lead={variant}
+  id={uid}
+  novalidate
+  class:list={['grid gap-4', variant === 'quick' ? 'sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr_auto] lg:items-end' : 'sm:grid-cols-2', dark && 'form-dark']}
+  data-msg-success={t('form.success')}
+  data-msg-error={t('form.error')}
+  data-msg-sending={t('form.sending')}
+  data-msg-invalid-phone={t('form.invalidPhone')}
+>
+  {
+    variant === 'partner' ? (
+      <input type="hidden" name="purpose" value="food" />
+    ) : (
+      <div class:list={[variant !== 'quick' && 'sm:col-span-2']}>
+        <label class="label" for={`${uid}-purpose`}>{t('form.purpose')}</label>
+        {variant === 'quick' ? (
+          <select id={`${uid}-purpose`} name="purpose" class="field appearance-none">
+            {purposes.map((p) => <option value={p} selected={p === purpose}>{t(`form.purpose.${p}`)}</option>)}
+          </select>
+        ) : (
+          <div class="grid grid-cols-2 gap-2 sm:grid-cols-4" role="radiogroup" aria-label={t('form.purpose')}>
+            {purposes.map((p) => (
+              <label class="relative cursor-pointer">
+                <input type="radio" name="purpose" value={p} checked={p === purpose} class="peer sr-only" />
+                <span class="flex min-h-14 items-center justify-center rounded-2xl border border-line bg-surface px-3 text-center text-sm font-medium transition peer-checked:border-gold peer-checked:bg-gold-soft peer-checked:text-ink peer-focus-visible:ring-2 peer-focus-visible:ring-gold">
+                  {t(`form.purpose.${p}`)}
+                </span>
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  {
+    showDate && (
+      <div>
+        <label class="label" for={`${uid}-date`}>{t('form.date')}</label>
+        <input id={`${uid}-date`} type="date" name="date" min={today} class="field" required={variant === 'quick'} />
+      </div>
+    )
+  }
+
+  {
+    showName && (
+      <div>
+        <label class="label" for={`${uid}-name`}>{t('form.name')}</label>
+        <input id={`${uid}-name`} type="text" name="name" autocomplete="name" maxlength="100" class="field" required />
+      </div>
+    )
+  }
+
+  {
+    showCompany && (
+      <div>
+        <label class="label" for={`${uid}-company`}>{t('form.company')}</label>
+        <input id={`${uid}-company`} type="text" name="company" autocomplete="organization" maxlength="150" class="field" />
+      </div>
+    )
+  }
+
+  <div>
+    <label class="label" for={`${uid}-phone`}>{t('form.phone')}</label>
+    <input
+      id={`${uid}-phone`}
+      type="tel"
+      name="phone"
+      inputmode="tel"
+      autocomplete="tel"
+      placeholder="+998 (__) ___-__-__"
+      class="field"
+      required
+    />
+  </div>
+
+  {
+    showComment && (
+      <div class="sm:col-span-2">
+        <label class="label" for={`${uid}-comment`}>{t('form.comment')}</label>
+        <textarea id={`${uid}-comment`} name="comment" rows="3" maxlength="1500" class="field min-h-28 py-3"></textarea>
+      </div>
+    )
+  }
+
+  <!-- honeypot -->
+  <div class="hidden" aria-hidden="true">
+    <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+  </div>
+
+  <div class:list={['flex flex-col gap-3', variant !== 'quick' && 'sm:col-span-2']}>
+    <div data-turnstile class="empty:hidden"></div>
+    <button type="submit" class:list={['btn w-full', variant === 'partner' ? 'btn-food' : 'btn-primary', variant !== 'quick' && 'sm:w-auto sm:justify-self-start']}>
+      {variant === 'quick' ? t('form.check') : t('form.submit')}
+      <Icon name="arrow" size={18} />
+    </button>
+  </div>
+
+  <p
+    data-status
+    hidden
+    role="status"
+    aria-live="polite"
+    class="rounded-2xl px-4 py-3 text-sm data-[kind=success]:bg-emerald-500/12 data-[kind=success]:text-emerald-700 data-[kind=error]:bg-red-500/10 data-[kind=error]:text-red-700 dark:data-[kind=success]:text-emerald-300 dark:data-[kind=error]:text-red-300 sm:col-span-2 lg:col-span-full"
+  >
+  </p>
+
+  <p class="text-xs text-muted sm:col-span-2 lg:col-span-full">
+    {t('form.consent')} <a href={href(lang, '/privacy-policy/')} class="underline underline-offset-2">{t('form.consentLink')}</a>{t('form.consentEnd') === '.' ? '.' : ` ${t('form.consentEnd')}`}
+  </p>
+</form>

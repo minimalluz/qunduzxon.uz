@@ -1,0 +1,21 @@
+---
+import Icon from './Icon.astro';
+---
+
+<dialog
+  id="lightbox"
+  class="m-0 h-dvh max-h-none w-screen max-w-none bg-black/95 p-0 text-white backdrop:bg-black/80 open:grid open:place-items-center"
+  aria-label="Gallery"
+>
+  <img src="data:," alt="" class="max-h-[85dvh] max-w-[94vw] rounded-xl object-contain" />
+  <p data-lb-caption class="absolute inset-x-0 bottom-0 p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-center text-sm text-white/80"></p>
+  <button type="button" data-lb-close class="absolute top-3 right-3 grid size-12 place-items-center rounded-full bg-white/10 hover:bg-white/20" aria-label="Close">
+    <Icon name="close" size={24} />
+  </button>
+  <button type="button" data-lb-prev class="absolute top-1/2 left-2 grid size-12 -translate-y-1/2 rotate-180 place-items-center rounded-full bg-white/10 hover:bg-white/20" aria-label="Previous">
+    <Icon name="arrow" size={22} />
+  </button>
+  <button type="button" data-lb-next class="absolute top-1/2 right-2 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-white/10 hover:bg-white/20" aria-label="Next">
+    <Icon name="arrow" size={22} />
+  </button>
+</dialog>

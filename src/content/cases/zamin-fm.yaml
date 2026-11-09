@@ -1,0 +1,9 @@
+title: "Zamin FM радиосида"
+titleRu: "На радио Zamin FM"
+category: tv
+image: ../../assets/media/zamin-fm.jpg
+video:
+  url:
+  vertical: false
+featured: false
+order: 0

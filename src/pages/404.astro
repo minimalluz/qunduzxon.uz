@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import { useT, href } from '../i18n/ui';
+
+const t = useT('uz');
+const r = useT('ru');
+---
+
+<Base lang="uz" title={t('404.title')} noindex>
+  <section class="container-site grid min-h-[80svh] place-items-center py-32 text-center">
+    <div>
+      <p class="font-display text-[8rem] leading-none text-gold sm:text-[12rem]">404</p>
+      <h1 class="mt-4 text-4xl sm:text-5xl">{t('404.title')}</h1>
+      <p class="mt-3 text-muted">{t('404.text')}</p>
+      <p class="mt-1 text-sm text-muted" lang="ru">{r('404.text')}</p>
+      <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+        <a href={href('uz')} class="btn btn-primary">{t('404.home')}</a>
+        <a href={href('ru')} class="btn btn-ghost" lang="ru">{r('404.home')}</a>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,131 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import Icon from '../../components/Icon.astro';
+import LeadForm from '../../components/LeadForm.astro';
+import Partners from '../../components/Partners.astro';
+import { useT, langStaticPaths, type Lang } from '../../i18n/ui';
+import { getSettings } from '../../lib/content';
+import { serviceSchema } from '../../lib/schema';
+import heroImg from '../../assets/reviews/kafe-3.jpg';
+
+export const getStaticPaths = langStaticPaths;
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const s = await getSettings();
+const uz = lang === 'uz';
+
+const stats = [
+  { v: s.social.instagramFollowers, l: 'Instagram' },
+  { v: s.social.telegramFollowers, l: 'Telegram' },
+  { v: s.social.avgReach, l: uz ? 'Reels ўртача қамрови' : 'Средний охват Reels' },
+  { v: s.social.audienceWomen ? `${s.social.audienceWomen}%` : '', l: uz ? 'аудиторияда аёллар' : 'женщин в аудитории' },
+  { v: s.social.audienceAge, l: uz ? 'асосий ёш гуруҳи' : 'основной возраст' },
+  { v: s.social.audienceCity, l: uz ? 'асосий шаҳар' : 'основной город' },
+].filter((x) => x.v);
+
+const packages = uz
+  ? [
+      { name: 'Фуд-обзор + Reels', text: 'Ресторанга ташриф, вертикал видео-шарҳ, Stories ва сайтдаги шарҳ саҳифаси (SEO).', items: ['1 Reels / Shorts', '3–5 Stories', 'Сайтда шарҳ', 'Таомлар фотосурати'] },
+      { name: 'Очилиш + Медиа (Комбо)', text: 'Ресторан ёки дўкон тантанали очилишини олиб бориш ва уни ижтимоий тармоқларда ёритиш.', items: ['Тадбирни олиб бориш', 'Жонли Stories', 'Reels-ҳисобот', 'Сайтда шарҳ'], featured: true },
+      { name: 'Бренд амбассадорлиги', text: 'Узоқ муддатли ҳамкорлик: мунтазам контент, тадбирлар ва бренд юзи сифатида чиқишлар.', items: ['Ойлик контент-режа', 'Тадбирлар', 'Эксклюзивлик', 'Ҳисоботлар'] },
+    ]
+  : [
+      { name: 'Фуд-обзор + Reels', text: 'Визит в ресторан, вертикальный видеообзор, Stories и страница обзора на сайте (SEO).', items: ['1 Reels / Shorts', '3–5 Stories', 'Обзор на сайте', 'Фото блюд'] },
+      { name: 'Открытие + Медиа (Комбо)', text: 'Ведение торжественного открытия ресторана или магазина и освещение в соцсетях.', items: ['Ведение мероприятия', 'Live Stories', 'Reels-отчёт', 'Обзор на сайте'], featured: true },
+      { name: 'Амбассадор бренда', text: 'Долгосрочное сотрудничество: регулярный контент, мероприятия и выступления в роли лица бренда.', items: ['Контент-план на месяц', 'Мероприятия', 'Эксклюзивность', 'Отчёты'] },
+    ];
+
+const cases = uz
+  ? [
+      { n: '+40%', t: 'Обзордан кейинги ҳафтада бронлар (намуна кейс)' },
+      { n: '120K', t: 'Битта Reels қамрови (намуна кейс)' },
+      { n: '3×', t: 'Очилиш кунидаги меҳмонлар оқими (намуна кейс)' },
+    ]
+  : [
+      { n: '+40%', t: 'Рост бронирований за неделю после обзора (пример кейса)' },
+      { n: '120K', t: 'Охват одного Reels (пример кейса)' },
+      { n: '3×', t: 'Поток гостей в день открытия (пример кейса)' },
+    ];
+---
+
+<Base
+  lang={lang}
+  title={t('partner.title')}
+  description={t('partner.lead')}
+  ogImage={heroImg}
+  crumbs={[{ name: t('nav.partner'), path: '/hamkorlik/' }]}
+  schema={[serviceSchema(lang, Astro.site!, t('partner.title'), t('partner.lead'), '/hamkorlik/')]}
+>
+  <section class="container-site grid gap-10 pt-8 pb-16 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-16">
+    <div>
+      <p class="eyebrow !text-food">Media-Kit</p>
+      <h1 class="mt-3 text-5xl sm:text-6xl lg:text-7xl">{t('partner.title')}</h1>
+      <p class="lead mt-6">{t('partner.lead')}</p>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <a href="#request" class="btn btn-food">{t('partner.request')} <Icon name="arrow" size={18} /></a>
+        {s.mediaKitPdf && <a href={s.mediaKitPdf} download class="btn btn-ghost"><Icon name="download" size={18} />{t('partner.download')}</a>}
+      </div>
+    </div>
+    <div class="aspect-[4/5] overflow-hidden rounded-[2rem] bg-surface-2">
+      <Picture src={heroImg} alt="" formats={['avif', 'webp']} widths={[400, 640, 900]} sizes="(min-width:1024px) 40vw, 92vw" class="h-full w-full object-cover" loading="eager" fetchpriority="high" layout="none" />
+    </div>
+  </section>
+
+  <section class="section bg-stage text-on-stage">
+    <div class="container-site">
+      <SectionHead title={t('partner.stats')} />
+      <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 lg:grid-cols-3">
+        {
+          stats.map((st) => (
+            <div class="bg-stage p-6 sm:p-8">
+              <dd class="font-display text-4xl text-gold sm:text-5xl">{st.v}</dd>
+              <dt class="mt-2 text-sm text-on-stage/70">{st.l}</dt>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-site">
+      <SectionHead title={t('partner.packages')} />
+      <ul class="grid gap-5 lg:grid-cols-3">
+        {
+          packages.map((p, i) => (
+            <li class:list={['flex flex-col rounded-3xl border p-6 sm:p-8', p.featured ? 'border-food bg-food text-white' : 'border-line bg-surface']} data-reveal>
+              <p class:list={['font-display text-5xl', p.featured ? 'text-white/70' : 'text-food']}>0{i + 1}</p>
+              <h3 class="mt-4 text-3xl">{p.name}</h3>
+              <p class:list={['mt-3 leading-relaxed', p.featured ? 'text-white/85' : 'text-muted']}>{p.text}</p>
+              <ul class="mt-6 space-y-2.5 text-sm">
+                {p.items.map((it) => <li class="flex items-center gap-2"><Icon name="check" size={18} />{it}</li>)}
+              </ul>
+              <a href="#request" class:list={['btn mt-8', p.featured ? 'bg-white text-food' : 'btn-ghost']}>{t('partner.request')}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section bg-food-soft">
+    <div class="container-site">
+      <SectionHead title={t('partner.cases')} />
+      <ul class="grid gap-4 sm:grid-cols-3">
+        {cases.map((c) => <li class="card p-6 sm:p-8" data-reveal><p class="font-display text-6xl text-food">{c.n}</p><p class="mt-3 text-muted">{c.t}</p></li>)}
+      </ul>
+      <div class="mt-14"><Partners /></div>
+    </div>
+  </section>
+
+  <section class="section" id="request">
+    <div class="container-site max-w-4xl">
+      <div class="card p-6 sm:p-10">
+        <SectionHead title={t('partner.request')} class="!mb-8" />
+        <LeadForm lang={lang} variant="partner" purpose="food" />
+      </div>
+    </div>
+  </section>
+</Base>

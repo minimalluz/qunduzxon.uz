@@ -1,0 +1,55 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../../../layouts/Base.astro';
+import Icon from '../../../components/Icon.astro';
+import SectionHead from '../../../components/SectionHead.astro';
+import LeadForm from '../../../components/LeadForm.astro';
+import { useT, href, langStaticPaths, type Lang } from '../../../i18n/ui';
+import { services, type ServiceKey } from '../../../i18n/services';
+import { serviceSchema } from '../../../lib/schema';
+import imgToy from '../../../assets/media/toy-ziyofat.jpg';
+import imgKorp from '../../../assets/media/korporativ-sahna.jpg';
+import imgTv from '../../../assets/media/radio-studiya.jpg';
+
+export const getStaticPaths = langStaticPaths;
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const images: Record<ServiceKey, ImageMetadata> = { toy: imgToy, korporativ: imgKorp, tv: imgTv };
+const keys: ServiceKey[] = ['toy', 'korporativ', 'tv'];
+const schema = keys.map((k) => serviceSchema(lang, Astro.site!, services[k][lang].title, services[k][lang].description, services[k][lang].path));
+---
+
+<Base lang={lang} title={t('services.title')} description={t('services.lead')} crumbs={[{ name: t('nav.services'), path: '/boshlovchi/' }]} schema={schema}>
+  <section class="container-site pt-8 pb-16 sm:pb-24">
+    <SectionHead as="h1" eyebrow={t('nav.services')} title={t('services.title')} lead={t('services.lead')} />
+    <ul class="grid gap-5 md:grid-cols-3">
+      {
+        keys.map((k, i) => {
+          const c = services[k][lang];
+          return (
+            <li>
+              <a href={href(lang, c.path)} class="group card flex h-full flex-col overflow-hidden">
+                <div class="aspect-[4/5] overflow-hidden bg-surface-2">
+                  <Picture src={images[k]} alt={c.title} formats={['avif', 'webp']} widths={[400, 600, 800]} sizes="(min-width:768px) 33vw, 92vw" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading={i === 0 ? 'eager' : 'lazy'} layout="none" />
+                </div>
+                <div class="flex flex-1 flex-col p-6">
+                  <h2 class="text-3xl">{c.title}</h2>
+                  <p class="mt-3 flex-1 text-sm leading-relaxed text-muted">{c.lead}</p>
+                  <span class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-gold">{t('more')} <Icon name="arrow" size={16} class="transition group-hover:translate-x-1" /></span>
+                </div>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </section>
+  <section class="section bg-surface-2">
+    <div class="container-site max-w-4xl">
+      <div class="card p-6 sm:p-10">
+        <SectionHead title={t('quick.title')} lead={t('quick.lead')} class="!mb-8" />
+        <LeadForm lang={lang} variant="service" />
+      </div>
+    </div>
+  </section>
+</Base>

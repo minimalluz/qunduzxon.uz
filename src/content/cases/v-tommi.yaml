@@ -1,0 +1,10 @@
+title: "Томми"
+titleRu: "Томми"
+category: lifestyle
+image: ../../assets/videos/tommi.jpg
+video:
+  url: /videos/tommi.mp4
+  vertical: true
+featured: false
+date: 
+order: 0

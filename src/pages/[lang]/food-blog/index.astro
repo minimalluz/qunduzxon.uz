@@ -1,0 +1,114 @@
+---
+import Base from '../../../layouts/Base.astro';
+import SectionHead from '../../../components/SectionHead.astro';
+import ReviewCard from '../../../components/ReviewCard.astro';
+import Icon from '../../../components/Icon.astro';
+import { useT, href, pick, langStaticPaths, type Lang } from '../../../i18n/ui';
+import { getReviews } from '../../../lib/content';
+
+export const getStaticPaths = langStaticPaths;
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const reviews = await getReviews();
+const cuisines = ['milliy', 'evropa', 'turk', 'osiyo', 'fastfood', 'kofe'] as const;
+const places = [...new Set(reviews.flatMap((r) => [r.data.city, pick(r.data.district, lang)].filter(Boolean)))];
+
+const itemList = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: reviews.map((r, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    url: new URL(href(lang, `/food-blog/${r.id}/`), Astro.site).href,
+    name: r.data.name,
+  })),
+};
+---
+
+<Base lang={lang} title={t('food.title')} description={t('food.lead')} ogImage={reviews[0]?.data.cover} crumbs={[{ name: t('nav.food'), path: '/food-blog/' }]} schema={[itemList]}>
+  <section class="container-site pt-8 pb-16 sm:pb-24">
+    <SectionHead as="h1" eyebrow={t('nav.food')} title={t('food.title')} lead={t('food.lead')} />
+
+    <div class="sticky top-16 z-30 -mx-4 mb-8 space-y-3 border-b border-line bg-bg/90 px-4 py-4 backdrop-blur-xl sm:top-20 sm:mx-0 sm:rounded-3xl sm:border sm:px-5" id="food-filters">
+      <div class="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
+        <label class="relative block">
+          <span class="sr-only">{t('food.search')}</span>
+          <input type="search" data-f="q" placeholder={t('food.search')} class="field pl-11" autocomplete="off" />
+          <svg class="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+        </label>
+        <label>
+          <span class="sr-only">{t('food.city')}</span>
+          <select data-f="city" class="field appearance-none pr-10">
+            <option value="">{t('food.city')}: {t('food.all.cuisine')}</option>
+            {places.map((p) => <option value={p}>{p}</option>)}
+          </select>
+        </label>
+        <label>
+          <span class="sr-only">{t('food.sort')}</span>
+          <select data-f="sort" class="field appearance-none pr-10">
+            <option value="new">{t('food.sort.new')}</option>
+            <option value="rating">{t('food.sort.rating')}</option>
+            <option value="cheap">{t('food.sort.cheap')}</option>
+          </select>
+        </label>
+      </div>
+      <div class="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0" role="group" aria-label={t('food.cuisine')}>
+        <button type="button" class="chip" data-cuisine="" aria-pressed="true">{t('food.all.cuisine')}</button>
+        {cuisines.map((c) => <button type="button" class="chip" data-cuisine={c} aria-pressed="false">{t(`cuisine.${c}`)}</button>)}
+      </div>
+    </div>
+
+    <div id="food-grid" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {reviews.map((r) => <ReviewCard lang={lang} review={r} filterable />)}
+    </div>
+    <p id="food-empty" hidden class="py-16 text-center text-muted">{t('food.empty')}</p>
+    <noscript><p class="mt-6 text-sm text-muted"><Icon name="dish" size={16} class="inline" /> {reviews.length}</p></noscript>
+  </section>
+
+  <script>
+    const root = document.getElementById('food-filters')!;
+    const grid = document.getElementById('food-grid')!;
+    const empty = document.getElementById('food-empty')!;
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>('[data-review]'));
+    const q = root.querySelector<HTMLInputElement>('[data-f="q"]')!;
+    const city = root.querySelector<HTMLSelectElement>('[data-f="city"]')!;
+    const sort = root.querySelector<HTMLSelectElement>('[data-f="sort"]')!;
+    const chips = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-cuisine]'));
+    let cuisine = '';
+
+    // URL parametrlaridan holatni tiklash (?cuisine=milliy)
+    const params = new URLSearchParams(location.search);
+    cuisine = params.get('cuisine') ?? '';
+    q.value = params.get('q') ?? '';
+
+    function apply() {
+      const term = q.value.trim().toLowerCase();
+      const place = city.value;
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.cuisine === cuisine)));
+      let shown = 0;
+      for (const c of cards) {
+        const ok =
+          (!term || c.dataset.name!.includes(term)) &&
+          (!cuisine || c.dataset.cuisine === cuisine) &&
+          (!place || c.dataset.city!.split('|').includes(place));
+        c.hidden = !ok;
+        if (ok) shown++;
+      }
+      const key = sort.value;
+      const val = (c: HTMLElement) =>
+        key === 'rating' ? -Number(c.dataset.score) : key === 'cheap' ? Number(c.dataset.check) || Infinity : -Number(c.dataset.date);
+      [...cards].sort((a, b) => val(a) - val(b)).forEach((c) => grid.appendChild(c));
+      empty.hidden = shown > 0;
+
+      const p = new URLSearchParams();
+      if (cuisine) p.set('cuisine', cuisine);
+      if (q.value.trim()) p.set('q', q.value.trim());
+      history.replaceState(null, '', p.size ? `?${p}` : location.pathname);
+    }
+    chips.forEach((c) => c.addEventListener('click', () => ((cuisine = c.dataset.cuisine ?? ''), apply())));
+    q.addEventListener('input', apply);
+    city.addEventListener('change', apply);
+    sort.addEventListener('change', apply);
+    apply();
+  </script>
+</Base>

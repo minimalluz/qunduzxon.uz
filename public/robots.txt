@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /keystatic/
+Disallow: /api/
+Disallow: /vsrc/
+
+Sitemap: https://qunduzxon.uz/sitemap-index.xml

@@ -1,0 +1,10 @@
+title: "Яшил кайфият"
+titleRu: "Зелёное настроение"
+category: lifestyle
+image: ../../assets/videos/yashil-kayfiyat.jpg
+video:
+  url: /videos/yashil-kayfiyat.mp4
+  vertical: true
+featured: false
+date: 2024-06-25
+order: 0

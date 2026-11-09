@@ -1,0 +1,109 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import { getEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import VideoFacade from '../../components/VideoFacade.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import { useT, pick, paragraphs, langStaticPaths, type Lang } from '../../i18n/ui';
+
+export const getStaticPaths = langStaticPaths;
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const entry = await getEntry('onam', 'index');
+if (!entry) throw new Error('src/content/onam/index.yaml topilmadi');
+const d = entry.data;
+const story = paragraphs(pick(d.story, lang));
+const galleryFull = await Promise.all(d.gallery.map((g) => getImage({ src: g.image, width: 1400, format: 'webp' })));
+---
+
+<Base
+  lang={lang}
+  title={t('nav.onam')}
+  description={pick(d.intro, lang)}
+  ogImage={d.cover ?? undefined}
+  ogType="article"
+  crumbs={[{ name: t('nav.onam'), path: '/onam/' }]}
+>
+  <section class="container-site pt-8 pb-16 text-center sm:pb-24">
+    <p class="eyebrow">{t('site.name')}</p>
+    <h1 class="mt-4 text-6xl sm:text-7xl lg:text-8xl">{t('nav.onam')}</h1>
+    <p class="lead mx-auto mt-6">{pick(d.intro, lang)}</p>
+    {
+      d.values.length > 0 && (
+        <ul class="mt-8 flex flex-wrap justify-center gap-2">
+          {d.values.map((v) => <li class="rounded-full border border-gold/40 bg-gold-soft px-5 py-2 text-sm font-medium">{pick(v, lang)}</li>)}
+        </ul>
+      )
+    }
+    {
+      d.cover && (
+        <div class="mx-auto mt-12 aspect-[4/5] max-w-md overflow-hidden rounded-[2rem] bg-surface-2">
+          <Picture src={d.cover} alt={t('nav.onam')} formats={['avif', 'webp']} widths={[400, 640, 900]} sizes="(min-width: 640px) 28rem, 92vw" class="h-full w-full object-cover" loading="eager" fetchpriority="high" layout="none" />
+        </div>
+      )
+    }
+  </section>
+
+  {
+    pick(d.quote, lang) && (
+      <section class="bg-stage py-20 text-on-stage sm:py-28">
+        <blockquote class="container-site max-w-4xl text-center">
+          <span class="font-display text-7xl leading-none text-gold" aria-hidden="true">“</span>
+          <p class="font-display text-3xl leading-snug italic sm:text-5xl">{pick(d.quote, lang)}</p>
+        </blockquote>
+      </section>
+    )
+  }
+
+  <section class="section">
+    <div class="container-site max-w-3xl">
+      <SectionHead title={t('onam.about')} />
+      <div class="prose-site">{story.map((p) => <p>{p}</p>)}</div>
+    </div>
+  </section>
+
+  {
+    d.gallery.length > 0 && (
+      <section class="section bg-surface-2">
+        <div class="container-site">
+          <SectionHead title={t('onam.gallery')} lead={t('onam.galleryLead')} />
+          <ul class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+            {d.gallery.map((g, i) => (
+              <li data-reveal>
+                <a href={galleryFull[i].src} data-lightbox="onam" data-caption={pick(g.caption, lang)} class="group block aspect-[3/4] overflow-hidden rounded-3xl bg-surface">
+                  <Picture src={g.image} alt={pick(g.caption, lang) || t('nav.onam')} formats={['avif', 'webp']} widths={[300, 500, 700]} sizes="(min-width:1024px) 33vw, 46vw" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" layout="none" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    d.videos.length > 0 && (
+      <section class="section">
+        <div class="container-site">
+          <SectionHead title={t('onam.videos')} lead={t('onam.videosLead')} />
+          <ul class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+            {d.videos.map((v) => (
+              <li data-reveal>
+                <VideoFacade poster={v.poster} title={pick(v.title, lang)} caption={pick(v.title, lang)} src={v.url} vertical={v.vertical} playLabel={t('video.play')} sizes="(min-width:1024px) 25vw, 46vw" />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section bg-gold-soft text-center">
+    <div class="container-site max-w-3xl">
+      <h2 class="h-section">{pick(d.closing.title, lang)}</h2>
+      <p class="lead mx-auto mt-5">{pick(d.closing.text, lang)}</p>
+    </div>
+  </section>
+  <Lightbox />
+</Base>

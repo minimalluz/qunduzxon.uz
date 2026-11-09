@@ -1,0 +1,10 @@
+title: "Қизил гиламда"
+titleRu: "На красной дорожке"
+category: lifestyle
+image: ../../assets/videos/qizil-gilamda.jpg
+video:
+  url: /videos/qizil-gilamda.mp4
+  vertical: true
+featured: false
+date: 
+order: 0

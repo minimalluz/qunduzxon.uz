@@ -1,0 +1,10 @@
+title: "Радио студиясида"
+titleRu: "В радиостудии"
+category: tv
+image: ../../assets/videos/radio-studiyasida.jpg
+video:
+  url: /videos/radio-studiyasida.mp4
+  vertical: true
+featured: true
+date: 2024-06-26
+order: 0

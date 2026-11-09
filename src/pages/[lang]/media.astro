@@ -1,0 +1,71 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import VideoFacade from '../../components/VideoFacade.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import { useT, langStaticPaths, type Lang } from '../../i18n/ui';
+import { getCases, getReviews } from '../../lib/content';
+import { videoSchemas } from '../../lib/schema';
+
+export const getStaticPaths = langStaticPaths;
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+
+const cases = await getCases();
+const reviews = await getReviews();
+const items = [
+  ...cases.map((c) => ({
+    cat: c.data.category,
+    title: lang === 'ru' && c.data.titleRu ? c.data.titleRu : c.data.title,
+    image: c.data.image,
+    video: c.data.video,
+    date: c.data.date,
+  })),
+  ...reviews.map((r) => ({
+    cat: 'food' as const,
+    title: r.data.name,
+    image: r.data.videoPoster ?? r.data.cover,
+    video: r.data.video,
+    date: r.data.publishedAt,
+  })),
+];
+const full = await Promise.all(items.map((i) => getImage({ src: i.image, width: 1400, format: 'webp' })));
+const filters = [
+  ['all', t('media.all')],
+  ['toy', t('media.toy')],
+  ['tv', t('media.tv')],
+  ['korporativ', t('media.korporativ')],
+  ['food', t('media.food')],
+  ['lifestyle', t('media.lifestyle')],
+] as const;
+const schema = await videoSchemas(Astro.site!, items.map((i) => ({ name: i.title, url: i.video.url, image: i.image, date: i.date })));
+---
+
+<Base lang={lang} title={t('media.title')} description={t('media.lead')} crumbs={[{ name: t('nav.media'), path: '/media/' }]} schema={schema}>
+  <section class="container-site pt-8 pb-16 sm:pb-24">
+    <SectionHead as="h1" eyebrow={t('nav.media')} title={t('media.title')} lead={t('media.lead')} />
+
+    <div data-filter-group="media-grid" class="no-scrollbar -mx-4 mb-8 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0" role="group">
+      {filters.map(([k, label], i) => <button type="button" class="chip" data-filter={k} aria-pressed={i === 0 ? 'true' : 'false'}>{label}</button>)}
+    </div>
+
+    <ul id="media-grid" class="columns-2 gap-3 sm:gap-4 lg:columns-4">
+      {
+        items.map((it, i) => (
+          <li data-cat={it.cat} class="mb-3 break-inside-avoid sm:mb-4">
+            {it.video.url ? (
+              <VideoFacade poster={it.image} title={it.title} caption={it.title} src={it.video.url} vertical={it.video.vertical} playLabel={t('video.play')} sizes="(min-width:1024px) 25vw, 46vw" />
+            ) : (
+              <a href={full[i].src} data-lightbox="media" data-caption={it.title} class="group relative block overflow-hidden rounded-3xl bg-surface-2">
+                <Picture src={it.image} alt={it.title} formats={['avif', 'webp']} widths={[300, 500, 700]} sizes="(min-width:1024px) 25vw, 46vw" class="h-auto w-full transition duration-700 group-hover:scale-105" loading={i < 4 ? 'eager' : 'lazy'} layout="none" />
+                <span class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-10 text-sm font-medium text-white opacity-0 transition group-hover:opacity-100 max-lg:opacity-100">{it.title}</span>
+              </a>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+  <Lightbox />
+</Base>

@@ -1,0 +1,8 @@
+---
+import ServicePage from '../../../components/ServicePage.astro';
+import { langStaticPaths, type Lang } from '../../../i18n/ui';
+
+export const getStaticPaths = langStaticPaths;
+---
+
+<ServicePage lang={Astro.params.lang as Lang} service="tv" />

@@ -1,0 +1,23 @@
+---
+import { pick, type Lang } from '../i18n/ui';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  lang: Lang;
+  items: CollectionEntry<'testimonials'>[];
+}
+const { lang, items } = Astro.props;
+---
+
+<ul class="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3">
+  {
+    items.map(({ data }) => (
+      <li class="card flex w-[85%] shrink-0 snap-center flex-col p-6 sm:w-auto sm:p-8" data-reveal>
+        <span class="font-display text-6xl leading-none text-gold" aria-hidden="true">“</span>
+        <blockquote class="mt-2 flex-1 text-lg leading-relaxed">{pick(data.text, lang)}</blockquote>
+        <p class="mt-6 font-semibold">{data.name}</p>
+        <p class="text-sm text-muted">{pick(data.event, lang)}</p>
+      </li>
+    ))
+  }
+</ul>

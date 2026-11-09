@@ -1,0 +1,10 @@
+title: "Кайфият"
+titleRu: "Настроение"
+category: lifestyle
+image: ../../assets/videos/kayfiyat.jpg
+video:
+  url: /videos/kayfiyat.mp4
+  vertical: true
+featured: false
+date: 2024-06-26
+order: 0

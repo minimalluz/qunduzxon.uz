@@ -1,0 +1,64 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import { useT, href, pick, formatNumber, type Lang } from '../i18n/ui';
+import { totalScore, type Review } from '../lib/content';
+
+interface Props {
+  lang: Lang;
+  review: Review;
+  /** Katalog filtri uchun data-atributlar */
+  filterable?: boolean;
+}
+const { lang, review, filterable = false } = Astro.props;
+const t = useT(lang);
+const d = review.data;
+const score = totalScore(d.rating);
+const district = pick(d.district, lang);
+---
+
+<article
+  class="group relative flex flex-col overflow-hidden rounded-3xl border border-line bg-surface transition duration-500 ease-out-soft hover:-translate-y-1 hover:shadow-2xl hover:shadow-food/10"
+  data-review={filterable ? '' : undefined}
+  data-name={filterable ? `${d.name} ${district}`.toLowerCase() : undefined}
+  data-cuisine={filterable ? d.cuisine : undefined}
+  data-city={filterable ? `${d.city}|${district}` : undefined}
+  data-score={filterable ? score : undefined}
+  data-check={filterable ? (d.avgCheck ?? 0) : undefined}
+  data-date={filterable ? d.publishedAt.getTime() : undefined}
+>
+  <div class="relative aspect-[4/5] overflow-hidden bg-surface-2">
+    <Picture
+      src={d.cover}
+      alt={pick(d.coverAlt, lang) || d.name}
+      formats={['avif', 'webp']}
+      widths={[360, 540, 720]}
+      sizes="(min-width: 1024px) 24rem, (min-width: 640px) 45vw, 92vw"
+      class="h-full w-full object-cover transition duration-700 ease-out-soft group-hover:scale-105"
+      loading="lazy"
+      layout="none"
+    />
+    <span class="absolute top-4 left-4 rounded-full bg-black/55 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+      {t(`cuisine.${d.cuisine}`)}
+    </span>
+    <span class="absolute top-4 right-4 flex items-center gap-1 rounded-full bg-food px-3 py-1 text-sm font-bold text-white">
+      <Icon name="star" size={14} />
+      {score.toFixed(1)}
+    </span>
+  </div>
+  <div class="flex flex-1 flex-col p-5 sm:p-6">
+    <p class="text-xs text-muted">{[d.city, district].filter(Boolean).join(', ')}</p>
+    <h3 class="mt-1 text-2xl sm:text-[1.7rem]">
+      <a href={href(lang, `/food-blog/${review.id}/`)} class="after:absolute after:inset-0">{d.name}</a>
+    </h3>
+    <p class="mt-2 line-clamp-3 text-sm leading-relaxed text-muted">{pick(d.summary, lang)}</p>
+    {
+      d.avgCheck ? (
+        <p class="mt-auto flex items-center gap-2 pt-4 text-sm font-medium">
+          <Icon name="wallet" size={16} class="text-food" />
+          {t('food.check')}: {formatNumber(d.avgCheck, lang)} {t('food.sum')}
+        </p>
+      ) : null
+    }
+  </div>
+</article>

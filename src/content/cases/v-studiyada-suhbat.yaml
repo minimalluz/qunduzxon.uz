@@ -1,0 +1,10 @@
+title: "Студияда суҳбат"
+titleRu: "Беседа в студии"
+category: tv
+image: ../../assets/videos/studiyada-suhbat.jpg
+video:
+  url: /videos/studiyada-suhbat.mp4
+  vertical: true
+featured: false
+date: 2024-04-08
+order: 0

@@ -1,0 +1,10 @@
+title: "Кечки сайр"
+titleRu: "Вечерняя прогулка"
+category: lifestyle
+image: ../../assets/media/kechki-sayr.jpg
+video:
+  url:
+  vertical: true
+featured: false
+date: 2026-09-28
+order: 0

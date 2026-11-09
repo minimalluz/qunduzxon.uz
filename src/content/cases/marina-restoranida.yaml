@@ -1,0 +1,10 @@
+title: "Marina ресторанида"
+titleRu: "В ресторане Marina"
+category: food
+image: ../../assets/media/marina-restoranida.jpg
+video:
+  url:
+  vertical: true
+featured: false
+date: 2026-09-25
+order: 0

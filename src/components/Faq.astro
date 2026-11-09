@@ -1,0 +1,26 @@
+---
+import Icon from './Icon.astro';
+import { pick, type Lang } from '../i18n/ui';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  lang: Lang;
+  items: CollectionEntry<'faq'>[];
+}
+const { lang, items } = Astro.props;
+const q = (d: CollectionEntry<'faq'>['data']) => (lang === 'ru' && d.questionRu ? d.questionRu : d.question);
+---
+
+<div class="divide-y divide-line border-y border-line">
+  {
+    items.map(({ data }) => (
+      <details class="group py-2" name="faq">
+        <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 text-lg font-medium [&::-webkit-details-marker]:hidden">
+          {q(data)}
+          <Icon name="chevron" size={20} class="shrink-0 transition group-open:rotate-180" />
+        </summary>
+        <p class="pb-5 leading-relaxed text-muted">{pick(data.answer, lang)}</p>
+      </details>
+    ))
+  }
+</div>

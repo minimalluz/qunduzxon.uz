@@ -1,0 +1,10 @@
+title: "Эфирдан саволлар"
+titleRu: "Вопросы из эфира"
+category: tv
+image: ../../assets/videos/efirdan-savollar.jpg
+video:
+  url: /videos/efirdan-savollar.mp4
+  vertical: true
+featured: true
+date: 2024-06-25
+order: 0

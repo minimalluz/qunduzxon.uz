@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import Icon from '../../components/Icon.astro';
+import LeadForm from '../../components/LeadForm.astro';
+import { useT, langStaticPaths, type Lang } from '../../i18n/ui';
+import { getSettings } from '../../lib/content';
+
+export const getStaticPaths = langStaticPaths;
+const lang = Astro.params.lang as Lang;
+const t = useT(lang);
+const s = await getSettings();
+const tel = (p: string) => p.replace(/[^\d+]/g, '');
+
+const contacts = [
+  s.adminPhone && { icon: 'phone' as const, label: t('book.admin'), value: s.adminPhone, href: `tel:${tel(s.adminPhone)}` },
+  s.telegram && { icon: 'telegram' as const, label: 'Telegram', value: s.telegram.replace(/^https?:\/\/t\.me\//, '@'), href: s.telegram },
+  s.instagram && { icon: 'instagram' as const, label: 'Instagram', value: s.instagram.replace(/^https?:\/\/(www\.)?instagram\.com\//, '@').replace(/\/$/, ''), href: s.instagram },
+  s.email && { icon: 'mail' as const, label: 'Email', value: s.email, href: `mailto:${s.email}` },
+].filter(Boolean) as { icon: 'phone' | 'telegram' | 'instagram' | 'mail'; label: string; value: string; href: string }[];
+
+const contactSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: t('book.title'),
+  mainEntity: {
+    '@id': new URL('/#person', Astro.site).href,
+    '@type': 'Person',
+    name: t('site.name'),
+    telephone: s.phone,
+    email: s.email,
+  },
+};
+---
+
+<Base lang={lang} title={t('book.title')} description={t('book.lead')} crumbs={[{ name: t('nav.book'), path: '/band-qilish/' }]} schema={[contactSchema]}>
+  <section class="container-site grid gap-10 pt-8 pb-16 sm:pb-24 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
+    <div>
+      <SectionHead as="h1" title={t('book.title')} lead={t('book.lead')} class="!mb-8" />
+      <div class="card p-5 sm:p-8">
+        <LeadForm lang={lang} variant="booking" />
+      </div>
+    </div>
+    <aside class="lg:pt-40">
+      <h2 class="text-3xl">{t('book.direct')}</h2>
+      <ul class="mt-6 space-y-3">
+        {
+          contacts.map((c) => (
+            <li>
+              <a href={c.href} target={c.href.startsWith('http') ? '_blank' : undefined} rel="noopener" class="card flex items-center gap-4 p-4 transition hover:border-gold">
+                <span class="grid size-12 shrink-0 place-items-center rounded-full bg-gold-soft text-gold"><Icon name={c.icon} /></span>
+                <span class="min-w-0">
+                  <span class="block text-xs text-muted">{c.label}</span>
+                  <span class="block truncate font-medium">{c.value}</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </aside>
+  </section>
+</Base>

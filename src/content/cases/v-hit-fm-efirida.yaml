@@ -1,0 +1,10 @@
+title: "Hit FM эфирида"
+titleRu: "В эфире Hit FM"
+category: tv
+image: ../../assets/videos/hit-fm-efirida.jpg
+video:
+  url: /videos/hit-fm-efirida.mp4
+  vertical: true
+featured: true
+date: 2024-06-26
+order: 0

@@ -1,0 +1,10 @@
+title: "Тантанали кеча"
+titleRu: "Торжественный вечер"
+category: toy
+image: ../../assets/media/obraz.jpg
+video:
+  url:
+  vertical: false
+featured: false
+date: 2024-01-20
+order: 0
