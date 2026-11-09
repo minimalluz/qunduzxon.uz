@@ -22,8 +22,8 @@ const nav = [
   { label: t('nav.food'), path: '/food-blog/' },
   { label: t('nav.partner'), path: '/hamkorlik/' },
   { label: t('nav.media'), path: '/media/' },
+  { label: t('nav.onam'), path: '/onam/' },
 ];
-const mobileExtra = [{ label: t('nav.onam'), path: '/onam/' }];
 ---
 
 <header
@@ -38,13 +38,13 @@ const mobileExtra = [{ label: t('nav.onam'), path: '/onam/' }];
       {lang === 'uz' ? 'Қундузхон' : 'Кундузхон'}<span class="text-gold">.</span>
     </a>
 
-    <nav aria-label="Main" class="hidden lg:block">
+    <nav aria-label="Main" class="hidden xl:block">
       <ul class="flex items-center gap-1 text-sm font-medium">
         {nav.map((item) => (
           <li class="group/dd relative">
             <a
               href={href(lang, item.path)}
-              class:list={['inline-flex items-center gap-1 rounded-full px-4 py-2 transition hover:bg-current/8', isActive(item.path) && 'text-gold']}
+              class:list={['inline-flex items-center gap-1 rounded-full px-3 py-2 whitespace-nowrap transition hover:bg-current/8 2xl:px-4', isActive(item.path) && 'text-gold']}
               aria-current={isActive(item.path) ? 'page' : undefined}
             >
               {item.label}
@@ -80,11 +80,11 @@ const mobileExtra = [{ label: t('nav.onam'), path: '/onam/' }];
         <Icon name="moon" class="dark:hidden" />
         <Icon name="sun" class="hidden dark:block" />
       </button>
-      <a href={href(lang, '/band-qilish/')} class="btn btn-primary hidden !min-h-11 sm:inline-flex">{t('nav.book')}</a>
+      <a href={href(lang, '/band-qilish/')} class="btn btn-primary hidden !min-h-11 whitespace-nowrap sm:inline-flex">{t('nav.book')}</a>
       <button
         type="button"
         data-menu-open
-        class="grid size-11 place-items-center rounded-full transition hover:bg-current/10 lg:hidden"
+        class="grid size-11 place-items-center rounded-full transition hover:bg-current/10 xl:hidden"
         aria-label={t('nav.menu')}
         aria-controls="mobile-menu"
         aria-expanded="false"
@@ -98,7 +98,7 @@ const mobileExtra = [{ label: t('nav.onam'), path: '/onam/' }];
 <div
   id="mobile-menu"
   hidden
-  class="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-stage text-on-stage lg:hidden"
+  class="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-stage text-on-stage xl:hidden"
   role="dialog"
   aria-modal="true"
   aria-label={t('nav.menu')}
@@ -124,7 +124,6 @@ const mobileExtra = [{ label: t('nav.onam'), path: '/onam/' }];
           )}
         </li>
       ))}
-      {mobileExtra.map((item) => <li><a href={href(lang, item.path)} class="block py-3 font-display text-3xl">{item.label}</a></li>)}
       <li><a href={href(lang, '/band-qilish/')} class="block py-3 font-display text-3xl">{t('nav.contact')}</a></li>
     </ul>
   </nav>
