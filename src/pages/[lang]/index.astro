@@ -4,6 +4,7 @@ import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import SectionHead from '../../components/SectionHead.astro';
 import AudioDemos from '../../components/AudioDemos.astro';
+import LiveRadio from '../../components/LiveRadio.astro';
 import VideoFacade from '../../components/VideoFacade.astro';
 import ReviewCard from '../../components/ReviewCard.astro';
 import Partners from '../../components/Partners.astro';
@@ -165,9 +166,15 @@ const hasReel = !!(s.showreel.webm || s.showreel.mp4);
 
   <!-- AUDIO -->
   <section class="section">
-    <div class="container-site grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
-      <SectionHead eyebrow="02" title={t('audio.title')} lead={t('audio.lead')} class="lg:sticky lg:top-28 lg:self-start" />
-      <AudioDemos lang={lang} />
+    <div class="container-site">
+      <SectionHead eyebrow="02" title={t('audio.title')} lead={t('audio.lead')} />
+      <div class:list={['grid gap-8 lg:gap-10', s.radio.stream && 'lg:grid-cols-2']}>
+        <div>
+          <h3 class="mb-5 font-display text-2xl sm:text-3xl">{t('audio.records')}</h3>
+          <AudioDemos lang={lang} cols={s.radio.stream ? 1 : 2} />
+        </div>
+        <LiveRadio lang={lang} />
+      </div>
     </div>
   </section>
 

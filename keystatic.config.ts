@@ -220,6 +220,14 @@ export default config({
           description: 'Бош саҳифадаги ва хизмат саҳифаларидаги сана текшириш формалари. Белгиланса — сайтда кўринади.',
           defaultValue: false,
         }),
+        radio: fields.object(
+          {
+            name: fields.text({ label: 'Радио номи', defaultValue: 'Hit FM 90.8' }),
+            stream: fields.url({ label: 'Оқим манзили (stream, https)', description: 'Масалан https://live.hitfm.uz/hitfmuz. Бўш бўлса, бош саҳифада радио кўрсатилмайди.' }),
+            site: fields.url({ label: 'Радио сайти' }),
+          },
+          { label: 'Онлайн радио (бош саҳифа)' },
+        ),
         mediaKitPdf: fields.file({ label: 'Media-Kit (PDF)', directory: 'public/files', publicPath: '/files/' }),
         showreel: fields.object(
           {

@@ -108,6 +108,9 @@ const settings = defineCollection({
       tiktok: z.string().nullable().optional(),
       facebook: z.string().nullable().optional(),
       showDateCheck: z.boolean().default(false),
+      radio: z
+        .object({ name: z.string().default(''), stream: z.string().nullable().optional(), site: z.string().nullable().optional() })
+        .default({ name: '', stream: null, site: null }),
       mediaKitPdf: z.string().nullable().optional(),
       showreel: z.object({
         webm: z.string().nullable().optional(),

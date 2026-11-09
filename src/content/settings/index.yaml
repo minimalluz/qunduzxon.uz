@@ -7,6 +7,10 @@ youtube: https://youtube.com/@qunduzxon
 tiktok:
 facebook: https://www.facebook.com/qunduzxon.abdullayeva
 showDateCheck: false
+radio:
+  name: Hit FM 90.8
+  stream: https://live.hitfm.uz/hitfmuz
+  site: https://hitfm.uz
 mediaKitPdf:
 showreel:
   webm:

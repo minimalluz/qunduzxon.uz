@@ -5,13 +5,15 @@ import { getAudio } from '../lib/content';
 
 interface Props {
   lang: Lang;
+  /** 1 — бир устун (тор жой учун), 2 — кенг экранда икки устун */
+  cols?: 1 | 2;
 }
-const { lang } = Astro.props;
+const { lang, cols = 2 } = Astro.props;
 const t = useT(lang);
 const demos = await getAudio();
 ---
 
-<ul class="grid gap-3 sm:grid-cols-2">
+<ul class:list={['grid gap-3', cols === 2 && 'sm:grid-cols-2']}>
   {
     demos.map(({ data }) => (
       <li data-audio class="group card flex items-center gap-4 p-4 transition data-[playing]:border-gold sm:p-5">
