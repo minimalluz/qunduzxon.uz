@@ -7,7 +7,7 @@ import VideoCard from './VideoCard.astro';
 import LeadForm from './LeadForm.astro';
 import { SITE as SITE_UZ, TG_URL, videoUrl, SHOW_DATE_CHECK } from '../config';
 import { SITE_L, type Lang } from '../i18n';
-import { cmsTestimonials, picUrl } from '../lib/cms';
+import TESTIMONIALS from '../data/testimonials.json';
 
 export interface Video { file: string; poster: ImageMetadata; title: string; tag?: string }
 interface Props {
@@ -47,7 +47,8 @@ const T = {
   },
 }[lang];
 // Отзивлар админ панелдан: шу хизматга тегишли ва шу тилда матни борлари
-const testimonials = (await cmsTestimonials())
+// Отзивлар src/data/testimonials.json дан: { name, service, event?, textUz, textRu? }
+const testimonials = (TESTIMONIALS as { name: string; service: string; event?: string; textUz: string; textRu?: string }[])
   .filter((x) => x.service === p.slug)
   .map((x) => ({ ...x, text: lang === 'ru' ? x.textRu : x.textUz }))
   .filter((x) => x.text);
@@ -122,7 +123,6 @@ const ld = [
             <figure>
               <blockquote>{x.text}</blockquote>
               <figcaption>
-                {x.photo && <img src={picUrl(x.photo, 120, '&h=120&fit=crop')} alt="" width="56" height="56" loading="lazy" />}
                 <span><b>{x.name}</b>{x.event && <small>{x.event}</small>}</span>
               </figcaption>
             </figure>
@@ -179,6 +179,5 @@ const ld = [
   .tst figure { background: #fff; border-radius: var(--r); padding: 22px; box-shadow: 0 1px 0 var(--color-line); display: flex; flex-direction: column; gap: 16px; }
   .tst blockquote { font-family: var(--font-serif); font-size: 21px; line-height: 1.4; font-style: italic; flex: 1; }
   .tst figcaption { display: flex; align-items: center; gap: 12px; }
-  .tst img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
   .tst b { display: block; } .tst small { color: var(--color-muted); font-size: 13px; }
 </style>

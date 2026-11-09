@@ -30,8 +30,9 @@ Environment variables:
 | `TELEGRAM_BOT_TOKEN` | **Secret** | @BotFather токени |
 | `TELEGRAM_CHAT_ID` | **Secret** | Аризалар келадиган гуруҳ ID |
 | `TURNSTILE_SECRET` | **Secret** | Turnstile secret key |
-| `SANITY_PROJECT_ID` | оддий | Sanity лойиҳаси ID. Берилса, созламалар, отзивлар ва ҳамкорлар админ панелдан олинади |
-| `SANITY_DATASET` | оддий | `production` (берилмаса ҳам шу) |
+| `ADMIN_PASSWORD` | **Secret** | Админ панел пароли, камида 12 белги |
+| `GITHUB_TOKEN` | **Secret** | Админ панел учун GitHub токени (пастда — «Админ панел») |
+| `GITHUB_BRANCH` | оддий | Сайт йиғиладиган шохча (production branch). Берилмаса — `redesign` |
 
 Аризалар `functions/api/lead.ts` (Pages Function) орқали Telegram'га боради.
 
@@ -48,21 +49,50 @@ Environment variables:
 | `/uz/media/` | Галерея (филтр + lightbox) |
 | `/uz/band-qilish/` | Ариза саҳифаси — **вақтинча ўчиқ** (менюда йўқ, noindex) |
 | `/uz/privacy-policy/` | Махфийлик сиёсати |
-| `/admin` | Админ панелга йўналтириш (`public/_redirects`) |
+| `/admin/` | Админ панел (`src/pages/admin.astro`, noindex) |
 | `/ru/...` | Юқоридаги ҳамма саҳифаларнинг рус тилидаги нусхаси (масалан `/ru/about/`, `/ru/boshlovchi/toy-va-tantanalar/`) |
 
-Созламалар битта жойда: `src/config.ts` (Telegram, телефон, ижтимоий тармоқлар, рақамлар, меню).
+Созламалар: `src/data/settings.json` (Telegram, телефон, тармоқлар, рақамлар, «Бўш санани текшириш» тугмаси — админ панел шу файлни ёзади) ва `src/config.ts` (меню, сайт номи ва ҳоказо).
 
-## Админ панел (Sanity)
+## Админ панел
 
-Йўриқнома ва созлаш қадамлари: [`../studio/README.md`](../studio/README.md). Манзил: qunduzxon.uz/admin.
+**qunduzxon.uz/admin/** — ўзимиз ёзган оддий панел: битта парол, ўзбекча, битта форма.
 
-- `SANITY_PROJECT_ID` **йўқ** бўлса — сайт ҳозиргидек файллардан ишлайди (`src/config.ts`).
-- **Бор** бўлса — build пайтида Sanity'дан олинади (`src/lib/cms.ts`): «Сайт созламалари» (бўш майдон учун `config.ts` даги қиймат), отзивлар (хизмат саҳифаларида), ҳамкорлар (бош саҳифада). Фақат эълон қилинган (Publish) ҳужжатлар.
-- Фуд-блог шарҳлари админ панелда **йўқ** — доим `src/content/reviews*` файлларидан.
-- Sanity'га уланиб бўлмаса, build хато билан тўхтайди — эски сайт ишлаб тураверади.
-- Расмлар Sanity CDN'дан ўлчами ўзгартирилиб олинади (`src/components/Pic.astro`), фокус нуқтаси (hotspot) ҳисобга олинади.
-- Маҳаллий текширув учун mock-сервер: `SANITY_PROJECT_ID=test SANITY_API_URL=http://localhost:5555 npm run build`.
+| Нима ўзгартирилади | Қаерга ёзилади |
+| --- | --- |
+| Telegram, телефон, email, Instagram/Facebook/YouTube, рақамлар (йил, тадбир, обуначи), «Бўш санани текшириш» формаси (ёқиш/ўчириш) | `src/data/settings.json` |
+
+**Қандай ишлайди:** «Сақлаш» босилганда Pages Function (`functions/api/admin/settings.ts`) маълумотни текширади ва GitHub'га коммит қилади («Админ панел: сайт созламалари янгиланди»). Cloudflare Pages шу коммитдан кейин сайтни ўзи қайта йиғади (2–3 дақиқа). Ҳар бир ўзгариш Git тарихида қолади — керак бўлса, олдинги ҳолатга қайтариш мумкин.
+
+| Файл | Нима |
+| --- | --- |
+| `src/pages/admin.astro` | Панел саҳифаси (кириш формаси + созламалар формаси) |
+| `functions/api/admin/login.ts`, `logout.ts`, `settings.ts` | Кириш, чиқиш, созламаларни ўқиш/ёзиш |
+| `functions-lib/admin.ts` | Сессия (HMAC cookie, 12 соат), текширув, GitHub API |
+
+**Хавфсизлик:** парол Cloudflare'да Secret сифатида сақланади; сессия — HttpOnly, Secure, SameSite=Strict cookie, фақат `/api/admin` учун; ўзгартирувчи сўровлар фақат шу сайтдан (Origin текширувi); нотўғри паролда 1,5 сония кутиш; `TURNSTILE_SECRET` бўлса, киришда Turnstile ҳам. Парол алмашса, барча эски сессиялар бекор бўлади.
+
+**Созлаш (бир марта, Cloudflare Pages жойлангандан кейин):**
+
+1. **GitHub токени:** github.com → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate new token.
+   - Repository access: **Only select repositories** → `minimalluz/qunduzxon.uz`
+   - Permissions → Repository permissions → **Contents: Read and write** (бошқа ҳеч нарса керак эмас)
+   - Expiration: 1 йил (муддати тугагач, янгисини қўйиш керак — панел «GitHub билан боғланишда хато» дейди)
+2. **Cloudflare Pages → Settings → Environment variables** (Production):
+   - `ADMIN_PASSWORD` — **Secret**, камида 12 белгили мустаҳкам парол
+   - `GITHUB_TOKEN` — **Secret**, 1-қадамдаги токен
+   - `GITHUB_BRANCH` — production шохчаси (ҳозир `redesign`; сайт `main` га ўтганда — `main`)
+3. Сайтни қайта жойлаш (Deployments → Retry deployment) ва qunduzxon.uz/admin/ ни очиш.
+
+**Маҳаллий текшириш** (`site` папкасида): `.dev.vars` файли (Git'га тушмайди) —
+```
+ADMIN_PASSWORD=камида-12-белгили-парол
+GITHUB_TOKEN=...
+GITHUB_BRANCH=redesign
+```
+кейин `npm run build` ва `npx wrangler pages dev dist`. Ҳақиқий GitHub ўрнига сохта сервер учун `GITHUB_API=http://localhost:...` қўшиш мумкин.
+
+Фуд-блог шарҳлари ва отзивлар ҳозирча файлларда: `src/content/reviews*`, `src/data/testimonials.json` (`[{ "name", "service": "toy-va-tantanalar", "event", "textUz", "textRu" }]`).
 
 ## Икки тил қандай ишлайди
 
@@ -83,10 +113,10 @@ Environment variables:
 
 ## Эгадан кутилаётган маълумотлар
 
-- [ ] Sanity лойиҳасини очиш ва улаш (`studio/README.md`, «Созлаш»)
-- [ ] Telegram username ва телефон рақам → админ панел «Сайт созламалари» (ёки `src/config.ts`)
+- [ ] Cloudflare Pages'ни улаш ва админ панелни созлаш (`ADMIN_PASSWORD`, `GITHUB_TOKEN` — «Админ панел» бўлими)
+- [ ] Telegram username ва телефон рақам → админ панел (ёки `src/data/settings.json`)
 - [x] Instagram ва Facebook (`facebook.com/qunduzxon.abdullayeva`) → `src/config.ts`
-- [ ] YouTube ҳаволаси (TikTok йўқ) → админ панел «Сайт созламалари»
+- [ ] YouTube ҳаволаси (TikTok йўқ) → админ панел
 - [x] Биография → `src/views/About.astro` (иккала тилда, 2026-11-09)
 - [ ] Йиллар, мукофотлар, сертификатлар → `src/views/About.astro`
 - [ ] Ҳақиқий фуд-блог шарҳлари (матн, баллар, манзил) → `src/content/reviews/` ва `src/content/reviews-ru/` (`sample: true` ни олиб ташлаш)

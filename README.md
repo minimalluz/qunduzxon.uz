@@ -11,7 +11,6 @@
 | Папка | Нима |
 | --- | --- |
 | `site/` | Astro сайти (`site/README.md`) |
-| `studio/` | Админ панел — Sanity Studio (`studio/README.md`) |
 | `prototype/` | Бош саҳифанинг HTML прототипи (`prototype/index.html`) ва сиқилган WebP расмлар |
 | `foto/` | Асл расмлар (46 та) |
 | `ona/` | «Менинг онам» саҳифаси расмлари (3 та) |
@@ -20,7 +19,7 @@
 
 ## Қарорлар
 
-- Стек: Astro.js + Tailwind CSS, Cloudflare Pages, Cloudflare Workers (формалар → Telegram бот), Turnstile, Sanity (админ панел).
+- Стек: Astro.js + Tailwind CSS, Cloudflare Pages, Cloudflare Workers (формалар → Telegram бот), Turnstile, ўзимиз ёзган админ панел (qunduzxon.uz/admin/ → GitHub коммит; `site/README.md`).
 - Дизайн «Эфир ва меҳр»: фон `#FBF7F4`, матн `#2A1B24`, акцент `#D63C7A`, эфир фони `#1C1218`, фуд-блог `#F08A24`.
 - Шрифтлар: сарлавҳалар Cormorant Garamond (ў, қ, ғ, ҳ бор), матн — тизим шрифти. Playfair Display ярамайди (ўзбек кирилл ҳарфлари йўқ).
 - «Банд қилиш» саҳифаси тайёрланади, лекин вақтинча ўчиқ; «Банд қилиш» тугмалари Telegram чатига олиб боради.

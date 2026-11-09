@@ -9,8 +9,8 @@ export default defineConfig({
   redirects: { '/': '/uz/' },
   integrations: [
     sitemap({
-      // «Банд қилиш» саҳифаси вақтинча ўчиқ — қидирувга бермаймиз
-      filter: (page) => !page.includes('/band-qilish/'),
+      // «Банд қилиш» вақтинча ўчиқ, админ панел — қидирувга бермаймиз
+      filter: (page) => !page.includes('/band-qilish/') && !page.includes('/admin/'),
       i18n: { defaultLocale: 'uz', locales: { uz: 'uz-Cyrl', ru: 'ru' } },
     }),
   ],

@@ -1,7 +1,7 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-// Фуд-блог шарҳлари. Кейинчалик Sanity'га кўчирилади — майдонлар шунга мос.
+// Фуд-блог шарҳлари (Markdown файллар).
 const reviews = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/reviews' }),
   schema: ({ image }) =>

@@ -1,7 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Lang } from '../i18n';
 import { videoUrl } from '../config';
-import type { Pic } from './cms';
+import type { ImageMetadata } from 'astro';
 
 type Ratings = CollectionEntry<'reviews'>['data']['ratings'];
 
@@ -19,8 +19,8 @@ export interface Review {
     cuisine: string[];
     averageCheck: number;
     ratings: Ratings;
-    cover: Pic;
-    gallery: Pic[];
+    cover: ImageMetadata;
+    gallery: ImageMetadata[];
     /** Видеонинг тўлиқ манзили */
     video?: string;
     videoVertical: boolean;
