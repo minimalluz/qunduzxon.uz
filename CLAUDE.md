@@ -19,6 +19,9 @@
 - Рақамлар: 16 йил, 1000 тадбир, 500 минг обуначи. TikTok йўқ (ўчирилган). Facebook: facebook.com/qunduzxon.abdullayeva.
 - «Бўш санани текшириш» формалари `settings.showDateCheck` га боғланган (Keystatic → Умумий созламалар), ҳозир ўчиқ.
 - Медиага Zamin FM расми қўшилди.
+- Бош саҳифа ва менюга «Менинг онам» қўшилди; десктоп меню 1280px дан (ундан торда бургер).
+- Шрифтлар @fontsource'дан (local провайдер) — Google Fonts'га боғлиқ эмас.
+- **2026-11-09 да `redesign` qunduzxon.uz га жойланди** (эганинг компьютеридан `npm run deploy`, Version ID `367fa9bd-8471-4c0d-b809-65c619986704`). Ортга қайтариш: `npx wrangler rollback`.
 
 ## Муҳим техник қарорлар
 - Видеолар `public/vsrc/` да; сайтда `/videos/<ном>.mp4|webm` орқали `src/pages/videos/[name].{mp4,webm}.ts`
@@ -37,4 +40,5 @@
 3. Cloudflare dashboard: SSL/TLS → **Full (strict)**, **Always Use HTTPS** ёқиш (ҳозир http ҳам очилади); www → apex redirect (ихтиёрий).
 4. Фойдаланувчи DNS учун яратган API токенни Cloudflare'да ўчириши керак (локал нусхаси ўчирилган).
 5. `mail` / `ftp` CNAME'лари apex'га қарайди (олдин ҳам нотўғри эди) — почта ишлатилса, ahost.uz почта серверига тўғрилаш.
-6. Аудио-демо файллар йўқ; Keystatic GitHub App созланмаган; GitHub репо (`minimalluz/qunduzxon.uz`) ҳали йўқ.
+6. Аудио-демо файллар йўқ; Keystatic GitHub App созланмаган.
+7. Деплой ҳозир фақат эганинг компьютеридан (`C:\Users\user\qunduzxon.uz`, `redesign` шохчаси). GitHub'дан авто-деплой (Workers Builds) уланмаган.
