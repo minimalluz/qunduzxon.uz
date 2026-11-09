@@ -25,9 +25,9 @@ const itemList = {
 };
 ---
 
-<Base lang={lang} title={t('food.title')} description={t('food.lead')} ogImage={reviews[0]?.data.cover} crumbs={[{ name: t('nav.food'), path: '/food-blog/' }]} schema={[itemList]}>
+<Base lang={lang} title={t('food.title')} description={t('food.lead') || t('site.description')} ogImage={reviews[0]?.data.cover} crumbs={[{ name: t('nav.food'), path: '/food-blog/' }]} schema={[itemList]}>
   <section class="container-site pt-8 pb-16 sm:pb-24">
-    <SectionHead as="h1" eyebrow={t('nav.food')} title={t('food.title')} lead={t('food.lead')} />
+    <SectionHead as="h1" title={t('food.title')} lead={t('food.lead')} />
 
     <div class="sticky top-16 z-30 -mx-4 mb-8 space-y-3 border-b border-line bg-bg/90 px-4 py-4 backdrop-blur-xl sm:top-20 sm:mx-0 sm:rounded-3xl sm:border sm:px-5" id="food-filters">
       <div class="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
