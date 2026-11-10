@@ -39,28 +39,57 @@ const stats = [
   { n: s.stats.restaurants, suffix: '+', label: t('stats.restaurants') },
   { n: s.stats.followers, suffix: '+', label: t('stats.followers'), compact: true },
 ];
-const hasReel = !!(s.showreel.webm || s.showreel.mp4);
+// Бош саҳифа видеолари: showreel + heroVideos. Ҳар ташрифда навбатдагиси (localStorage), биринчи ташрифда — showreel.
+const reels = [
+  ...(s.showreel.webm || s.showreel.mp4 ? [{ webm: s.showreel.webm ?? null, mp4: s.showreel.mp4 ?? null, poster: s.showreel.poster }] : []),
+  ...s.heroVideos.map((v) => ({ webm: null, mp4: v.mp4, poster: v.poster })),
+];
+const hasReel = reels.length > 0;
+const posters = reels.length ? reels.map((r) => r.poster) : [s.showreel.poster];
 ---
 
 <Base lang={lang} title={`${t('site.name')} — ${t('site.roles')}`} overlayHeader schema={[await personSchema(lang, Astro.site!)]}>
   <!-- HERO -->
   <section class="relative isolate flex min-h-[100svh] items-end overflow-hidden bg-stage text-on-stage">
     <div class="absolute inset-0 -z-10 lg:left-[42%]">
-      <Picture
-        src={s.showreel.poster}
-        alt={t('site.name')}
-        formats={['avif', 'webp']}
-        widths={[480, 720, 960, 1280]}
-        sizes="(min-width: 1024px) 58vw, 100vw"
-        class="h-full w-full object-cover object-[50%_20%]"
-        loading="eager"
-        fetchpriority="high"
-        layout="none"
-      />
+      {posters.map((p, i) => (
+        <Picture
+          src={p}
+          alt={t('site.name')}
+          formats={['avif', 'webp']}
+          widths={[480, 720, 960, 1280]}
+          sizes="(min-width: 1024px) 58vw, 100vw"
+          class="absolute inset-0 h-full w-full object-cover object-[50%_20%]"
+          loading={i === 0 ? 'eager' : 'lazy'}
+          fetchpriority={i === 0 ? 'high' : undefined}
+          layout="none"
+          data-reel-poster={i}
+          hidden={i !== 0}
+        />
+      ))}
+      {reels.length > 1 && (
+        <script is:inline define:vars={{ n: reels.length }}>
+          // Навбатдаги видеони бўёқдан олдин танлаймиз, муқова ҳам мос бўлсин
+          (function () {
+            var i = 0;
+            try {
+              var prev = localStorage.getItem('qx-reel');
+              i = prev === null ? 0 : (parseInt(prev, 10) + 1) % n;
+              if (isNaN(i)) i = 0;
+              localStorage.setItem('qx-reel', String(i));
+            } catch (e) {}
+            document.documentElement.dataset.reel = String(i);
+            document.querySelectorAll('[data-reel-poster]').forEach(function (el) {
+              el.hidden = el.getAttribute('data-reel-poster') !== String(i);
+            });
+          })();
+        </script>
+      )}
       {
         hasReel && (
           <video
             data-hero-video
+            data-reels={JSON.stringify(reels.map((r) => ({ webm: r.webm, mp4: r.mp4 })))}
             class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-1000"
             muted
             loop
@@ -68,8 +97,6 @@ const hasReel = !!(s.showreel.webm || s.showreel.mp4);
             preload="none"
             aria-hidden="true"
           >
-            {s.showreel.webm && <source data-src={s.showreel.webm} type="video/webm" />}
-            {s.showreel.mp4 && <source data-src={s.showreel.mp4} type="video/mp4" />}
           </video>
         )
       }
@@ -302,7 +329,17 @@ const hasReel = !!(s.showreel.webm || s.showreel.mp4);
       };
 
       const start = () => {
-        v.querySelectorAll<HTMLSourceElement>('source[data-src]').forEach((s) => (s.src = s.dataset.src!));
+        // Танланган видео (бош қисмдаги inline скрипт html[data-reel] га ёзган)
+        const reels = JSON.parse(v.dataset.reels || '[]') as { webm: string | null; mp4: string | null }[];
+        const reel = reels[Number(document.documentElement.dataset.reel) || 0] ?? reels[0];
+        if (!reel) return;
+        for (const [src, type] of [[reel.webm, 'video/webm'], [reel.mp4, 'video/mp4']] as const) {
+          if (!src) continue;
+          const el = document.createElement('source');
+          el.src = src;
+          el.type = type;
+          v.appendChild(el);
+        }
         v.load();
         v.addEventListener(
           'playing',

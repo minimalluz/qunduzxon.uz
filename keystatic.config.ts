@@ -237,6 +237,17 @@ export default config({
           },
           { label: 'Hero Showreel' },
         ),
+        heroVideos: fields.array(
+          fields.object({
+            mp4: fields.text({ label: 'Видео (MP4)', description: 'Масалан /videos/hit-fm-efirida.mp4 (файл public/vsrc/ да)' }),
+            poster: img('Муқова (poster)', 'videos'),
+          }),
+          {
+            label: 'Бош саҳифа видеолари (навбат билан)',
+            description: 'Showreel билан навбат алмашади: ҳар сафар саҳифа очилганда кейингиси чиқади.',
+            itemLabel: (p) => p.fields.mp4.value || 'Видео',
+          },
+        ),
         stats: fields.object(
           {
             years: fields.integer({ label: 'Эфирдаги тажриба (йил)' }),

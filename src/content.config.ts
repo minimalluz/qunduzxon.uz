@@ -117,6 +117,8 @@ const settings = defineCollection({
         mp4: z.string().nullable().optional(),
         poster: image(),
       }),
+      // Бош саҳифада showreel билан навбат алмашадиган қўшимча видеолар
+      heroVideos: z.array(z.object({ mp4: z.string(), poster: image() })).default([]),
       stats: z.object({
         years: z.number(),
         events: z.number(),

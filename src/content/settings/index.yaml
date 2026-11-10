@@ -16,6 +16,14 @@ showreel:
   webm:
   mp4: /videos/showreel.mp4
   poster: ../../assets/site/showreel-poster.jpg
+# Бош саҳифада showreel билан навбат алмашадиган видеолар (эга танлайди)
+heroVideos:
+  - mp4: /videos/hit-fm-efirida.mp4
+    poster: ../../assets/videos/hit-fm-efirida.jpg
+  - mp4: /videos/efirdan-savollar.mp4
+    poster: ../../assets/videos/efirdan-savollar.jpg
+  - mp4: /videos/islom-sivilizatsiyasi-markazi.mp4
+    poster: ../../assets/videos/islom-sivilizatsiyasi-markazi.jpg
 stats:
   years: 16
   events: 1000
