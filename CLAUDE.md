@@ -42,4 +42,4 @@
 4. Фойдаланувчи DNS учун яратган API токенни Cloudflare'да ўчириши керак (локал нусхаси ўчирилган).
 5. `mail` / `ftp` CNAME'лари apex'га қарайди (олдин ҳам нотўғри эди) — почта ишлатилса, ahost.uz почта серверига тўғрилаш.
 6. Аудио-демо файллар йўқ; Keystatic GitHub App созланмаган.
-7. Деплой ҳозир фақат эганинг компьютеридан (`C:\Users\user\qunduzxon.uz`, `redesign` шохчаси). GitHub'дан авто-деплой (Workers Builds) уланмаган.
+7. Деплой: 2026-11-10 да Cloudflare Workers Builds GitHub'га уланди (`minimalluz/qunduzxon.uz`, production branch `redesign`, build `npm run build`, deploy `npx wrangler deploy`) — `redesign` га ҳар push'да сайт ўзи янгиланади. Сессиядан `wrangler deploy` ишламайди: прокси Authorization сарлавҳасини алмаштиргани учун asset upload 401 беради.
