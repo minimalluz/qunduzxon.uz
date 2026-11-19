@@ -1,0 +1,291 @@
+---
+/**
+ * «Танланган видео-кейслар»: 3D каруселъ (ўртадаги карточка катта, ёнидагилари орқага қийшаяди, ўзи айланади).
+ * Карточка = тоифа. Ўртадаги карточка босилса — шу тоифанинг видео ва фотолари ўзи айланадиган тасмада очилади.
+ * Медиа манбаи: src/content/cases/*.yaml (тоифа: category; видео: video.url).
+ */
+import { Picture, getImage } from 'astro:assets';
+import Icon from './Icon.astro';
+import { getCases } from '../lib/content';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const ru = lang === 'ru';
+
+const T = {
+  uz: { open: 'Кўриш', close: 'Ёпиш', prev: 'Олдинги', next: 'Кейинги', items: 'та иш', play: 'Видеони ўйнатиш', hint: 'Карточкани босинг — ичидаги видео ва фотолар очилади' },
+  ru: { open: 'Смотреть', close: 'Закрыть', prev: 'Назад', next: 'Вперёд', items: 'работ', play: 'Смотреть видео', hint: 'Нажмите на карточку, чтобы открыть видео и фото' },
+}[lang];
+
+type Case = Awaited<ReturnType<typeof getCases>>[number];
+const all = await getCases();
+const hasVideo = (c: Case) => !!c.data.video.url;
+
+// Тоифалар (карточкалар). Тартиб — каруселдаги тартиб; биринчиси бошида ўртада туради.
+const defs: { key: string; title: [string, string]; sub: [string, string]; lead: [string, string]; pick: (c: Case) => boolean }[] = [
+  { key: 'tv', title: ['Радио ва ТВ', 'Радио и ТВ'], sub: ['Эфир ва студия', 'Эфир и студия'], lead: ['Радио эфирлари, телекўрсатувлар ва студиядан лавҳалар.', 'Радиоэфиры, телепередачи и кадры из студии.'], pick: (c) => c.data.category === 'tv' },
+  { key: 'stories', title: ['Instagram историялар', 'Instagram-истории'], sub: ['Ҳар кунги лаҳзалар', 'Моменты каждого дня'], lead: ['Кундалик ҳаёт, саҳна ортидан ва кайфиятли қисқа видеолар.', 'Повседневная жизнь, закулисье и короткие видео с настроением.'], pick: (c) => c.data.category === 'lifestyle' && hasVideo(c) },
+  { key: 'toy', title: ['Тўйлар', 'Свадьбы'], sub: ['Энг ёрқин кунлар', 'Самые яркие дни'], lead: ['Тўй ва тантаналардан лавҳалар.', 'Кадры со свадеб и торжеств.'], pick: (c) => c.data.category === 'toy' },
+  { key: 'korporativ', title: ['Корпоратив', 'Корпоративы'], sub: ['Форум ва тақдимотлар', 'Форумы и презентации'], lead: ['Корпоратив тадбирлар, форумлар ва саҳна.', 'Корпоративные мероприятия, форумы и сцена.'], pick: (c) => c.data.category === 'korporativ' },
+  { key: 'food', title: ['Фуд-блог', 'Фуд-блог'], sub: ['Таъм ва шарҳлар', 'Вкус и обзоры'], lead: ['Ресторанлар ва таомлар ҳақида видео-обзорлар.', 'Видеообзоры ресторанов и блюд.'], pick: (c) => c.data.category === 'food' },
+  { key: 'photo', title: ['Фотосессиялар', 'Фотосессии'], sub: ['Образ ва услуб', 'Образ и стиль'], lead: ['Фотосессиялардан энг яхши кадрлар.', 'Лучшие кадры с фотосессий.'], pick: (c) => c.data.category === 'lifestyle' && !hasVideo(c) },
+];
+
+const L = ru ? 1 : 0;
+const groups = await Promise.all(
+  defs.map(async (d) => {
+    const items = all.filter(d.pick);
+    const cover = (items.find((c) => c.data.featured) ?? items[0])?.data.image;
+    const media = await Promise.all(
+      items.map(async (c) => ({
+        title: ru && c.data.titleRu ? c.data.titleRu : c.data.title,
+        image: c.data.image,
+        video: c.data.video.url ?? null,
+        full: c.data.video.url ? null : (await getImage({ src: c.data.image, width: 1400, format: 'webp' })).src,
+      })),
+    );
+    return { key: d.key, title: d.title[L], sub: d.sub[L], lead: d.lead[L], cover, media };
+  }),
+).then((gs) => gs.filter((g) => g.media.length > 0 && g.cover));
+---
+
+<div data-cf class="relative">
+  <div data-cf-stage class="relative mx-auto h-[min(118vw,460px)] touch-pan-y select-none [perspective:1400px] sm:h-[520px]">
+    {
+      groups.map((g, i) => (
+        <button
+          type="button"
+          data-cf-card
+          data-i={i}
+          data-group={g.key}
+          aria-label={`${g.title} — ${T.open}`}
+          class="group/card absolute top-1/2 left-1/2 isolate aspect-[3/4] w-[64vw] max-w-[300px] overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#1b1714] text-left shadow-2xl transition-[transform,opacity,box-shadow,border-color] duration-700 ease-out-soft will-change-transform data-[active]:border-gold/70 data-[active]:shadow-[0_0_60px_-10px_var(--gold)] sm:max-w-[340px]"
+          style={`transform: translate(-50%, -50%); opacity: ${i === 0 ? 1 : 0}`}
+        >
+          <Picture
+            src={g.cover!}
+            alt=""
+            formats={['avif', 'webp']}
+            widths={[360, 540, 720]}
+            sizes="(min-width: 640px) 340px, 64vw"
+            class="absolute inset-0 -z-10 h-full w-full object-cover object-[50%_25%] transition duration-700 group-hover/card:scale-105"
+            loading="lazy"
+            layout="none"
+          />
+          <div class="absolute inset-0 -z-10 bg-gradient-to-b from-black/80 via-black/15 to-black/55" />
+          <div class="absolute inset-x-0 top-0 p-6 sm:p-7">
+            <p class="font-display text-3xl leading-none text-white sm:text-4xl">{g.title}</p>
+            <p class="mt-3 text-[0.65rem] font-semibold tracking-[0.3em] text-white/75 uppercase">{g.sub}</p>
+          </div>
+          <span class="absolute inset-x-6 bottom-6 flex items-center justify-between text-sm text-white/85 sm:inset-x-7">
+            <span>{g.media.length} {T.items}</span>
+            <span class="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1.5 font-semibold backdrop-blur group-data-[active]/card:bg-gold group-data-[active]/card:text-stage">
+              {T.open} <Icon name="arrow" size={14} />
+            </span>
+          </span>
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="mt-6 flex items-center justify-center gap-4">
+    <button type="button" data-cf-prev aria-label={T.prev} class="grid size-11 rotate-180 place-items-center rounded-full border border-white/20 transition hover:bg-white/10">
+      <Icon name="arrow" size={18} />
+    </button>
+    <div class="flex gap-2" aria-hidden="true">
+      {groups.map((_, i) => <span data-cf-dot data-i={i} class="h-1.5 w-1.5 rounded-full bg-white/30 transition-all data-[active]:w-6 data-[active]:bg-gold" />)}
+    </div>
+    <button type="button" data-cf-next aria-label={T.next} class="grid size-11 place-items-center rounded-full border border-white/20 transition hover:bg-white/10">
+      <Icon name="arrow" size={18} />
+    </button>
+  </div>
+  <p class="mt-4 text-center text-sm text-on-stage/60">{T.hint}</p>
+
+  {
+    groups.map((g) => (
+      <dialog
+        data-cf-dialog={g.key}
+        aria-label={g.title}
+        class="m-0 h-dvh max-h-none w-screen max-w-none overflow-y-auto bg-stage p-0 text-on-stage backdrop:bg-black/80 open:flex open:flex-col open:justify-center"
+      >
+        <div class="container-site py-20 sm:py-16">
+          <p class="eyebrow">{g.sub}</p>
+          <h3 class="mt-3 font-display text-5xl sm:text-6xl">{g.title}</h3>
+          <p class="mt-4 max-w-2xl text-on-stage/75">{g.lead}</p>
+        </div>
+        <div data-cf-marquee class="cf-marquee relative w-full overflow-hidden pb-16" style={`--cf-dur: ${Math.max(g.media.length, 4) * 5}s`}>
+          <ul class="cf-track flex w-max gap-4 px-2">
+            {[0, 1].map((copy) =>
+              g.media.map((m, i) => (
+                <li class="relative aspect-[3/4] w-[62vw] shrink-0 overflow-hidden rounded-2xl bg-black sm:w-64 lg:w-72" aria-hidden={copy ? 'true' : undefined}>
+                  <Picture
+                    src={m.image}
+                    alt={copy ? '' : m.title}
+                    formats={['avif', 'webp']}
+                    widths={[300, 500, 700]}
+                    sizes="(min-width: 1024px) 18rem, (min-width: 640px) 16rem, 62vw"
+                    class="absolute inset-0 h-full w-full object-cover"
+                    loading="lazy"
+                    layout="none"
+                  />
+                  {m.video ? (
+                    <button type="button" data-video-facade data-src={m.video} tabindex={copy ? -1 : undefined} aria-label={`${T.play}: ${m.title}`} class="group/play absolute inset-0 z-10 grid place-items-center">
+                      <span class="grid size-14 place-items-center rounded-full bg-white/90 text-stage shadow-2xl transition group-hover/play:scale-110">
+                        <Icon name="play" size={24} class="translate-x-0.5" />
+                      </span>
+                    </button>
+                  ) : (
+                    <a href={m.full!} data-lightbox={copy ? undefined : `cf-${g.key}`} data-cf-copy={copy ? `${g.key}:${i}` : undefined} data-caption={m.title} tabindex={copy ? -1 : undefined} class="absolute inset-0 z-10" aria-label={m.title} />
+                  )}
+                  <p class="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-black/45 px-3 py-2.5 text-center text-sm text-white backdrop-blur-sm">{m.title}</p>
+                </li>
+              )),
+            )}
+          </ul>
+        </div>
+        <button type="button" data-cf-close autofocus aria-label={T.close} class="fixed top-4 right-4 z-30 grid size-12 place-items-center rounded-full bg-white/10 hover:bg-white/20">
+          <Icon name="close" size={24} />
+        </button>
+      </dialog>
+    ))
+  }
+</div>
+
+<style>
+  .cf-track {
+    animation: cf-scroll var(--cf-dur, 40s) linear infinite;
+  }
+  .cf-marquee:hover .cf-track,
+  .cf-marquee:has(:focus-visible) .cf-track,
+  .cf-marquee[data-paused] .cf-track {
+    animation-play-state: paused;
+  }
+  @keyframes cf-scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cf-track {
+      animation: none;
+    }
+    .cf-marquee {
+      overflow-x: auto;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-cf]').forEach((root) => {
+    const cards = [...root.querySelectorAll<HTMLButtonElement>('[data-cf-card]')];
+    const dots = [...root.querySelectorAll<HTMLElement>('[data-cf-dot]')];
+    const stage = root.querySelector<HTMLElement>('[data-cf-stage]')!;
+    const n = cards.length;
+    if (!n) return;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let active = 0;
+    let timer = 0;
+    let hover = false;
+    let inView = false;
+
+    const layout = () => {
+      const w = cards[0].offsetWidth;
+      const step = w * (innerWidth < 640 ? 0.42 : 0.62);
+      cards.forEach((c, i) => {
+        let off = i - active;
+        if (off > n / 2) off -= n;
+        if (off < -n / 2) off += n;
+        const a = Math.abs(off);
+        const scale = a === 0 ? 1 : a === 1 ? 0.84 : 0.7;
+        c.style.transform = `translate(-50%, -50%) translateX(${off * step}px) translateZ(${-a * 160}px) rotateY(${-Math.sign(off) * Math.min(a, 2) * 18}deg) scale(${scale})`;
+        c.style.opacity = a > 2 ? '0' : a === 2 ? '0.55' : '1';
+        c.style.zIndex = String(10 - a);
+        c.style.pointerEvents = a > 2 ? 'none' : '';
+        c.tabIndex = a === 0 ? 0 : -1;
+        c.toggleAttribute('data-active', a === 0);
+      });
+      dots.forEach((d, i) => d.toggleAttribute('data-active', i === active));
+    };
+    const go = (i: number) => {
+      active = (i + n) % n;
+      layout();
+    };
+    const tick = () => {
+      clearInterval(timer);
+      if (reduce) return;
+      timer = window.setInterval(() => {
+        if (!hover && inView && !document.querySelector('dialog[open]')) go(active + 1);
+      }, 3500);
+    };
+
+    cards.forEach((c, i) =>
+      c.addEventListener('click', () => {
+        if (i !== active) return go(i), tick();
+        const d = root.querySelector<HTMLDialogElement>(`[data-cf-dialog="${c.dataset.group}"]`);
+        d?.showModal();
+      }),
+    );
+    root.querySelector('[data-cf-prev]')?.addEventListener('click', () => (go(active - 1), tick()));
+    root.querySelector('[data-cf-next]')?.addEventListener('click', () => (go(active + 1), tick()));
+    stage.addEventListener('mouseenter', () => (hover = true));
+    stage.addEventListener('mouseleave', () => (hover = false));
+    stage.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') go(active - 1), cards[active].focus();
+      if (e.key === 'ArrowRight') go(active + 1), cards[active].focus();
+    });
+    // Бармоқ билан суриш
+    let x0 = 0;
+    let moved = false;
+    stage.addEventListener('pointerdown', (e) => ((x0 = e.clientX), (moved = false)));
+    stage.addEventListener('pointerup', (e) => {
+      const dx = e.clientX - x0;
+      if (Math.abs(dx) > 40) {
+        moved = true;
+        go(active + (dx < 0 ? 1 : -1));
+        tick();
+      }
+    });
+    stage.addEventListener('click', (e) => moved && (e.stopPropagation(), e.preventDefault(), (moved = false)), true);
+    new IntersectionObserver(([e]) => (inView = e.isIntersecting), { threshold: 0.3 }).observe(stage);
+    addEventListener('resize', layout);
+    layout();
+    tick();
+
+    // Тасма (диалог)
+    root.querySelectorAll<HTMLDialogElement>('[data-cf-dialog]').forEach((d) => {
+      const marquee = d.querySelector<HTMLElement>('[data-cf-marquee]')!;
+      const stopAll = () => d.querySelectorAll<HTMLMediaElement>('video').forEach((v) => v.pause());
+      d.querySelector('[data-cf-close]')?.addEventListener('click', () => d.close());
+      d.addEventListener('click', (e) => e.target === d && d.close());
+      d.addEventListener('close', () => {
+        stopAll();
+        marquee.removeAttribute('data-paused');
+      });
+      // Видео ўйнаётганда тасма тўхтайди
+      d.addEventListener('play', () => marquee.setAttribute('data-paused', ''), true);
+      const playing = () => [...d.querySelectorAll<HTMLVideoElement>('video')].some((v) => !v.paused);
+      d.addEventListener('pause', () => !playing() && marquee.removeAttribute('data-paused'), true);
+      d.addEventListener('click', (e) => {
+        if ((e.target as Element).closest('[data-video-facade]')) marquee.setAttribute('data-paused', '');
+      });
+      // Телефонда босилганда бироз тўхтатиш
+      let t = 0;
+      marquee.addEventListener('pointerdown', () => {
+        marquee.setAttribute('data-paused', '');
+        clearTimeout(t);
+        t = window.setTimeout(() => !playing() && marquee.removeAttribute('data-paused'), 4000);
+      });
+      // Нусха (такрор) карточка босилса — асл карточкадаги расмни очиш
+      d.querySelectorAll<HTMLAnchorElement>('a[data-cf-copy]').forEach((a) =>
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const orig = [...d.querySelectorAll<HTMLAnchorElement>('a[data-lightbox]')].find((x) => x.getAttribute('href') === a.getAttribute('href'));
+          orig?.click();
+        }),
+      );
+    });
+  });
+</script>

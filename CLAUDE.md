@@ -23,6 +23,7 @@
 - Шрифтлар @fontsource'дан (local провайдер) — Google Fonts'га боғлиқ эмас.
 - Бош саҳифа «Овозимни тингланг»: чапда ёзиб олинган запислар, ўнгда онлайн радио (`src/components/LiveRadio.astro`). Оқим: `https://live.hitfm.uz/hitfmuz` (AAC 96 kbps, CORS очиқ; hitfm.uz сайтидан олинган). Keystatic → Умумий созламалар → «Онлайн радио»; `stream` бўш бўлса радио кўринмайди.
 - Бош саҳифа видеоси навбат билан: showreel + `settings.heroVideos` (Keystatic → «Бош саҳифа видеолари»). Ҳар ташрифда кейингиси (`localStorage` `qx-reel`), биринчи ташрифда showreel. Эга танлаган: showreel → «Hit FM: бизга аталган шеър» (bizga-atalgan-sher) → «Шоколадли ширинликлар» (shokoladli-shirinliklar).
+- Бош саҳифа «Танланган видео-кейслар»: 3D каруселъ (`src/components/CasesCarousel.astro`) — 6 тоифа (Радио ва ТВ, Instagram историялар = lifestyle+видео, Тўйлар, Корпоратив, Фуд-блог, Фотосессиялар = lifestyle+расм). Ўзи айланади; ўртадаги карточка босилса — тоифанинг ўзи айланадиган тасмаси (dialog). Медиа манбаи `src/content/cases/*.yaml`. Эга яна видео/фото юборади.
 - **2026-11-09 да `redesign` qunduzxon.uz га жойланди** (эганинг компьютеридан `npm run deploy`, Version ID `367fa9bd-8471-4c0d-b809-65c619986704`). Ортга қайтариш: `npx wrangler rollback`.
 
 ## Муҳим техник қарорлар

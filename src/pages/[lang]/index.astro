@@ -5,13 +5,14 @@ import Icon from '../../components/Icon.astro';
 import SectionHead from '../../components/SectionHead.astro';
 import AudioDemos from '../../components/AudioDemos.astro';
 import LiveRadio from '../../components/LiveRadio.astro';
-import VideoFacade from '../../components/VideoFacade.astro';
+import CasesCarousel from '../../components/CasesCarousel.astro';
+import Lightbox from '../../components/Lightbox.astro';
 import ReviewCard from '../../components/ReviewCard.astro';
 import Partners from '../../components/Partners.astro';
 import LeadForm from '../../components/LeadForm.astro';
 import { getEntry } from 'astro:content';
 import { useT, href, pick, langStaticPaths, type Lang } from '../../i18n/ui';
-import { getSettings, getReviews, getCases } from '../../lib/content';
+import { getSettings, getReviews } from '../../lib/content';
 import { personSchema } from '../../lib/schema';
 import imgToy from '../../assets/media/toy-ziyofat.jpg';
 import imgTv from '../../assets/media/radio-908fm.jpg';
@@ -25,7 +26,6 @@ const onam = (await getEntry('onam', 'index'))?.data;
 const onamPics = onam ? [onam.cover, ...onam.gallery.map((g) => g.image)].filter((x): x is NonNullable<typeof x> => !!x).filter((x, i, a) => a.findIndex((y) => y.src === x.src) === i).slice(0, 3) : [];
 const s = await getSettings();
 const reviews = (await getReviews()).slice(0, 3);
-const featured = (await getCases()).filter((c) => c.data.featured).slice(0, 4);
 
 const directions = [
   { title: t('dir.toy.title'), text: t('dir.toy.text'), img: imgToy, path: '/boshlovchi/toy-va-tantanalar/', icon: 'rings' as const, accent: 'gold' },
@@ -210,30 +210,18 @@ const posters = reels.length ? reels.map((r) => r.poster) : [s.showreel.poster];
     </div>
   </section>
 
-  <!-- VIDEO KEYSLAR -->
-  <section class="section bg-stage text-on-stage">
+  <!-- VIDEO KEYSLAR: 3D каруселъ (тоифалар) → ичида ўзи айланадиган тасма -->
+  <section class="section overflow-hidden bg-stage text-on-stage">
     <div class="container-site">
       <div class="flex flex-wrap items-end justify-between gap-4">
         <SectionHead eyebrow="03" title={t('cases.title')} class="!mb-0" />
         <a href={href(lang, '/media/')} class="btn btn-light">{t('cases.all')} <Icon name="arrow" size={18} /></a>
       </div>
-      <ul class="no-scrollbar -mx-4 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 sm:mt-14 lg:mx-0 lg:grid lg:grid-cols-4 lg:overflow-visible lg:px-0">
-        {
-          featured.map((c) => (
-            <li class="w-[72%] shrink-0 snap-center sm:w-[42%] lg:w-auto" data-reveal>
-              <VideoFacade
-                poster={c.data.image}
-                title={lang === 'ru' && c.data.titleRu ? c.data.titleRu : c.data.title}
-                caption={lang === 'ru' && c.data.titleRu ? c.data.titleRu : c.data.title}
-                src={c.data.video.url}
-                vertical
-                playLabel={t('video.play')}
-              />
-            </li>
-          ))
-        }
-      </ul>
     </div>
+    <div class="mt-10 sm:mt-14">
+      <CasesCarousel lang={lang} />
+    </div>
+    <Lightbox />
   </section>
 
   <!-- FUD-BLOG -->
