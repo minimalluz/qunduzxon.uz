@@ -44,5 +44,4 @@
 4. Фойдаланувчи DNS учун яратган API токенни Cloudflare'да ўчириши керак (локал нусхаси ўчирилган).
 5. `mail` / `ftp` CNAME'лари apex'га қарайди (олдин ҳам нотўғри эди) — почта ишлатилса, ahost.uz почта серверига тўғрилаш.
 6. Аудио-демо файллар йўқ; Keystatic GitHub App созланмаган.
-8. Instagram историялар архиви: `tools/ig-stories/` (VPS Ubuntu 24.04, systemd timer, `/srv/ig-stories`). Код тайёр ва mock билан синалган; эга ҳали ўрнатмаган. Аккаунт профессионал эканлиги ва Meta илова/токен — эгада. API ҳақиқий аккаунтда синалмаган (`check`).
 7. Деплой: 2026-11-10 да Cloudflare Workers Builds GitHub'га уланди (`minimalluz/qunduzxon.uz`, production branch `redesign`, build `npm run build`, deploy `npx wrangler deploy`) — `redesign` га ҳар push'да сайт ўзи янгиланади. Агар push'дан кейин Deployments'да янги «Build» пайдо бўлмаса (2026-11-19 да `2fbb90a` ва `9ab86a9` билан бўлган — GitHub↔Cloudflare уланиши узилган; эга текширди), янги коммит push қилиш йиғишни қайта бошлайди. Сессиядан `wrangler deploy` ишламайди: прокси Authorization сарлавҳасини алмаштиргани учун asset upload 401 беради.
