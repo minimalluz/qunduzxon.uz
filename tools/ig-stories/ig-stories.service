@@ -1,0 +1,18 @@
+[Unit]
+Description=Instagram историяларини архивлаш (qunduzxon)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=igstories
+Group=igstories
+ExecStart=/usr/bin/python3 /opt/ig-stories/ig_stories.py fetch
+# Хавфсизлик: фақат ўз папкаларига ёза олади, сайт ва тизимга тегмайди
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/srv/ig-stories /var/lib/ig-stories
+Nice=10
+IOSchedulingClass=idle
