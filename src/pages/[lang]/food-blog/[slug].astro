@@ -5,7 +5,7 @@ import Icon from '../../../components/Icon.astro';
 import VideoFacade from '../../../components/VideoFacade.astro';
 import ReviewCard from '../../../components/ReviewCard.astro';
 import Lightbox from '../../../components/Lightbox.astro';
-import { useT, href, pick, paragraphs, formatNumber, langs, type Lang } from '../../../i18n/ui';
+import { useT, href, pick, paragraphs, langs, type Lang } from '../../../i18n/ui';
 import { getReviews, totalScore, type Review } from '../../../lib/content';
 import { reviewSchema, videoSchemas } from '../../../lib/schema';
 
@@ -171,9 +171,6 @@ const dateFmt = new Intl.DateTimeFormat(lang === 'uz' ? 'uz-Cyrl-UZ' : 'ru-RU', 
             {d.hours && (
               <li class="flex gap-3"><Icon name="clock" size={18} class="mt-0.5 shrink-0 text-food" /><span><span class="block text-muted">{t('food.hours')}</span>{d.hours}</span></li>
             )}
-            {d.avgCheck ? (
-              <li class="flex gap-3"><Icon name="wallet" size={18} class="mt-0.5 shrink-0 text-food" /><span><span class="block text-muted">{t('food.check')}</span>{formatNumber(d.avgCheck, lang)} {t('food.sum')}</span></li>
-            ) : null}
             {d.phone && (
               <li class="flex gap-3"><Icon name="phone" size={18} class="mt-0.5 shrink-0 text-food" /><a href={`tel:${d.phone.replace(/[^\d+]/g, '')}`}>{d.phone}</a></li>
             )}

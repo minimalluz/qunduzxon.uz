@@ -102,7 +102,6 @@ export async function reviewSchema(lang: Lang, site: URL, review: CollectionEntr
         image: abs(img.src, site),
         address: { '@type': 'PostalAddress', streetAddress: pick(d.address, lang), addressLocality: d.city, addressCountry: 'UZ' },
         telephone: d.phone || undefined,
-        priceRange: d.avgCheck ? `${d.avgCheck} UZS` : undefined,
         openingHours: d.hours || undefined,
         hasMap: d.mapUrl || undefined,
       },
