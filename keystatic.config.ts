@@ -59,7 +59,8 @@ const video = fields.object(
 );
 
 export default config({
-  storage: import.meta.env.PROD
+  // Productionда — GitHub. Компьютерда GitHub App яратиш/синаш учун: .env → PUBLIC_KEYSTATIC_STORAGE=github
+  storage: import.meta.env.PROD || import.meta.env.PUBLIC_KEYSTATIC_STORAGE === 'github'
     ? { kind: 'github', repo: { owner: 'minimalluz', name: 'qunduzxon.uz' } }
     : { kind: 'local' },
   ui: {
