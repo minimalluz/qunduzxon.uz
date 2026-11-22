@@ -36,7 +36,7 @@ function fontsource(cssPath, weight) {
     });
   }
   if (!variants.length) throw new Error(`Шрифт топилмади: ${cssPath}`);
-  return variants;
+  return /** @type {[any, ...any[]]} */ (variants);
 }
 
 export default defineConfig({
