@@ -43,5 +43,6 @@
 3. Cloudflare dashboard: SSL/TLS → **Full (strict)**, **Always Use HTTPS** ёқиш (ҳозир http ҳам очилади); www → apex redirect (ихтиёрий).
 4. Фойдаланувчи DNS учун яратган API токенни Cloudflare'да ўчириши керак (локал нусхаси ўчирилган).
 5. `mail` / `ftp` CNAME'лари apex'га қарайди (олдин ҳам нотўғри эди) — почта ишлатилса, ahost.uz почта серверига тўғрилаш.
-6. Аудио-демо файллар йўқ; Keystatic GitHub App созланмаган.
+6. Аудио-демо файллар йўқ.
+- Keystatic (2026-11-22): GitHub App `qunduzxon` (minimalluz, фақат qunduzxon.uz репо; callback https://qunduzxon.uz/api/keystatic/github/oauth/callback ва www). Worker secrets: KEYSTATIC_GITHUB_CLIENT_ID / _CLIENT_SECRET / KEYSTATIC_SECRET; build variable PUBLIC_KEYSTATIC_GITHUB_APP_SLUG=qunduzxon. Репо default branch → `redesign`. `trailingSlash: 'ignore'` — 'always' да /api/keystatic/* 404 берарди. Компьютердаги dev (workerd) да Keystatic API ишламайди («exports is not defined»), production'да ишлайди.
 7. Деплой: 2026-11-10 да Cloudflare Workers Builds GitHub'га уланди (`minimalluz/qunduzxon.uz`, production branch `redesign`, build `npm run build`, deploy `npx wrangler deploy`) — `redesign` га ҳар push'да сайт ўзи янгиланади. Агар push'дан кейин Deployments'да янги «Build» пайдо бўлмаса (2026-11-19 да `2fbb90a` ва `9ab86a9` билан бўлган — GitHub↔Cloudflare уланиши узилган; эга текширди), янги коммит push қилиш йиғишни қайта бошлайди. Сессиядан `wrangler deploy` ишламайди: прокси Authorization сарлавҳасини алмаштиргани учун asset upload 401 беради.
