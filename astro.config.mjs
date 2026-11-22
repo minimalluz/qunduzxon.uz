@@ -41,7 +41,8 @@ function fontsource(cssPath, weight) {
 
 export default defineConfig({
   site: SITE,
-  trailingSlash: 'always',
+  // 'ignore': Keystatic API манзиллари (/api/keystatic/...) охирида «/» сиз чақирилади; сайт ҳаволалари барибир «/» билан
+  trailingSlash: 'ignore',
   output: 'static',
 
   adapter: cloudflare({
